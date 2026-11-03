@@ -1,0 +1,8 @@
+{
+  "name": "wp-agentic-kit-mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "MCP server giving agents WordPress core API docs, blueprints and the WP Engine AI API reference.",
+  "bin": { "wp-agentic-kit-mcp": "src/index.mjs" },
+  "dependencies": { "@modelcontextprotocol/sdk": "^1.12.0" }
+}

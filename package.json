@@ -1,0 +1,26 @@
+{
+  "name": "wp-agentic-experiences",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Developer kit for building AI experiences on WordPress's application layer + the WP Engine AI API.",
+  "workspaces": ["packages/*", "site"],
+  "scripts": {
+    "ingest": "node scripts/ingest/run.mjs",
+    "ingest:wp": "node scripts/ingest/run.mjs wp",
+    "ingest:source": "node scripts/ingest/run.mjs source",
+    "ingest:wpe": "node scripts/ingest/run.mjs wpe",
+    "build:artifacts": "node scripts/build/run.mjs",
+    "sync": "npm run ingest && npm run build:artifacts",
+    "mcp": "node packages/mcp-server/src/index.mjs",
+    "mcp:http": "node packages/mcp-server/src/http.mjs",
+    "site:dev": "npm -w site run dev",
+    "site:build": "npm -w site run build"
+  },
+  "dependencies": {
+    "node-html-parser": "^7.0.1",
+    "turndown": "^7.2.0",
+    "yaml": "^2.8.0"
+  },
+  "engines": { "node": ">=20" }
+}

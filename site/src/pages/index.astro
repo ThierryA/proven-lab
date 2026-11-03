@@ -1,0 +1,107 @@
+---
+import Base from '../layouts/Base.astro';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+const stats = JSON.parse(readFileSync(join(process.cwd(), '..', 'dist', 'stats.json'), 'utf8'));
+const fmt = (n) => n.toLocaleString('en-US');
+const why = [
+  ['Efficiency', 'Don\'t pay an agent to reinvent it', 'Users, permissions, content modeling, validation, media, cron, search. Reusing systems that already run at massive scale is cheaper, more reliable and far more scalable than asking an agent to regenerate them from scratch, and re-debug them every time.'],
+  ['Mature ecosystem', 'Two decades of collective intelligence', 'Battle-tested code, a huge security research community and an established disclosure and patching process. An agent-written auth layer has none of that. WordPress core has all of it.'],
+  ['Decoupled value', 'You don\'t have to love wp-admin', 'The value was never the admin screen. It is the core API layer underneath: registered post types, meta, capabilities, hooks, the REST API. Build your own admin and frontend in Node and never open wp-admin.'],
+  ['Bridging the AI gap', 'Infrastructure agents can actually use', 'The WP Engine AI API adds what WordPress core doesn\'t: an AI gateway, a managed knowledge base for semantic search, agents and sessions, and an MCP server, all wired to your site.'],
+];
+const steps = [
+  ['01', 'Ask', '"Create me a Node app with its own admin and frontend, using WordPress as the backend."'],
+  ['02', 'Look up', 'The agent calls get_blueprint and get_function for the exact core APIs, not guesses.'],
+  ['03', 'Compose', 'register_post_type, register_meta, Abilities, REST. Plus the AI Gateway and Knowledge Base.'],
+  ['04', 'Ship', 'A real app on a proven stack. No wp-admin, no reinvented auth, no rebuilt CMS.'],
+];
+---
+<Base title="WP Agentic Kit: build on WordPress, don't rebuild it">
+<style>
+  .hero{padding:96px 0 56px;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:-200px -10% auto -10%;height:640px;background:radial-gradient(60% 60% at 30% 20%,rgba(94,234,212,.16),transparent 70%),radial-gradient(50% 50% at 80% 10%,rgba(129,140,248,.18),transparent 70%);pointer-events:none}
+  .eyebrow{display:inline-block;font:600 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);border:1px solid rgba(94,234,212,.35);padding:5px 12px;border-radius:99px;background:rgba(94,234,212,.06)}
+  h1.big{font-size:clamp(2.6rem,6.4vw,5rem);line-height:1.02;letter-spacing:-.035em;margin:22px 0 22px;max-width:900px}
+  h1.big em{font-style:normal;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:1.25rem;color:var(--mute);max-width:720px;margin:0 0 32px}.cta{display:flex;gap:12px;flex-wrap:wrap}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:56px}
+  .stats div{background:var(--panel);padding:22px}.stats b{display:block;font-size:2rem;letter-spacing:-.02em}.stats span{color:var(--mute);font-size:13px}
+  section{padding:84px 0 0}h2.s{font-size:clamp(1.8rem,3.4vw,2.6rem);letter-spacing:-.025em;margin:0 0 12px}.sub{color:var(--mute);max-width:680px;margin:0 0 36px}
+  .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+  .why{grid-template-columns:repeat(auto-fit,minmax(420px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;transition:border-color .2s,transform .2s}.card:hover{border-color:#2c3650;transform:translateY(-2px)}
+  .card .k{font:600 12px var(--mono);color:var(--accent);letter-spacing:.1em;text-transform:uppercase}.card h3{margin:10px 0;font-size:1.15rem;letter-spacing:-.01em}.card p{margin:0;color:var(--mute);font-size:15px}
+  .stack{display:grid;grid-template-columns:1fr 1fr;gap:16px}.layer{border:1px solid var(--line);border-radius:14px;padding:26px;background:var(--panel)}
+  .layer h3{margin:0 0 4px}.layer .t{font:12px var(--mono);color:var(--mute);margin-bottom:16px;display:block}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}.chip{font:12.5px var(--mono);padding:5px 10px;border-radius:7px;border:1px solid var(--line);color:#c9d1e3;background:#0a0d14}
+  .wide{grid-column:1/-1;display:flex;align-items:center;gap:18px;justify-content:center;background:linear-gradient(90deg,rgba(94,234,212,.08),rgba(129,140,248,.1));border-color:#2a3550}
+  .wide strong{letter-spacing:-.01em}
+  .layer.you{border-color:rgba(94,234,212,.35)}.layer.ai{border-color:rgba(129,140,248,.4)}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;counter-reset:s}.step{border-left:2px solid var(--line);padding:2px 0 2px 20px}.step b{font:600 13px var(--mono);color:var(--warm)}.step h4{margin:4px 0;font-size:1.1rem}.step p{margin:0;color:var(--mute);font-size:14.5px}
+  pre.term{background:#05060a;border:1px solid var(--line);border-radius:14px;padding:22px;font-size:13.5px;line-height:1.7;overflow:auto;color:#c9d1e3;margin:36px 0 0}.term .p{color:var(--accent)}.term .c{color:#5b6579}.term .w{color:var(--warm)}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:16px}.vs .card ul{margin:12px 0 0;padding-left:18px;color:var(--mute);font-size:15px}.vs .bad{border-color:rgba(251,113,133,.3)}.vs .good{border-color:rgba(94,234,212,.4)}
+  @media(max-width:900px){.why{grid-template-columns:1fr}}
+  @media(max-width:760px){.stack,.vs{grid-template-columns:1fr}.hero{padding-top:60px}}
+</style>
+
+<header class="hero"><div class="wrap">
+  <span class="eyebrow">Developer kit · MCP · OpenAPI · llms.txt</span>
+  <h1 class="big">Build on WordPress.<br/><em>Don't make agents rebuild it.</em></h1>
+  <p class="lede">WordPress core APIs are the most battle-tested application layer on the web. The WP Engine AI API adds the cloud infrastructure, knowledge base and agents. This kit gives your coding agents the documentation and tools to combine them into real applications.</p>
+  <div class="cta"><a class="btn primary" href="/docs/connect">Connect your agent →</a><a class="btn" href="/docs/headless-node-app">See the Node app blueprint</a></div>
+  <div class="stats">
+    <div><b>{fmt(stats.functions)}</b><span>core functions documented</span></div>
+    <div><b>{fmt(stats.hooks)}</b><span>actions &amp; filters</span></div>
+    <div><b>{stats.wpeOperations}</b><span>WP Engine AI API operations</span></div>
+    <div><b>WP {stats.wordpress}</b><span>generated from source, not a handbook</span></div>
+  </div>
+</div></header>
+
+<section id="why"><div class="wrap">
+  <h2 class="s">Why reuse beats regenerate</h2>
+  <p class="sub">Agents are great at composing. They are expensive and risky when asked to reinvent a CMS, an auth system and a search engine on every project.</p>
+  <div class="grid4 why">{why.map(([k, h, p]) => <div class="card"><span class="k">{k}</span><h3>{h}</h3><p>{p}</p></div>)}</div>
+  <div class="vs" style="margin-top:16px">
+    <div class="card bad"><span class="k" style="color:#fb7185">From scratch with an agent</span><ul><li>Custom auth, roles, sessions: new attack surface</li><li>Hand-rolled content model and validation</li><li>Bespoke search and vector pipeline to host</li><li>Every project starts at zero, unreviewed by anyone else</li></ul></div>
+    <div class="card good"><span class="k">WordPress + WP Engine AI API</span><ul><li>Capabilities, application passwords, nonces: hardened for years</li><li>register_post_type, register_meta, Abilities: typed and permissioned</li><li>Managed knowledge base, gateway, agents and MCP</li><li>Open, portable, extensible with hooks</li></ul></div>
+  </div>
+</div></section>
+
+<section id="stack"><div class="wrap">
+  <h2 class="s">One open stack. Two layers that fit.</h2>
+  <p class="sub">Your UI can be Node, a mobile app or PHP templates. The value sits in the layers below it.</p>
+  <div class="stack">
+    <div class="layer you wide"><strong>Your experience</strong><span class="chip">Node admin</span><span class="chip">Node frontend</span><span class="chip">PHP templates</span><span class="chip">Agents &amp; MCP clients</span></div>
+    <div class="layer you"><h3>WordPress core APIs</h3><span class="t">application layer · runs your data, users and logic</span>
+      <div class="chips">{['register_post_type','register_meta (post/term/user)','register_taxonomy','WP_Query','capabilities & roles','add_action / add_filter','Abilities API','REST API','blocks & templates','cron & cache'].map((c) => <span class="chip">{c}</span>)}</div></div>
+    <div class="layer ai"><h3>WP Engine AI API</h3><span class="t">cloud infrastructure · powers search and AI</span>
+      <div class="chips">{['AI Gateway','Knowledge Base','Agents & sessions','Site connector','MCP server','alt-text · summarize · taxonomy','OpenAI-compatible'].map((c) => <span class="chip">{c}</span>)}</div></div>
+  </div>
+</div></section>
+
+<section id="agents"><div class="wrap">
+  <h2 class="s">Docs written for agents, kept current automatically</h2>
+  <p class="sub">The documentation isn't a handbook. It is generated from WordPress core source, the developer handbooks and the live WP Engine AI OpenAPI spec, then served in every format agents consume.</p>
+  <div class="steps">{steps.map(([n, h, p]) => <div class="step"><b>{n}</b><h4>{h}</h4><p>{p}</p></div>)}</div>
+  <pre class="term"><span class="c"># one line to give your agent WordPress superpowers</span>
+<span class="p">$</span> claude mcp add wp-agentic-kit -- npx wp-agentic-kit-mcp
+
+<span class="p">you ›</span> Create me a Node app that uses WordPress as the backend, custom admin included.
+<span class="w">agent</span> get_blueprint("headless-node-app")
+<span class="w">agent</span> get_function("register_meta")     <span class="c"># user meta, REST-visible</span>
+<span class="w">agent</span> get_wpe_operation("searchCollection") <span class="c"># knowledge-base search</span></pre>
+  <div class="grid4" style="margin-top:24px">
+    <div class="card"><span class="k">MCP</span><h3>Streamable HTTP + stdio</h3><p>Ten tools: search, exact signatures, hooks, blueprints, WP Engine operations.</p></div>
+    <div class="card"><span class="k">OpenAPI</span><h3><a href="/openapi/kit-api.yaml">kit-api.yaml</a></h3><p>For actions-style agents. Plus the full <a href="/openapi/wpe-ai.yaml">WP Engine AI spec</a>.</p></div>
+    <div class="card"><span class="k">Function calling</span><h3><a href="/tools/openai.json">OpenAI</a> · <a href="/tools/anthropic.json">Anthropic</a></h3><p>Drop-in tool definitions for any agent framework.</p></div>
+    <div class="card"><span class="k">llms.txt</span><h3><a href="/llms.txt">llms.txt</a> · <a href="/llms-full.txt">full</a></h3><p>Context-ready docs and an <a href="/AGENTS.md">AGENTS.md</a> playbook.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap" style="text-align:center">
+  <h2 class="s">An open, flexible stack that competes on what matters</h2>
+  <p class="sub" style="margin:0 auto 28px">Proven core APIs, purpose-built AI infrastructure, and agents that build with both.</p>
+  <div class="cta" style="justify-content:center"><a class="btn primary" href="/docs/connect">Get started</a><a class="btn" href="/docs">Browse the docs</a></div>
+</div></section>
+</Base>

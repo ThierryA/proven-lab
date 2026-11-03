@@ -1,0 +1,15 @@
+// Single source of truth for the kit's tools: used by the MCP server, the HTTP API,
+// and the generated OpenAI / Anthropic / OpenAPI definitions.
+const str = (description) => ({ type: 'string', description });
+export const TOOLS = [
+  { name: 'list_domains', description: 'List WordPress core API domains (content modeling, users, hooks, blocks, REST, Abilities/AI...). Start here to find which core APIs fit a task.', inputSchema: { type: 'object', properties: {} } },
+  { name: 'get_domain', description: 'Get a domain page: the key functions, classes and hooks for a task area, with signatures, parameters and since-versions.', inputSchema: { type: 'object', properties: { slug: str('Domain slug from list_domains, e.g. content-modeling') }, required: ['slug'] } },
+  { name: 'search_docs', description: 'Full-text search across WordPress core functions, classes, methods, hooks, developer handbooks and WP Engine docs. Returns ranked ids and snippets.', inputSchema: { type: 'object', properties: { query: str('What you are looking for, e.g. "register user meta"'), type: { type: 'string', enum: ['function', 'class', 'method', 'hook', 'handbook', 'wpe-doc'], description: 'Optional filter' }, limit: { type: 'integer', description: 'Max results (default 10, max 30)' } }, required: ['query'] } },
+  { name: 'get_function', description: 'Exact signature, parameters, return, description, since history and source location of a WordPress core function. Use before writing any call.', inputSchema: { type: 'object', properties: { name: str('Function name, e.g. register_post_meta') }, required: ['name'] } },
+  { name: 'get_class', description: 'Details of a WordPress core class and its public methods.', inputSchema: { type: 'object', properties: { name: str('Class name, e.g. WP_Query') }, required: ['name'] } },
+  { name: 'get_hook', description: 'Details of an action or filter hook: arguments, when it fires, source location.', inputSchema: { type: 'object', properties: { name: str('Hook name, e.g. save_post or rest_prepare_{$this->post_type}') }, required: ['name'] } },
+  { name: 'list_blueprints', description: 'List end-to-end build recipes (headless Node app, PHP-templated frontend, WP Engine AI experiences).', inputSchema: { type: 'object', properties: {} } },
+  { name: 'get_blueprint', description: 'Get a full build recipe by slug. Use for requests like "create me a Node app on WordPress".', inputSchema: { type: 'object', properties: { slug: str('Blueprint slug from list_blueprints') }, required: ['slug'] } },
+  { name: 'list_wpe_operations', description: 'List WP Engine AI API operations (gateway, knowledge base, agents, sessions, site connector, MCP), optionally filtered by tag or text.', inputSchema: { type: 'object', properties: { filter: str('Optional text or tag, e.g. "Knowledge Base"') } } },
+  { name: 'get_wpe_operation', description: 'Full detail of a WP Engine AI API operation by operationId: method, path, parameters, request body schema, responses, auth.', inputSchema: { type: 'object', properties: { operationId: str('e.g. createChatCompletion, searchCollection') }, required: ['operationId'] } },
+];

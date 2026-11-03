@@ -1,0 +1,13 @@
+{
+  "name": "site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prebuild": "node ../scripts/build/run.mjs && node scripts/copy-dist.mjs",
+    "predev": "node scripts/copy-dist.mjs",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": { "astro": "^5.0.0", "marked": "^15.0.0" }
+}

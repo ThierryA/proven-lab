@@ -1,0 +1,15 @@
+---
+import Base from '../../layouts/Base.astro';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+const d = (f) => JSON.parse(readFileSync(join(process.cwd(), '..', 'dist', f), 'utf8'));
+const domains = d('domains.json'), blueprints = d('blueprints.json'), wpe = d('wpe-operations.json');
+const tags = {}; for (const o of wpe.operations) { const t = (o.tags || []).find((x) => !x.startsWith('Product')) || 'Other'; (tags[t] ||= []).push(o); }
+---
+<Base title="Docs · WP Agentic Kit"><div class="wrap" style="padding-top:48px">
+<style>.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:48px}.c{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;color:var(--text)}.c:hover{border-color:#2c3650;text-decoration:none}.c b{display:block;margin-bottom:6px}.c span{color:var(--mute);font-size:14px}h2{letter-spacing:-.02em}.op{font:13px var(--mono);color:var(--mute);margin:0}.op code{color:var(--accent)}</style>
+<h1 style="font-size:2.4rem;letter-spacing:-.03em">Docs</h1>
+<h2>Blueprints</h2><div class="g">{blueprints.map((b) => <a class="c" href={`/docs/${b.slug}`}><b>{b.title}</b><span>{b.summary}</span></a>)}<a class="c" href="/docs/connect"><b>Connect your agent</b><span>MCP, OpenAPI, function calling, llms.txt.</span></a></div>
+<h2>WordPress core API domains</h2><div class="g">{domains.map((x) => <a class="c" href={`/docs/domain-${x.slug}`}><b>{x.title}</b><span>{x.summary}</span></a>)}</div>
+<h2>WP Engine AI API</h2>{Object.entries(tags).map(([t, ops]) => <div style="margin-bottom:20px"><b>{t}</b>{ops.map((o) => <p class="op"><code>{o.method} {o.path}</code> · {o.operationId}</p>)}</div>)}
+</div></Base>

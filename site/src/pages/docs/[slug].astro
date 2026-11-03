@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { marked } from 'marked';
+export function getStaticPaths() {
+  const d = (f) => JSON.parse(readFileSync(join(process.cwd(), '..', 'dist', f), 'utf8'));
+  const blueprints = d('blueprints.json'), domains = d('domains.json');
+  const domainMd = (s) => readFileSync(join(process.cwd(), '..', 'dist', 'domains', `${s}.md`), 'utf8');
+  return [
+    ...blueprints.map((b) => ({ params: { slug: b.slug }, props: { title: b.title, md: `# ${b.title}\n\n` + b.md.replace(/^# .*\n/, '') } })),
+    ...domains.map((x) => ({ params: { slug: `domain-${x.slug}` }, props: { title: x.title, md: domainMd(x.slug) } })),
+    { params: { slug: 'connect' }, props: { title: 'Connect your agent', md: readFileSync(join(process.cwd(), 'src', 'content', 'connect.md'), 'utf8') } },
+  ];
+}
+const { title, md } = Astro.props;
+---
+<Base title={`${title} · WP Agentic Kit`}><div class="wrap" style="padding-top:48px"><article class="md" set:html={marked.parse(md)} /></div></Base>
