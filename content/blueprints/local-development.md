@@ -13,7 +13,7 @@ you_do:
 
 # Workspace on the user's computer: Local
 
-> **Runbook step 2 · Workspace,** for developers and anyone who has Local. No Local and no wish to install anything: `build-on-wpengine`. **Next:** step 3, `classic-wordpress` or `custom-app`.
+> **Runbook step 2 · Workspace,** for developers and anyone who has Local. No Local and no wish to install anything: `wpengine-cloud`. **Next:** step 3, `classic-wordpress` or `custom-app`.
 
 You set up the site. The user's only possible tasks: install Local if they want it, and agree on the site name.
 
@@ -50,7 +50,7 @@ Offer the choice in one message, then continue with the answer:
 
 > I can set this up on your computer with Local (free, https://localwp.com: install it and open it once), or build it directly on WP Engine with nothing to install and send you a link.
 
-- Nothing to install: `build-on-wpengine`.
+- Nothing to install: `wpengine-cloud`.
 - Developers who prefer no app: WordPress Playground, `npx @wp-playground/cli@latest start` in the project folder. Docker only if they already use it.
 
 ## Done when

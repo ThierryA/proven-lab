@@ -11,7 +11,7 @@ you_do:
 
 # Choose a setup: Classic or headless
 
-> **Runbook step 1 · Plan.** Read this to explain the four setups and recommend one. **Next:** step 2, set up the workspace (`local-development` or `build-on-wpengine`).
+> **Runbook step 1 · Plan.** Read this to explain the four setups and recommend one. **Next:** step 2, set up the workspace (`local-development` or `wpengine-cloud`).
 
 WordPress is the application layer; a custom app is optional. Two choices: the admin and the frontend.
 
@@ -56,7 +56,7 @@ Running the admin or the frontend as a separate app is what *headless* means her
 
 The Cloud AI API runs on WP Engine's infrastructure, not inside WordPress. It provides the gateway to models (chat, images, text to speech and transcription), the knowledge base for search, and agents with sessions for the AI features you build. It works with WordPress where needed: your code indexes content into the knowledge base, and the WP Engine AI plugin connects the site so WP Engine AI can use its Abilities.
 
-**On WP Engine, coding agents can also use WP-CLI on the deployed site.** They run commands in a sandboxed session next to the site through the WP Engine MCP server (`sandbox_bash`), with no SSH setup: inspect, seed, update and verify without a browser. See `hosted-sites`.
+**On WP Engine, coding agents can also use WP-CLI on the deployed site.** They run commands in a sandboxed session next to the site through the WP Engine MCP server (`sandbox_bash`), with no SSH setup: inspect, seed, update and verify without a browser. See `wpengine-cloud`.
 
 ## The four setups
 

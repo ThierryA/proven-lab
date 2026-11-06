@@ -16,7 +16,7 @@ export const runbookMd = () => readFileSync(dist('AGENTS.md'), 'utf8');
 export const RUNBOOK = [
   { title: 'Start', pages: [['Use your agent', '/docs/connect'], ['Runbook for agents', '/docs/runbook']] },
   { title: '1 · Plan', slugs: ['architecture'] },
-  { title: '2 · Workspace', slugs: ['local-development', 'build-on-wpengine', 'hosted-sites'] },
+  { title: '2 · Workspace', slugs: ['local-development', 'wpengine-cloud'] },
   { title: '3 · Build', slugs: ['classic-wordpress', 'custom-app'] },
   { title: '4 · AI', slugs: ['wpe-ai-plugins', 'ai-features'] },
   { title: '5 · Verify', slugs: ['wp-cli-for-agents', 'best-practices'] },

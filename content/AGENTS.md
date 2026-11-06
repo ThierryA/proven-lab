@@ -18,7 +18,7 @@ Read the request and adapt. Use the developer path when the user writes about co
 |---|---|---|
 | Questions | Setup, where to build, repository; wait for the answers | What the site is for and its name, in plain words; propose the rest in one line and continue unless they object |
 | Setup | Their choice (step 1) | Classic: "I'll build it as a regular WordPress site" |
-| Where to build | Local on their computer | Directly on WP Engine, nothing to install |
+| Where to build | Local on their computer | In the cloud on WP Engine, nothing to install |
 | Repository | New, existing, or none for now | None; offer one later |
 | Checks | Coding standards, PHPUnit, PHPStan, Plugin Check | PHP lint, WP-CLI checks, the pages load |
 | Shipping | GitHub Action: staging, then production after approval | Staging link, then production after they say yes |
@@ -32,7 +32,7 @@ Never ask a non-developer to run commands or edit files. When a person must act 
 Ask in one message, only what the user has not said yet:
 
 - **Which setup?** Classic (WP Admin and WordPress templating) · Headless Frontend (WP Admin and your own frontend app) · Headless Admin (your own admin app and WordPress templating) · Headless Frontend + Admin (your own admin and frontend app). Recommend one in a line: a content site → Classic; an app with its own interface → Headless Frontend + Admin. Guide: `architecture`.
-- **Where to build?** Check whether Local (localwp.com) is installed, then offer: on your computer with Local (recommended when installed), or directly on WP Engine with nothing to install (needs a WP Engine account), or WordPress Playground.
+- **Where to build?** Check whether Local (localwp.com) is installed, then offer: on your computer with Local (recommended when installed), or in the cloud on WP Engine with nothing to install (needs a WP Engine account). A site already on WP Engine is always worked on in the cloud.
 - **Developers: which repository?** Create a new one, use an existing one, or none for now.
 
 Developers: wait for the answers and never pick the setup for them. Non-developers: follow the table above.
@@ -40,8 +40,7 @@ Developers: wait for the answers and never pick the setup for them. Non-develope
 ### 2. Set up the workspace
 
 - **On the user's computer:** `local-development` (Local, with Local's MCP server when available; otherwise Playground or Docker).
-- **Directly on WP Engine, nothing to install:** `build-on-wpengine` (the WP Engine MCP server creates the site and a staging environment; you build in its sandbox).
-- **The site already runs on WP Engine:** `hosted-sites`.
+- **In the cloud, nothing to install, and every site already on WP Engine:** `wpengine-cloud` (the WP Engine MCP server finds or creates the site and its staging environment; you build in its sandbox).
 - Developers with a repository: create or connect it now (`wpe-deployment`, section 1).
 
 ### 3. Build the app as a plugin
@@ -71,7 +70,7 @@ Not the Web Speech API or another provider unless the user asks. Code outside Wo
 
 ### 6. Ship: staging, then production
 
-Guide: `wpe-deployment` (non-developers: `build-on-wpengine`, section 5).
+Guide: `wpe-deployment` (non-developers: `wpengine-cloud`, section 5).
 
 - **Always staging first.** Send the user the staging link and what to check. Production only after they say yes.
 - From a repository: WP Engine's GitHub Action deploys to staging on every push to `main`, and to production after approval.

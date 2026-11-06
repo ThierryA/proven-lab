@@ -100,7 +100,7 @@ Prefer structured output so you can parse results:
 
 ## 9. On WP Engine: the WP Engine MCP sandbox
 
-When the site is on WP Engine, agents run WP-CLI through the **WP Engine MCP server** (`hosted-sites`): `sandbox_bash` runs a command in a sandboxed session next to the site, in `/sites/<install name>`, and `sandbox_read`, `sandbox_edit` and `sandbox_write` handle files. The MCP server opens the session with the user's WP Engine sign-in. **Do not generate SSH keys, add keys to the account or configure the SSH Gateway for yourself**: connect the WP Engine MCP server and let it handle access.
+When the site is on WP Engine, agents run WP-CLI through the **WP Engine MCP server** (`wpengine-cloud`): `sandbox_bash` runs a command in a sandboxed session next to the site, in `/sites/<install name>`, and `sandbox_read`, `sandbox_edit` and `sandbox_write` handle files. The MCP server opens the session with the user's WP Engine sign-in. **Do not generate SSH keys, add keys to the account or configure the SSH Gateway for yourself**: connect the WP Engine MCP server and let it handle access.
 
 ```bash
 wp core version

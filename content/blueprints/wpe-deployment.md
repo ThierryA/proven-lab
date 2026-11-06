@@ -13,7 +13,7 @@ you_do:
 
 # Ship: staging, then production
 
-> **Runbook step 6 · Ship,** for developers (non-developers: `build-on-wpengine`, section 5). Every release goes to staging first and to production only after the user says yes.
+> **Runbook step 6 · Ship,** for developers (non-developers: `wpengine-cloud`, section 5). Every release goes to staging first and to production only after the user says yes.
 
 Deploying on WP Engine is **optional**; Proven Lab recommends it. Nothing in the Core API requires it, and the Cloud AI API works from any host. WP Engine adds managed WordPress, the Headless Platform for custom apps, staging and production environments, and SSH access with WP-CLI for coding agents.
 
@@ -27,13 +27,13 @@ At the start of a project, ask the user once, in plain words:
 
 - **Create a new repository** (recommended for developers): `git init`, a WordPress `.gitignore`, and, if the GitHub CLI is signed in (`gh auth status`), `gh repo create <name> --private --source=. --push`.
 - **Use an existing repository:** clone it, or add it as `origin` and work on a branch.
-- **No repository:** fine for a quick prototype or for someone who does not code. Deploy with section 4 or `build-on-wpengine`, and offer a repository again before the first production release.
+- **No repository:** fine for a quick prototype or for someone who does not code. Deploy with section 4 or `wpengine-cloud`, and offer a repository again before the first production release.
 
 What goes in the repository: your code only, never WordPress core, uploads or secrets. Typically `wp-content/plugins/<app>/` (the app: data model, Abilities, routes), `wp-content/themes/<theme>/`, plus a custom app folder and the tests and tooling from `best-practices`.
 
 ## 2. WP Engine environments
 
-A WP Engine **site** groups up to three **environments** (installs): production, staging and development. With the WP Engine MCP server (`hosted-sites`): `wpe_list_sites` and `wpe_list_installs` to find them, `wpe_create_site` and `wpe_create_install` to create missing ones (preview, then `confirm: true` after the user approves; an install name is 3 to 14 lowercase letters and digits, globally unique, and takes 5 to 15 minutes to become active). Without the MCP server, the user creates them in the WP Engine User Portal.
+A WP Engine **site** groups up to three **environments** (installs): production, staging and development. With the WP Engine MCP server (`wpengine-cloud`): `wpe_list_sites` and `wpe_list_installs` to find them, `wpe_create_site` and `wpe_create_install` to create missing ones (preview, then `confirm: true` after the user approves; an install name is 3 to 14 lowercase letters and digits, globally unique, and takes 5 to 15 minutes to become active). Without the MCP server, the user creates them in the WP Engine User Portal.
 
 ## 3. From a Git repository: staging, then production
 
@@ -98,15 +98,15 @@ Notes:
 
 - The action is **non-destructive by default**: it adds and updates files but does not delete files missing from the repository. Add `--delete` to `FLAGS` only when the repository is the complete source of the deployed folder, and keep the default flags (`-azvr --inplace --exclude=.*`) when you set `FLAGS`.
 - Code deploys never touch the database or uploads. Content created on production stays there; seed content on staging with WP-CLI, not by copying a database over production.
-- A failed deploy leaves production as it was. To undo a bad release, revert the commit and deploy again; for anything worse, restore a backup (`hosted-sites`).
+- A failed deploy leaves production as it was. To undo a bad release, revert the commit and deploy again; for anything worse, restore a backup (`wpengine-cloud`).
 - Branch-per-environment works too: a `stage.yml` that deploys the `stage` branch to staging and a `main.yml` that deploys `main` to production.
 
-**Releasing:** after the staging deploy, give the user the staging URL and what to check. Only when they say yes: run the workflow (or approve the waiting `production` job), then check production with a request and WP-CLI (`hosted-sites`, sandbox).
+**Releasing:** after the staging deploy, give the user the staging URL and what to check. Only when they say yes: run the workflow (or approve the waiting `production` job), then check production with a request and WP-CLI (`wpengine-cloud`, sandbox).
 
 ## 4. Without a repository
 
 - **From Local:** `local_wpe_push` (Local's MCP server, `local-development`) or **Push** in Local, **to staging**. A push replaces the environment's files and database, so push to production only for a site that is not live yet, and only with the user's explicit approval.
-- **Built on WP Engine** (no Local, no Git): see `build-on-wpengine`. The code is created on staging through the WP Engine MCP sandbox, then promoted to production.
+- **Built on WP Engine** (no Local, no Git): see `wpengine-cloud`. The code is created on staging through the WP Engine MCP sandbox, then promoted to production.
 - **Before launch**, promoting staging to production can be a full copy (`wpe_copy_install`). It overwrites **all** files and the database of the destination, so never use it once production has real content; deploy the code files instead.
 
 Offer to put the code in a repository before the first production release: it is the only way to review, roll back and redeploy reliably.
@@ -129,7 +129,7 @@ You can also run your custom app on any Node host; WordPress stays on its own ho
 
 ## Agents on WP Engine: WP-CLI through the WP Engine MCP server
 
-On WP Engine, a coding agent runs **WP-CLI directly next to the site** through the WP Engine MCP server's sandbox (`sandbox_bash`, `hosted-sites`). The MCP server handles access with the user's sign-in: do not generate SSH keys or set up the SSH Gateway for the agent.
+On WP Engine, a coding agent runs **WP-CLI directly next to the site** through the WP Engine MCP server's sandbox (`sandbox_bash`, `wpengine-cloud`). The MCP server handles access with the user's sign-in: do not generate SSH keys or set up the SSH Gateway for the agent.
 
 Each session is an isolated container that times out after 10 minutes; only the site folder persists. Details and limits: `wp-cli-for-agents`, section 9.
 

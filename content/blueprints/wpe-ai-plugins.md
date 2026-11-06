@@ -33,7 +33,7 @@ wp plugin install "https://wp-product-info.wpesvc.net/v1/plugins/power-coworker?
 | `wpe-ai-chatbot` | WP Engine AI Chatbot | The site needs a visitor-facing chat |
 | `power-coworker` | WP Engine AI Coworker | Editors want AI agents in WP Admin that act on the site |
 
-In Local, run these in the site shell or use Local's MCP tools (`wp_plugin_install`, `wp_plugin_activate`). On a hosted site, use the WP Engine MCP server's sandbox (`hosted-sites`).
+In Local, run these in the site shell or use Local's MCP tools (`wp_plugin_install`, `wp_plugin_activate`). On a hosted site, use the WP Engine MCP server's sandbox (`wpengine-cloud`).
 
 ## 2. Connect the site (once, by a person)
 
