@@ -20,7 +20,7 @@ summary: The WordPress core PHP APIs an application is built on, extracted from 
 
 ## How an application uses it
 
-1. **Register on hooks.** Post types, taxonomies and meta on `init`; REST routes on `rest_api_init`; abilities on `wp_abilities_api_init`. Put this code in a plugin or a must-use plugin, never in WordPress core.
+1. **Register on hooks.** Post types, taxonomies and meta on `init`; REST routes on `rest_api_init`; abilities on `wp_abilities_api_init`. Put this code in a plugin, never in WordPress core.
 2. **Opt in to the REST API.** Post types, taxonomies, meta and settings are only in the REST API with `show_in_rest => true`; post meta also needs the post type to support `custom-fields`.
 3. **Let capabilities decide access.** `current_user_can()`, `permission_callback` and `auth_callback` enforce permissions on every request, whatever the admin or frontend.
 4. **Expose custom actions as Abilities.** An ability has an input and output schema and a permission check, and is available over REST (and over MCP with the MCP Adapter plugin).

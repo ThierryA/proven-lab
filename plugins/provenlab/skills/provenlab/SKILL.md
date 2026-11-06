@@ -1,6 +1,6 @@
 ---
 name: provenlab
-description: Build applications on WordPress as the application layer (post types, registered meta, users and capabilities, hooks, Abilities, REST API) with WP-CLI and the Cloud AI API. Use when creating or changing a WordPress-backed site or app, a headless or custom admin/frontend, WordPress plugins or must-use plugins, or AI features (gateway, knowledge base, agents) for such an app.
+description: Build applications on WordPress as the application layer (post types, registered meta, users and capabilities, hooks, Abilities, REST API) with WP-CLI and the Cloud AI API. Use when creating or changing a WordPress-backed site or app, a headless or custom admin/frontend, WordPress plugins, or AI features (gateway, knowledge base, agents) for such an app.
 ---
 
 # Proven Lab: build on WordPress, don't rebuild it
@@ -22,8 +22,8 @@ Use the `provenlab` MCP tools. If they are not connected, call the same tools ov
 
 ## Non-negotiables
 
-1. Before writing code, ask the user which setup they want (Classic, Headless Frontend, Headless Admin, Headless Frontend + Admin), with a one-line recommendation, and where WordPress runs locally: check for Local (localwp.com) first and create the site there, through Local's MCP server when available; if Local is missing, recommend it (`get_blueprint local-development`). Wait for the answer; never pick the setup for them. Then follow `classic-wordpress` or `custom-app` (`get_blueprint architecture` explains the setups).
-2. Define the data model in a must-use plugin on `init`; `show_in_rest => true` for anything a custom app uses; post meta also needs `custom-fields` support.
+1. Before writing code, ask the user which setup they want (Classic, Headless Frontend, Headless Admin, Headless Frontend + Admin), with a one-line recommendation, and where to build: in Local when it is installed (`get_blueprint local-development`), or directly on WP Engine with nothing to install, through the WP Engine MCP server (`get_blueprint build-on-wpengine`), the easiest path for someone without Local or who does not code. Developers: also ask whether to create a repository, use an existing one, or none (`get_blueprint wpe-deployment`). Deploy to staging first, production only after the user says yes. Wait for the answer; never pick the setup for them. Then follow `classic-wordpress` or `custom-app` (`get_blueprint architecture` explains the setups).
+2. Define the data model in a regular plugin (`wp-content/plugins/<app>/`, activated with WP-CLI), not a must-use plugin, on `init`; `show_in_rest => true` for anything a custom app uses; post meta also needs `custom-fields` support.
 3. Permissions are WordPress capabilities, enforced in `permission_callback` / `auth_callback`, never only in the UI.
 4. Custom actions are Abilities (`wp_register_ability`).
 5. Verify with WP-CLI and real requests before saying it works. Never run destructive commands on shared environments without approval.
