@@ -21,7 +21,7 @@ test('healthz', async () => { const r = await get('/healthz'); assert.equal(r.st
 
 test('pages render with the right content', async () => {
   const cases = [
-    ['/', 'text/html', ['Why pay agents to rebuild a battle-tested platform', 'data-film', 'A short film about agents', 'One application layer', 'data-setup="classic"', 'WP Admin', 'WordPress templating', 'Core API', 'WP-CLI', 'Deployment', 'optional']],
+    ['/', 'text/html', ['Why pay agents to rebuild a battle-tested platform', 'hero-code', 'not written', 'One application layer', 'data-setup="classic"', 'WP Admin', 'WordPress templating', 'Core API', 'WP-CLI', 'Deployment', 'optional']],
     ['/docs', 'text/html', ['Documentation', 'Core API', 'AI API', 'Deployment', 'WP-CLI']],
     ['/docs/api/fields', 'text/html', ['register_meta', 'Fields (Meta)']],
     ['/docs/api/abilities', 'text/html', ['wp_register_ability']],
