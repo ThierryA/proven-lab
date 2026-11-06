@@ -1,22 +1,42 @@
 {
-  "name": "@faustwp/faust-scaffold",
+  "name": "provenlab",
+  "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "description": "Proven Lab: docs and tools that let AI agents build on WordPress core APIs, WP-CLI and the Cloud AI API.",
+  "workspaces": [
+    "packages/*",
+    "site"
+  ],
   "scripts": {
-    "dev": "faust dev",
-    "build": "faust build",
-    "generate": "faust generatePossibleTypes",
-    "start": "faust start",
-    "format": "prettier . --write",
-    "test:format": "prettier . --check"
+    "ingest": "node scripts/ingest/run.mjs",
+    "ingest:wp": "node scripts/ingest/run.mjs wp",
+    "ingest:cli": "node scripts/ingest/run.mjs cli",
+    "ingest:source": "node scripts/ingest/run.mjs source",
+    "ingest:wpe": "node scripts/ingest/run.mjs wpe",
+    "build:artifacts": "node scripts/build/run.mjs",
+    "sync": "npm run ingest && npm run build:artifacts",
+    "mcp": "node packages/mcp-server/src/index.mjs",
+    "mcp:http": "node packages/mcp-server/src/http.mjs",
+    "site:dev": "npm -w site run dev",
+    "site:build": "npm -w site run build",
+    "build": "npm -w site run build",
+    "start": "node server/index.mjs",
+    "test": "npm run build && node --test \"test/*.test.mjs\"",
+    "test:unit": "node --test test/unit.test.mjs test/blueprints.test.mjs",
+    "test:e2e": "node --test test/e2e.test.mjs"
   },
   "dependencies": {
-    "@apollo/client": "^3.13.8",
-    "@faustwp/cli": "^3.2.3",
-    "@faustwp/core": "^3.2.6",
-    "graphql": "^16.10.0",
-    "next": "^15.5.2",
-    "prettier": "^3.5.3",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "node-html-parser": "^7.0.1",
+    "turndown": "^7.2.0",
+    "yaml": "^2.8.0"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "homepage": "https://h01j8ie82uxpc31tlr1b9sqsz.js.wpenginepowered.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ThierryA/proven"
   }
 }

@@ -1,0 +1,21 @@
+{
+  "name": "site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "prebuild": "node ../scripts/build/run.mjs && node scripts/copy-dist.mjs",
+    "predev": "node scripts/copy-dist.mjs",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource-variable/ibm-plex-sans": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@tailwindcss/typography": "^0.5.20",
+    "@tailwindcss/vite": "^4.3.4",
+    "astro": "^5.0.0",
+    "marked": "^15.0.0",
+    "tailwindcss": "^4.3.4"
+  }
+}

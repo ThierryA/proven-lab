@@ -1,0 +1,41 @@
+---
+import '@fontsource-variable/ibm-plex-sans';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/400-italic.css';
+import '../styles/global.css';
+import { stats } from '../lib/data.mjs';
+const { title = 'Proven Lab', description = 'Docs, an MCP server and tool schemas that let coding agents build on WordPress core, WP-CLI and the Cloud AI API.' } = Astro.props;
+const s = stats();
+const path = Astro.url.pathname;
+const links = [['Docs', '/docs'], ['Architecture', '/docs/architecture'], ['Connect', '/docs/connect']];
+---
+<!doctype html>
+<html lang="en" class="antialiased">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{title}</title><meta name="description" content={description} />
+  <meta name="theme-color" content="#0b0b0c" />
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
+</head>
+<body class="bg-ink font-sans text-fg-2">
+<header class="sticky top-0 z-40 border-b border-line bg-ink/90 backdrop-blur-sm">
+  <div class="mx-auto flex h-14 max-w-[90rem] items-center gap-8 px-5 sm:px-8">
+    <a href="/" class="flex items-center text-fg">
+      <span class="text-[15px] font-medium tracking-tight">Proven <span class="font-mono font-normal italic tracking-normal text-signal">Lab</span></span>
+    </a>
+    <nav class="ml-auto flex items-center gap-6 text-[13px]">
+      {links.map(([l, h]) => <a href={h} class={`hover:text-fg ${path.startsWith(h) && h !== '/docs' || path === h ? 'text-fg' : ''}`}>{l}</a>)}
+      <a href="/llms.txt" class="hidden font-mono text-[12px] text-fg-3 hover:text-fg sm:block">llms.txt</a>
+    </nav>
+  </div>
+</header>
+<slot />
+<footer class="mt-32 border-t border-line">
+  <div class="mx-auto flex max-w-[90rem] flex-wrap items-center gap-x-8 gap-y-2 px-5 py-8 font-mono text-[11px] text-fg-3 sm:px-8">
+    <span>Proven Lab</span>
+    <span>WordPress {s.wordpress} · WP-CLI {s.cliVersion} · Cloud AI API spec {s.wpeVersion ?? ''}</span>
+    <span class="ml-auto flex gap-6"><a class="hover:text-fg" href="/llms.txt">llms.txt</a><a class="hover:text-fg" href="/AGENTS.md">AGENTS.md</a><a class="hover:text-fg" href="/openapi/provenlab-api.yaml">OpenAPI</a><a class="hover:text-fg" href="/tools/openai.json">Tool schemas</a></span>
+  </div>
+</footer>
+</body></html>

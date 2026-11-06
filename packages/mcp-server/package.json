@@ -1,0 +1,22 @@
+{
+  "name": "@provenlab/mcp",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Proven Lab MCP server (WordPress Core API, WP-CLI, Cloud AI API references) and project kit installer (init).",
+  "bin": {
+    "mcp": "src/index.mjs",
+    "provenlab-mcp": "src/index.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0"
+  },
+  "files": [
+    "src",
+    "data"
+  ],
+  "scripts": {
+    "prepack": "node ../../scripts/build/pack-data.mjs",
+    "postpack": "node -e \"require('fs').rmSync('data',{recursive:true,force:true})\""
+  },
+  "homepage": "https://h01j8ie82uxpc31tlr1b9sqsz.js.wpenginepowered.com"
+}

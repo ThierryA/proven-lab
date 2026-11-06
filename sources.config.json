@@ -1,0 +1,15 @@
+{
+  "wp": {
+    "base": "https://developer.wordpress.org/wp-json/wp/v2",
+    "reference": ["wp-parser-function", "wp-parser-class", "wp-parser-method", "wp-parser-hook"],
+    "handbooks": ["apis-handbook", "plugin-handbook", "theme-handbook", "blocks-handbook", "rest-api-handbook", "adv-admin-handbook", "wpcs-handbook", "playground-handbook"],
+    "extra": [
+      { "name": "mcp-adapter", "url": "https://raw.githubusercontent.com/WordPress/mcp-adapter/trunk/README.md" }
+    ]
+  },
+  "wpe": {
+    "openapi": "https://api.ai.wpengine.com/v1/openapi.yaml",
+    "sitemap": "https://developers.wpengine.com/sitemap-index.xml",
+    "includePrefixes": ["/docs/ai/", "/docs/smart-search/"]
+  }
+}

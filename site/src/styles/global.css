@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Proven Lab: one dark theme, hairlines, one accent. */
+@theme {
+  --font-sans: "IBM Plex Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --color-ink: #0b0b0c;      /* page */
+  --color-ink-2: #121214;    /* raised surface */
+  --color-line: #222225;     /* hairline */
+  --color-line-2: #36363b;   /* stronger rule, dashed outlines */
+  --color-fg: #ecebe6;       /* primary text */
+  --color-fg-2: #a6a49e;     /* secondary text */
+  --color-fg-3: #6e6d69;     /* labels, captions */
+  --color-signal: #facc48;   /* the one accent */
+}
+
+html { background: var(--color-ink); color-scheme: dark; scroll-padding-top: 5rem; }
+body { font-feature-settings: "ss02", "tnum" 0; }
+::selection { background: var(--color-signal); color: var(--color-ink); }
+a { text-underline-offset: 3px; }
+
+/* Section label: "01 / Why" */
+.label { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-fg-3); }
+
+/* Docs prose */
+.prose-lab {
+  --tw-prose-body: var(--color-fg-2);
+  --tw-prose-headings: var(--color-fg);
+  --tw-prose-lead: var(--color-fg-2);
+  --tw-prose-links: var(--color-fg);
+  --tw-prose-bold: var(--color-fg);
+  --tw-prose-counters: var(--color-fg-3);
+  --tw-prose-bullets: var(--color-line-2);
+  --tw-prose-hr: var(--color-line);
+  --tw-prose-quotes: var(--color-fg);
+  --tw-prose-quote-borders: var(--color-line-2);
+  --tw-prose-captions: var(--color-fg-3);
+  --tw-prose-code: var(--color-fg);
+  --tw-prose-pre-code: var(--color-fg);
+  --tw-prose-pre-bg: var(--color-ink-2);
+  --tw-prose-th-borders: var(--color-line-2);
+  --tw-prose-td-borders: var(--color-line);
+  max-width: none;
+}
+.prose-lab :where(h1) { font-weight: 500; letter-spacing: -0.02em; }
+.prose-lab :where(h2) { font-weight: 500; letter-spacing: -0.01em; border-top: 1px solid var(--color-line); padding-top: 2rem; }
+.prose-lab :where(h3) { font-family: var(--font-mono); font-size: 0.95rem; font-weight: 500; }
+.prose-lab :where(a) { text-decoration-color: var(--color-signal); }
+.prose-lab :where(a):hover { color: var(--color-signal); }
+.prose-lab :where(code):not(:where(pre *)) { background: var(--color-ink-2); border: 1px solid var(--color-line); padding: 0.1em 0.35em; font-weight: 400; font-size: 0.85em; }
+.prose-lab :where(code):not(:where(pre *))::before, .prose-lab :where(code):not(:where(pre *))::after { content: none; }
+.prose-lab :where(pre) { border: 1px solid var(--color-line); border-radius: 0; font-size: 0.82rem; line-height: 1.7; }
+.prose-lab :where(table) { font-size: 0.875rem; }
+.prose-lab :where(thead th) { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-fg-3); }

@@ -1,0 +1,162 @@
+---
+import Base from '../layouts/Base.astro';
+import ArchitectureDiagram from '../components/ArchitectureDiagram.astro';
+import GridBackground from '../components/GridBackground.astro';
+import { stats as getStats, wpe } from '../lib/data.mjs';
+import { TOOLS } from '../../../packages/mcp-server/src/tools.mjs';
+const s = getStats();
+const mcpUrl = new URL('/mcp', Astro.site).href;
+const fmt = (n) => n.toLocaleString('en-US');
+const aiOps = wpe().operations.length;
+
+const why = [
+  ['Efficiency', 'Reuse, don\'t regenerate', 'Users, permissions, content modeling, validation, media, cron, search. Reusing systems that already run at massive scale is cheaper, more reliable and far more scalable than asking an agent to rebuild them, and re-debug them, on every project.'],
+  ['Mature ecosystem', 'Years of collective intelligence', 'Battle-tested code, a huge security research community and an established disclosure and patching process. An agent-written auth layer has none of that. The platform has all of it.'],
+  ['Decoupled value', 'You don\'t need to love WP Admin', 'The value was never the admin screen. It is the core API layer underneath: registered post types, meta, capabilities, hooks, the REST API. Build your own admin and frontend in Node and never open WP Admin.'],
+  ['Bridging the AI gap', 'Infrastructure agents can use', 'The Cloud AI API adds what core doesn\'t: an AI gateway, a managed knowledge base for semantic search, agents and sessions, all wired to your site.'],
+];
+const compare = [
+  ['Authentication and roles', 'New code, new attack surface', 'Capabilities, cookie auth with nonces, application passwords'],
+  ['Content model', 'Hand-written schema and validation', 'register_post_type, register_meta, REST schemas'],
+  ['Custom actions', 'Ad-hoc endpoints', 'Abilities API: input and output schema, permission check'],
+  ['Search over content', 'A vector pipeline to build and host', 'Cloud AI API knowledge base'],
+  ['Review', 'Starts at zero on every project', 'Open source, used and reviewed on millions of sites'],
+];
+const formats = [
+  ['MCP', `${TOOLS.length} tools over streamable HTTP at /mcp, no API key`, '/docs/connect'],
+  ['Project kit', 'AGENTS.md, CLAUDE.md, MCP configs and a skill: ask your agent to follow /kit/SETUP.md, or run install.sh', '/kit/SETUP.md'],
+  ['Claude Code plugin', 'MCP server, skill and commands in one install', '/docs/connect'],
+  ['OpenAPI', 'provenlab-api.yaml: the same tools as REST, for OpenAPI clients such as GPT Actions', '/openapi/provenlab-api.yaml'],
+  ['Tool schemas', 'OpenAI and Anthropic function-calling definitions; calls go to /api/<tool>', '/tools/openai.json'],
+  ['llms.txt', 'Plain-text index, a full dump and an AGENTS.md playbook', '/llms.txt'],
+];
+const steps = [
+  ['Ask', 'A user asks: "Create a Node app with its own admin and frontend."'],
+  ['Look up', 'The agent reads the architecture blueprint and checks exact signatures with get_function and get_hook.'],
+  ['Compose', 'It registers post types and meta, adds Abilities, and calls the Cloud AI API where the app needs AI.'],
+  ['Verify', 'It proves the result with WP-CLI and real requests, not by rereading its own code.'],
+];
+const section = 'mx-auto grid max-w-[90rem] gap-x-12 gap-y-6 border-t border-line px-5 py-20 sm:px-8 lg:grid-cols-[12rem_minmax(0,1fr)]';
+---
+<Base title="Why pay agents to rebuild a battle-tested platform? Instead, build on top of it! · Proven Lab">
+
+<!-- Hero -->
+<div class="relative isolate overflow-hidden">
+<GridBackground />
+<section class="mx-auto max-w-[90rem] px-5 pt-24 pb-20 sm:px-8 sm:pt-32">
+  <p class="label">Proven Lab · for coding agents</p>
+  <h1 class="mt-6 max-w-[17em] text-[clamp(2.25rem,5.2vw,4.4rem)] font-medium leading-[1.04] tracking-[-0.035em] text-fg">
+    Why pay agents to rebuild a <span class="whitespace-nowrap">battle-tested</span> platform? <span class="text-fg-3">Instead, build on top of it!</span>
+  </h1>
+  <p class="mt-8 max-w-2xl text-[17px] leading-relaxed">
+    Let agents leverage the most widely used open-source website platform, with more than twenty years of collective intelligence, production use and public security review. Proven Lab gives coding agents exact documentation of its PHP APIs, <span class="whitespace-nowrap">WP-CLI</span> and the Cloud AI API, to build <em class="text-signal">reliable</em>, <em class="text-signal">secure</em> and <em class="text-signal">scalable</em> applications more <em class="text-signal">efficiently</em> and at <em class="text-signal">lower cost</em>.
+  </p>
+  <div class="mt-10 flex flex-wrap items-center gap-6">
+    <a href="/docs/connect" class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Connect your agent</a>
+    <a href="/docs/architecture" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">How it fits together</a>
+  </div>
+
+  <dl class="mt-20 grid grid-cols-2 border-t border-line lg:grid-cols-4">
+    {[[fmt(s.functionsPublic), 'public core functions'], [fmt(s.hooks), 'hooks (actions and filters)'], [fmt(s.cliLeafCommands), `WP-CLI ${s.cliVersion} commands`], [String(aiOps), 'Cloud AI API operations']].map(([n, l]) => (
+      <div class="border-b border-line py-5 pr-4 lg:border-b-0"><dt class="text-2xl tracking-tight text-fg">{n}</dt><dd class="label mt-1.5">{l}</dd></div>
+    ))}
+  </dl>
+</section>
+
+</div>
+
+<!-- 01 Why -->
+<section id="why" class={section}>
+  <p class="label">01 / Why</p>
+  <div>
+    <h2 class="max-w-2xl text-3xl font-medium tracking-tight text-fg">Reuse beats regenerate.</h2>
+    <p class="mt-4 max-w-2xl">Agents are good at wiring existing APIs together. Asking them to rebuild a CMS, an authentication system and a search engine on every project costs more and adds risk.</p>
+    <div class="mt-12 grid border-t border-l border-line md:grid-cols-2">
+      {why.map(([k, h, p], i) => (
+        <div class="border-r border-b border-line p-7">
+          <p class="label">1.{i + 1} {k}</p>
+          <h3 class="mt-4 text-lg text-fg">{h}</h3>
+          <p class="mt-2 text-[15px] leading-relaxed">{p}</p>
+        </div>
+      ))}
+    </div>
+    <table class="mt-12 w-full border-collapse text-[14px]">
+      <thead><tr class="label text-left"><th class="border-b border-line-2 py-3 pr-6 font-normal"></th><th class="border-b border-line-2 py-3 pr-6 font-normal">Rebuilt by an agent</th><th class="border-b border-line-2 py-3 font-normal text-fg">Built on the platform</th></tr></thead>
+      <tbody>{compare.map(([k, a, b]) => <tr><td class="border-b border-line py-3 pr-6 text-fg-3">{k}</td><td class="border-b border-line py-3 pr-6 text-fg-3 line-through decoration-line-2">{a}</td><td class="border-b border-line py-3 text-fg">{b}</td></tr>)}</tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 02 Architecture -->
+<section id="architecture" class={section}>
+  <p class="label">02 / Architecture</p>
+  <div>
+    <h2 class="max-w-3xl text-3xl font-medium tracking-tight text-fg">One application layer. Your choice of admin and frontend.</h2>
+    <p class="mt-4 max-w-2xl">The application layer always runs and does the work. The admin and the frontend each run inside it or as a separate custom app. The Cloud AI API runs on its own infrastructure.</p>
+    <div class="mt-12"><ArchitectureDiagram /></div>
+    <p class="mt-8 text-[14px]"><a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/architecture">Read the architecture blueprint</a></p>
+  </div>
+</section>
+
+<!-- 03 Tools -->
+<section id="tools" class={section}>
+  <p class="label">03 / Tools</p>
+  <div class="grid min-w-0 gap-12 lg:grid-cols-2">
+    <div class="min-w-0">
+      <h2 class="text-2xl font-medium tracking-tight text-fg">WP-CLI</h2>
+      <p class="mt-3 max-w-xl">The official command-line tool for WordPress. Coding agents install, seed, inspect and verify a site from the shell, in every setup, locally or on a remote host. Every command and flag is documented from the WP-CLI {s.cliVersion} release.</p>
+      <pre class="mt-6 overflow-x-auto border border-line bg-ink-2 p-5 font-mono text-[12.5px] leading-7 text-fg-2"><span class="text-fg-3">$</span> wp post-type list --fields=name,show_in_rest
+<span class="text-fg-3">$</span> wp post create --post_type=project --porcelain
+<span class="text-fg-3">$</span> wp user application-password create admin app</pre>
+      <p class="mt-4 text-[14px]"><a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/wp-cli-for-agents">WP-CLI for agents</a></p>
+    </div>
+    <div class="min-w-0">
+      <h2 class="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-2xl font-medium tracking-tight text-fg">Deployment <span class="label">optional · recommended</span></h2>
+      <p class="mt-3 max-w-xl">WP Engine hosts the application layer on managed WordPress and a custom app on the Headless Platform. On WP Engine, a coding agent with your SSH key can run WP-CLI in a sandboxed SSH session next to the site. Nothing in Proven Lab requires WP Engine.</p>
+      <dl class="mt-6 border-t border-line text-[14px]">
+        {[['Application layer', 'Managed WordPress'], ['Custom app', 'Headless Platform (any Node framework)'], ['Coding agents', 'SSH Gateway + WP-CLI']].map(([k, v]) => <div class="flex justify-between gap-6 border-b border-line py-3"><dt class="shrink-0 whitespace-nowrap text-fg-3">{k}</dt><dd class="text-right text-fg">{v}</dd></div>)}
+      </dl>
+      <p class="mt-4 text-[14px]"><a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/wpe-deployment">Deploying on WP Engine</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 For agents -->
+<section id="agents" class={section}>
+  <p class="label">04 / For agents</p>
+  <div>
+    <h2 class="max-w-3xl text-3xl font-medium tracking-tight text-fg">Documentation generated for agents.</h2>
+    <p class="mt-4 max-w-2xl">Built from the platform's source code, its developer handbooks, the WP-CLI release and the Cloud AI API's published spec, and served in the formats agents read.</p>
+    <div class="mt-12 grid gap-12 lg:grid-cols-2">
+      <ol class="min-w-0 border-t border-line">
+        {steps.map(([h, p], i) => <li class="grid grid-cols-[3rem_1fr] border-b border-line py-4"><span class="label pt-0.5">0{i + 1}</span><div><p class="text-fg">{h}</p><p class="mt-1 text-[14px]">{p}</p></div></li>)}
+      </ol>
+      <pre class="min-w-0 self-start overflow-x-auto border border-line bg-ink-2 p-5 font-mono text-[12.5px] leading-7 text-fg-2"><span class="text-fg-3"># add Proven Lab to Claude Code</span>
+<span class="text-signal">$</span> claude mcp add --transport http provenlab \
+    {mcpUrl}
+
+<span class="text-fg-3">user ›</span> Build a Node app with its own admin.
+<span class="text-fg">agent</span> get_blueprint("architecture")
+<span class="text-fg">agent</span> get_function("register_meta")
+<span class="text-fg">agent</span> get_cli_command("post-type list")</pre>
+    </div>
+    <div class="mt-12 border-t border-line">
+      {formats.map(([k, v, href]) => <a href={href} class="grid grid-cols-[9rem_1fr_auto] items-baseline gap-6 border-b border-line py-4 text-[14px] hover:bg-ink-2"><span class="font-mono text-[12px] text-fg">{k}</span><span>{v}</span><span class="text-fg-3">→</span></a>)}
+    </div>
+  </div>
+</section>
+
+<!-- Close -->
+<div class="relative isolate overflow-hidden border-t border-line">
+<GridBackground intensity={0.7} focus="80% 50%" />
+<section class="mx-auto max-w-[90rem] px-5 py-20 sm:px-8">
+  <h2 class="max-w-3xl text-[clamp(1.8rem,3.6vw,3rem)] font-medium leading-tight tracking-[-0.03em] text-fg">Build on a proven platform, not from scratch.</h2>
+  <div class="mt-8 flex flex-wrap items-center gap-6">
+    <a href="/docs/connect" class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Connect your agent</a>
+    <a href="/docs" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">Browse the docs</a>
+  </div>
+</section>
+</div>
+
+
+</Base>

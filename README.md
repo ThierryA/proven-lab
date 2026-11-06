@@ -1,97 +1,65 @@
-# ![Faust.js Logo](./.github/assets/faustjs-logo.svg) Faust.js Starter Kit
+# Proven Lab
 
-This repository contains a starter kit to get you up and running quickly on [WP Engine's Headless Platform](https://wpengine.com/headless-wordpress/) with a WordPress site skeleton for more advanced developers.
+Docs, an MCP server and tool schemas that let coding agents build on the WordPress **Core API** (Proven Lab's name for the WordPress core PHP APIs), **WP-CLI** and the **Cloud AI API**. When a user asks an agent to "create a Node app on WordPress", the agent looks up exact signatures, hooks and commands instead of guessing, and reuses WordPress instead of rebuilding it.
 
-## Getting Started 🚀
+## How it works
 
-To get started on WP Engine's Platform please follow the docs here [https://developers.wpengine.com/docs/atlas/getting-started/create-app/](https://developers.wpengine.com/docs/atlas/getting-started/create-app/)
-
-## Project Structure
-
-```bash
-├── components/
-├── fragments/
-├── pages/
-├── queries/
-├── styles/
-├── wp-templates/
-│   ├── archive.js          # For your category/archive templates
-│   ├── front-page.js       # Front page
-│   ├── index.js            # Mapping for available templates
-│   ├── page.js             # Single page
-│   └── single.js           # Single post or singular
-├── DEVELOPMENT.md
-├── faust.config.js
-├── next.config.js
-├── package.json
-├── possibleTypes.json
-└── README.md
-└── screenshots
+```
+sources ──► ingest ──► corpus/ ──► build ──► dist/ ──► MCP server · OpenAPI · tools · llms.txt · site
 ```
 
-## Available Commands
+| Source | How it's pulled |
+|---|---|
+| WordPress core PHP APIs (functions, classes, methods, **hooks**) | Downloads the release tarball and statically extracts docblocks with `scripts/php/extract.php` (tokenizer only, never executes WordPress) |
+| WP-CLI commands | Downloads the WP-CLI release, verifies its SHA-512 checksum and runs `wp cli cmd-dump` |
+| WordPress handbooks (plugin, theme, blocks, REST, APIs, advanced admin, ...) | developer.wordpress.org REST API |
+| Cloud AI API | published `openapi.yaml` + docs crawled via sitemap |
+| Blueprints and domain map | hand-written in `content/` (names validated against the corpus) |
 
-| Command       | Script                        | Description                      |
-| ------------- | ----------------------------- | -------------------------------- |
-| `dev`         | `faust dev`                   | Start the development server     |
-| `build`       | `faust build`                 | Build the project for production |
-| `generate`    | `faust generatePossibleTypes` | Generate GraphQL possible types  |
-| `start`       | `faust start`                 | Start the production server      |
-| `format`      | `prettier . --write`          | Format code with Prettier        |
-| `test:format` | `prettier . --check`          | Check code formatting            |
+## For developers and agents
 
-## Screenshots
+- **MCP server:** `claude mcp add --transport http provenlab <homepage>/mcp` (Cursor, VS Code and others: see `/docs/connect`).
+- **Project kit:** ask an agent to follow `<homepage>/kit/SETUP.md`, or run `curl -fsSL <homepage>/install.sh | sh`. Adds `AGENTS.md`, `CLAUDE.md`, MCP configs for Claude Code, Cursor and VS Code, and a Claude Code skill. Templates: `content/kit/`.
+- **Claude Code plugin:** `/plugin install provenlab --marketplace ThierryA/proven`. Generated into `plugins/provenlab/` and `.claude-plugin/marketplace.json` by the build; do not edit those by hand.
+- **npm (not published yet):** `npx @provenlab/mcp` (stdio server), `npx @provenlab/mcp init` (kit, merging existing MCP configs).
 
-<details>
-    <summary>View Screenshots</summary>
+`<homepage>` is `homepage` in `package.json`; `SITE_URL` overrides it at build time.
 
-![Front Page](screenshots/front-page.png)
+## Commands
 
-![Category Page](screenshots/category-page.png)
+```bash
+npm install
+npm run sync            # ingest everything + build dist/  (WP_VERSION=7.0 to pin)
+npm run mcp             # MCP server over stdio
+npm run mcp:http        # /mcp (streamable HTTP) and /api/<tool>
+```
 
-![Single Page](screenshots/single-page.png)
+Add the MCP server to Claude Code: `claude mcp add provenlab -- node /path/to/provenlab/packages/mcp-server/src/index.mjs`, or over HTTP: `claude mcp add --transport http provenlab https://<host>/mcp`.
 
-![Single Post](screenshots/single-post.png)
+## Run and deploy
 
-</details>
+```bash
+npm install
+npm run build      # builds data artifacts + the site
+npm start          # serves site + /mcp + /api/<tool> on PORT (default 8080)
+```
 
-## Our Community 🩵
+One Node process serves the website, the MCP endpoint (`/mcp`), the REST mirror of the tools (`/api/<tool>`) and `/healthz`. It listens on `PORT` (default 8080), needs no framework at runtime (only the MCP SDK), and builds from the committed data snapshot in `corpus/`, so the build needs no network and no PHP. This matches WP Engine's Headless Platform (build `npm run build`, start `npm start`, port 8080 or 3000, Node per `.nvmrc`). Refresh the data with `npm run sync` and commit the result. Set `SITE_URL` at build time for absolute links in `llms.txt` and the OpenAPI files; without it they are relative.
 
-At WP Engine, we have a strong community built around headless WordPress to support you with your journey.
+## Tests
 
-- [Discord Headless Community Channel](https://faustjs.org/discord)
-- [Fortnightly Headless Community Call](https://discord.gg/headless-wordpress-836253505944813629?event=1371472220592930857)
-- [WP Engine's Headless Platform developer community](https://wpengine.com/builders/headless)
-- [WP Engine`s Builders YouTube Channel](https://www.youtube.com/@WPEngineBuilders)
-- [WP Engine's Headless Platform](https://wpengine.com/headless-wordpress/)
-- [WP Engines Headless Platform Docs](https://developers.wpengine.com/docs/atlas/overview/)
+```bash
+npm test                              # build + all tests: data integrity, blueprint code, server, MCP (HTTP + stdio), link crawl
+WP_REAL=1 node --test test/wordpress.test.mjs   # real WordPress 7.x via WordPress Playground: runs the blueprint code
+```
 
-## Plugin Ecosystem 🪄
+The blueprint tests lint every PHP snippet, check every WordPress function and every WP-CLI command and flag against the generated data, and the real-WordPress test executes the custom app blueprint (post types, registered meta over REST, user meta, capabilities, an Ability that changes a post's status).
 
-- [Faust.js](https://faustjs.org)
-- [WPGraphQL](https://www.wpgraphql.com)
-- [WPGraphQL Content Blocks](https://github.com/wpengine/wp-graphql-content-blocks)
-- [WPGraphQL IDE](https://github.com/wp-graphql/wpgraphql-ide)
-- [HWP Toolkit](https://github.com/wpengine/hwptoolkit)
+## Outputs (`dist/`)
+`llms.txt`, `llms-full.txt`, `AGENTS.md`, `domains/*.md`, `blueprints/*.md`, `cli/*.md`, `entities.json`, `docs.json`, `cli-commands.json`, `wpe-operations.json`, `stats.json`, `openapi/{provenlab-api,wpe-ai}.yaml`, `tools/{openai,anthropic}.json`.
 
-## Documentation 🔎
-
-> [!NOTE]
-> We are continuously adding new docs for [Faustjs.org](https://faustjs.org/docs)
-
-- [Faust.js Documentation](https://faustjs.org/docs/)
-- [Headless Platform Documentation](https://wpengine.com/headless-wordpress/)
-- [WPGraphQL Documentation](https://developers.wpengine.com/docs/atlas/overview/)
-
-
-## Contributions
-
-## Contributor License Agreement
-
-All external contributors to WP Engine products must have a signed Contributor License Agreement (CLA) in place before the contribution may be accepted into any WP Engine codebase.
-
-1. [Submit your name and email](https://wpeng.in/cla/)
-2. 📝 Sign the CLA emailed to you
-3. 📥 Receive copy of signed CLA
-
-❤️ Thank you for helping us fulfill our legal obligations in order to continue empowering builders through headless WordPress.
+## Roadmap
+- Scheduled GitHub Action running `npm run sync` and publishing
+- Publish `@provenlab/mcp` to npm (needs an npm org named `provenlab`)
+- Index hooks/methods per WP version (`WP_VERSION`) and diff between versions
+- More blueprints (WooCommerce, multisite, auth flows)

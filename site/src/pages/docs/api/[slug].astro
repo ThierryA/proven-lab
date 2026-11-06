@@ -1,0 +1,15 @@
+---
+import Docs from '../../../layouts/Docs.astro';
+import { domains, domainMd } from '../../../lib/data.mjs';
+import { render } from '../../../lib/md.mjs';
+export function getStaticPaths() { return domains().map((d) => ({ params: { slug: d.slug }, props: { d } })); }
+const { d } = Astro.props;
+const html = render(domainMd(d.slug).replace(/^# .*\n+[^\n]*\n+/, '').replace(/^\*WordPress .*generated from source.*\n/m, ''));
+const n = (count, one, many) => `${count} ${count === 1 ? one : many}`;
+---
+<Docs title={d.title} description={d.summary}>
+  <p class="label mb-4">Core API · {d.group}</p>
+  <article class="prose prose-lab"><h1>{d.title}</h1><p class="lead">{d.summary}</p>
+    <p class="text-sm">{n(d.functions.length, 'function', 'functions')} · {n(d.classes.length, 'class', 'classes')} · {n(d.hooks.length, 'hook', 'hooks')}. Look up any of them with the <code>get_function</code>, <code>get_class</code> and <code>get_hook</code> MCP tools.</p>
+    <div set:html={html} /></article>
+</Docs>
