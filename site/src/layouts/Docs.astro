@@ -15,7 +15,7 @@ const sections = [
 ];
 ---
 <Base title={`${title} · Proven Lab`} description={description}>
-<div class="mx-auto flex max-w-[90rem] px-5 sm:px-8">
+<div class="mx-auto flex max-w-[80rem] px-5 sm:px-8">
   <aside class="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-64 shrink-0 overflow-y-auto border-r border-line py-8 pr-6 lg:block" aria-label="Documentation">
     <p class="label">Guides</p>
     <ul class="mt-3 border-l border-line">{sb.guides.map((i) => <li><a href={i.href} class={link(on(i.href))}>{i.label}</a></li>)}</ul>
