@@ -95,7 +95,7 @@ Prefer structured output so you can parse results:
 ## 8. Remote targets
 
 - `wp --path=/var/www/site --url=https://site.test <cmd>` targets a specific install or multisite blog.
-- `wp --ssh=user@host/path <cmd>` runs against a remote install over SSH on hosts where WP-CLI's SSH transport works.
+- `wp --ssh=user@host/path <cmd>` runs against a remote install on other hosts where the user already has SSH access. Never on WP Engine: use the WP Engine MCP server's `sandbox_bash`, which handles access itself.
 - Docker setups: `--ssh=docker:<container>` or `docker compose exec wordpress wp ...`.
 
 ## 9. On WP Engine: the WP Engine MCP sandbox
@@ -108,13 +108,13 @@ wp post-type list --format=json
 wp search-replace 'old.test' 'new.test' --dry-run
 ```
 
-Each session is a container with WP-CLI, `mysql`, bash and Composer. Plain `ssh <env>@<env>.ssh.wpengine.net` works too, but only for a person who already set up their own key; never set it up on the user's behalf.
+Each session is a container with WP-CLI, `mysql`, bash and Composer. Never set up or use SSH to WP Engine yourself: the MCP server connects for you.
 
 What the sandbox means for an agent:
 - **Isolated:** a new container per session, separate per site. No root or sudo, and server processes and logs are not visible.
 - **Short-lived:** the session times out after 10 minutes. Long-running processes die with it, so batch big jobs.
 - **Only the site persists:** files outside `/sites/<environment>/` (home, `/tmp`) are discarded. Keep scripts in `_wpeprivate/`, which is not web-accessible.
-- **Limits:** 5 sessions per user at a time ([WP Engine SSH Gateway docs](https://wpengine.com/support/ssh-gateway/)).
+- **Limits:** 5 sessions per user at a time.
 - Take a backup before changing a live environment.
 
 ## Rules for agents

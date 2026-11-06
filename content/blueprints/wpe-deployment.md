@@ -43,9 +43,9 @@ Code deploys never touch content: posts and uploads on production stay where the
 
 ## Automatic deploys with GitHub (optional)
 
-WP Engine's GitHub Action (`wpengine/github-action-wpe-site-deploy`) copies the repository to an environment with rsync, lints PHP, runs a post-deploy script and clears the cache. Set it up only when the user wants it, with their approval. The SSH key is for GitHub Actions, not for you; you keep using the WP Engine MCP server.
+WP Engine's GitHub Action (`wpengine/github-action-wpe-site-deploy`) copies the repository to an environment with rsync, lints PHP, runs a post-deploy script and clears the cache. Set it up only when the user wants it. You never create SSH keys: the deploy key belongs to GitHub Actions, and you keep using the WP Engine MCP server.
 
-1. Key pair: `ssh-keygen -t ed25519 -N "" -C "wpengine-deploy" -f ~/.ssh/wpengine_deploy`; public key to the account with `wpe_create_ssh_key`; private key with `gh secret set WPE_SSHG_KEY_PRIVATE < ~/.ssh/wpengine_deploy`.
+1. Ask the user to connect the repository with WP Engine's guided setup (User Portal → **Profile → GitHub Action**, https://my.wpengine.com/profile/github_action). It creates the deploy key and tells them to save it as the `WPE_SSHG_KEY_PRIVATE` repository secret.
 2. Environment names: `gh variable set WPE_STAGING_ENV --body <staging install>` and `gh variable set WPE_PRODUCTION_ENV --body <production install>`.
 3. Optional: a `production` environment in the repository settings with the user as required reviewer.
 4. Add `.github/workflows/deploy.yml`. A push to `main` deploys staging; production runs when the workflow is started by hand (**Actions → Deploy → Run workflow**). Without staging, drop the `staging` job and the `needs` line.
