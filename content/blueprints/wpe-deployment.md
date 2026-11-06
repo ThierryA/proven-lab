@@ -1,7 +1,14 @@
 ---
 nav: "Ship: staging, then production"
 title: "Ship: staging, then production"
-summary: "Ship from a Git repository to a WP Engine staging environment, then to production after a check; or deploy without a repository. Managed WordPress for the application layer, the Headless Platform for a custom app, SSH with WP-CLI for coding agents, and how to stay portable."
+summary: "Ship to a WP Engine staging environment, then to production after the user checks it: from a Git repository with WP Engine's GitHub Action, or without a repository. Managed WordPress for the application layer, the Headless Platform for a custom app, and how to stay portable."
+agent_does:
+  - "Sets up a repository and automatic deploys if you want them."
+  - "Deploys to staging and sends you the link."
+  - "Deploys to production after your approval."
+you_do:
+  - "Check staging."
+  - "Approve the production release."
 ---
 
 # Ship: staging, then production

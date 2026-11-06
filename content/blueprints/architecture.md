@@ -2,6 +2,11 @@
 nav: "Choose a setup"
 title: "Choose a setup: Classic or headless"
 summary: "WordPress is the application layer: it always runs, and its Core API does the work. The admin and the frontend each run inside WordPress or as a separate custom app. The Cloud AI API runs on its own infrastructure and provides models (chat, images, speech, transcription), search and agents."
+agent_does:
+  - "Explains the four setups and recommends one for your request."
+  - "Asks you to choose (or, if you don't code, proposes a regular WordPress site)."
+you_do:
+  - "Pick a setup, or accept the recommendation."
 ---
 
 # Choose a setup: Classic or headless

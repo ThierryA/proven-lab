@@ -1,69 +1,58 @@
 ---
 nav: "On your computer (Local)"
 title: "Workspace on the user's computer: Local"
-summary: "Run WordPress on the developer's machine with Local (localwp.com, by WP Engine): check whether it is installed, suggest it if not, and create and drive sites through Local's MCP server when it is available."
+summary: "You set up WordPress on the user's computer with Local (localwp.com, by WP Engine): detect it, create the site through Local's MCP server when available, and fall back to Playground. The user only installs Local if they want it."
+agent_does:
+  - "Checks whether Local is on your computer."
+  - "Creates the WordPress site in Local and installs your app in it."
+  - "Uses Local's tools to test everything."
+you_do:
+  - "Install Local if you want to work on your computer (free)."
+  - "Agree on the site's name."
 ---
 
 # Workspace on the user's computer: Local
 
-> **Runbook step 2 · Workspace,** for developers and anyone who has Local or wants WordPress on their computer. No Local and no wish to install anything: `build-on-wpengine`. **Next:** step 3, `classic-wordpress` or `custom-app`.
+> **Runbook step 2 · Workspace,** for developers and anyone who has Local. No Local and no wish to install anything: `build-on-wpengine`. **Next:** step 3, `classic-wordpress` or `custom-app`.
 
-[Local](https://localwp.com) (free, by WP Engine, macOS, Windows and Linux) is the recommended way to run WordPress on the developer's machine. It creates a complete site (web server, PHP, MySQL, WP-CLI) in one step, and it can push and pull to WP Engine.
+You set up the site. The user's only possible tasks: install Local if they want it, and agree on the site name.
 
-## 1. Check whether Local is installed
+## 1. Detect Local
 
-Local keeps its data, including the list of sites, in one folder. If `sites.json` exists there, Local is installed and has been opened at least once.
-
-| OS | Local data folder |
-|---|---|
-| macOS | `~/Library/Application Support/Local/` |
-| Windows | `%APPDATA%\Local\` |
-| Linux | `~/.config/Local/` |
+Local is installed when its `sites.json` exists: `~/Library/Application Support/Local/` (macOS), `%APPDATA%\Local\` (Windows), `~/.config/Local/` (Linux).
 
 ```bash
-test -f "$HOME/Library/Application Support/Local/sites.json" && echo "Local is installed"   # macOS
+test -f "$HOME/Library/Application Support/Local/sites.json" && echo "Local is installed"
 ```
 
-`sites.json` lists every site with its `name`, `domain` and `path`. WordPress itself is in `<path>/app/public`.
+`sites.json` lists each site's `name`, `domain` and `path`; WordPress is in `<path>/app/public`.
 
-## 2. If Local is not installed
+## 2. Local installed: create the site yourself
 
-Suggest it to the user and wait for their answer:
-
-> To run WordPress locally I recommend Local (free, by WP Engine): https://localwp.com. Install it, open it once, and tell me when it's ready. If you'd rather not install anything, I can build it directly on WP Engine (you need a WP Engine account) and send you a link, or use WordPress Playground or Docker.
-
-- **Directly on WP Engine, nothing to install:** the easiest option for someone who does not code. Follow `build-on-wpengine`.
-
-- **WordPress Playground:** `npx @wp-playground/cli@latest start` in the project folder.
-- **Docker:** only if the user already uses it.
-
-## 3. If Local is installed: use Local's MCP server
-
-Local can expose its sites to agents through an MCP server provided by the **WPE Coworker** add-on (early access). It is enabled when `wpe-coworker-mcp-connection-info.json` exists in the Local data folder. Its `stdioPath` field is the server to start:
+Connect Local's MCP server (WPE Coworker add-on) when `wpe-coworker-mcp-connection-info.json` exists in the same folder; start the `stdioPath` it names:
 
 ```bash
 claude mcp add local -- node "$HOME/Library/Application Support/Local/addons/local-addon-wpe-coworker/bin/mcp-stdio.js"
 ```
 
-Use the `stdioPath` from the file if it differs. If the add-on was installed with npm, `claude mcp add local -- wpe-coworker-mcp` works too. Local must be running.
+Then:
 
-Then, with the user's agreement on the site name:
+1. `local_list_sites` (reuse a site the user names) or `local_create_site` with the agreed `name`.
+2. `local_get_site` for the URL and `path`. Write the plugin to `<path>/app/public/wp-content/plugins/<app>/` and activate it with `wp_plugin_activate`.
+3. Run WP-CLI through the `wp_*` tools (`wp_eval`, `wp_post_create`, `wp_post_list`). Ask before database imports or anything destructive.
+4. Later, `local_wpe_push` sends the site to a WP Engine **staging** environment (step 6).
 
-1. `local_list_sites`: reuse an existing site if the user names one.
-2. `local_create_site` with `name`: creates and starts a site with WordPress installed (admin user `admin`, password `admin`; change it for anything shared).
-3. `local_get_site`: the site's URL and `path`. Write the app's plugin to `<path>/app/public/wp-content/plugins/<app>/` and activate it (`wp_plugin_activate`).
-4. Install the WP Engine AI plugins with `wp_plugin_install` and `wp_plugin_activate` (`wpe-ai-plugins`) and ask the user to click Connect once in the site's WP Admin.
-5. Verify with the `wp_*` tools (`wp_eval`, `wp_post_create`, `wp_post_list`) or WP-CLI.
-6. `local_wpe_push` and `local_wpe_pull` sync the site with a WP Engine environment when the user is ready.
+Without Local's MCP server: ask the user to create the site in Local (**+ Add Local site**) and give you its name, read its `path` from `sites.json`, and run `wp` in the site folder.
 
-The add-on's tools include `wp_eval` and database import and export: use them on local sites only, and ask before destructive actions.
+## 3. Local not installed
 
-## 4. If Local is installed without the MCP server
+Offer the choice in one message, then continue with the answer:
 
-1. Ask the user to create a site in Local (**+ Add Local site**) and tell you its name.
-2. Find its `path` in `sites.json`; WordPress is in `<path>/app/public`.
-3. For WP-CLI, ask the user to open the site's shell in Local (**Open site shell**), where `wp` is set up for that site, or use the community [local-wp-mcp](https://github.com/chrisfromthelc/local-wp-mcp) server.
+> I can set this up on your computer with Local (free, https://localwp.com: install it and open it once), or build it directly on WP Engine with nothing to install and send you a link.
 
-## Proven Lab tools still apply
+- Nothing to install: `build-on-wpengine`.
+- Developers who prefer no app: WordPress Playground, `npx @wp-playground/cli@latest start` in the project folder. Docker only if they already use it.
 
-Local runs WordPress; the `provenlab` tools tell you which APIs to use. Keep looking up signatures with `get_function` and WP-CLI flags with `get_cli_command`.
+## Done when
+
+The site runs locally, you know its URL and folder, and `wp core version` answers there.

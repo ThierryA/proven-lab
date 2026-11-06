@@ -2,6 +2,11 @@
 nav: "Quality checks"
 title: "Quality checks: WordPress best practices"
 summary: "Apply on every project: WordPress Coding Standards (PHPCS), PHPUnit with the WordPress test suite, static analysis, JavaScript tooling, Plugin Check, security, i18n, performance and CI."
+agent_does:
+  - "Sets up WordPress coding standards, tests and quality checks."
+  - "Runs them before saying the work is done."
+you_do:
+  - "Nothing."
 ---
 
 # Quality checks: WordPress best practices

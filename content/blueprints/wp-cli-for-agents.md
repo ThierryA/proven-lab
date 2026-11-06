@@ -2,6 +2,11 @@
 nav: "Verify with WP-CLI"
 title: "Verify with WP-CLI"
 summary: WP-CLI (wp) is the official command-line tool for WordPress. Agents use it to install, seed, inspect and verify a site without a browser, in every setup, locally and on remote hosts.
+agent_does:
+  - "Checks every change with WordPress's command-line tool instead of guessing."
+  - "Reports what it checked."
+you_do:
+  - "Nothing."
 ---
 
 # Verify with WP-CLI

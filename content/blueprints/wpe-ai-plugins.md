@@ -2,6 +2,11 @@
 nav: "AI features (no API key)"
 title: "AI features: the WP Engine AI plugins, no API key"
 summary: "The default way to add AI to a WordPress site: install the WP Engine AI plugins, connect the site once in WP Admin, and every AI feature (PHP, frontend chat, agents, search over content) uses the site's connection instead of an API key."
+agent_does:
+  - "Installs the WP Engine AI plugins."
+  - "Adds the AI features you asked for (chat, dictation, summaries, search) with no API key."
+you_do:
+  - "Click Connect once in WP Admin and sign in to WP Engine."
 ---
 
 # AI features: the WP Engine AI plugins, no API key

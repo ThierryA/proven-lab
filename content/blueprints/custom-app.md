@@ -2,6 +2,11 @@
 nav: "Custom app (headless)"
 title: "Build: custom app (Headless Frontend, Headless Admin, or both)"
 summary: WordPress keeps running and does the work. Your custom app (for example Node) runs separately and owns the admin, the frontend, or both, using WordPress over the REST API and the Abilities API. Covers the three headless setups.
+agent_does:
+  - "Builds the data model in a WordPress plugin."
+  - "Builds your own admin and/or frontend app that talks to WordPress securely."
+you_do:
+  - "Nothing, unless the agent asks a question about what you want."
 ---
 
 # Build: custom app (Headless Frontend, Headless Admin, or both)

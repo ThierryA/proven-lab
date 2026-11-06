@@ -2,6 +2,11 @@
 nav: "Classic"
 title: "Build: Classic (WP Admin and WordPress templating)"
 summary: Everything runs inside WordPress. Editors use WP Admin, and WordPress renders the frontend with its PHP templates. The simplest setup, one runtime to deploy.
+agent_does:
+  - "Builds your app as a WordPress plugin: content types, fields, permissions, pages."
+  - "Uses WordPress's own admin and templates."
+you_do:
+  - "Nothing, unless the agent asks a question about what you want."
 ---
 
 # Build: Classic (WP Admin and WordPress templating)

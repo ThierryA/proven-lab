@@ -2,6 +2,10 @@
 nav: "AI outside WordPress (API key)"
 title: "AI outside WordPress: Cloud AI API patterns and API keys"
 summary: Add chat, images, text to speech, transcription (speech to text), search and agents to a WordPress-backed app with the Cloud AI API, from PHP and from Node. Covers the gateway, the knowledge base, agents and sessions, and how a site connects.
+agent_does:
+  - "Calls the Cloud AI API from code outside WordPress, with an API key kept on the server."
+you_do:
+  - "Create an API key in the WP Engine User Portal, only if the agent needs one."
 ---
 
 # AI outside WordPress: Cloud AI API patterns and API keys
