@@ -1,20 +1,26 @@
 ---
 import Docs from '../../layouts/Docs.astro';
-import { marked } from 'marked';
-import { blueprints, connectMd } from '../../lib/data.mjs';
+import { blueprints, overviews, connectMd, domains, sidebar, GROUP_ORDER } from '../../lib/data.mjs';
+import { render } from '../../lib/md.mjs';
 import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
 export function getStaticPaths() {
-  return [...blueprints().map((b) => ({ params: { slug: b.slug }, props: { title: b.title, md: `# ${b.title}\n\n` + b.md.replace(/^\s*# .*\n/, '') } })),
-    { params: { slug: 'connect' }, props: { title: 'Connect your agent', md: connectMd() } }];
+  return [...blueprints().map((b) => ({ params: { slug: b.slug }, props: { kind: 'Blueprint', title: b.title, md: `# ${b.title}\n\n` + b.md.replace(/^\s*# .*\n/, '') } })),
+    ...overviews().map((o) => ({ params: { slug: o.slug }, props: { kind: 'Overview', slug: o.slug, title: o.title, md: o.md } })),
+    { params: { slug: 'connect' }, props: { kind: 'Guide', title: 'Connect your agent', md: connectMd() } }];
 }
-const { title, md } = Astro.props;
+const { kind, slug, title, md } = Astro.props;
+const sb = sidebar();
+const row = 'grid grid-cols-[minmax(0,13rem)_1fr] gap-6 border-b border-line py-3 text-[14px] no-underline hover:bg-ink-2';
 // Pages can mark a text diagram (kept for agents) that the site replaces with the visual one.
 const [before, rest] = md.split('<!-- diagram:start -->');
 const after = rest?.split('<!-- diagram:end -->')[1];
-const prose = 'prose prose-slate max-w-none dark:prose-invert';
+const prose = 'prose prose-lab';
 ---
 <Docs title={title}>
-  {after === undefined ? <article class={prose} set:html={marked.parse(md)} /> : (
-    <article><div class={prose} set:html={marked.parse(before)} /><div class="my-8"><ArchitectureDiagram /></div><div class={prose} set:html={marked.parse(after)} /></article>
+  <p class="label mb-4">{kind}</p>
+  {after === undefined ? <article class={prose} set:html={render(md)} /> : (
+    <article><div class={prose} set:html={render(before)} /><div class="my-10"><ArchitectureDiagram /></div><div class={prose} set:html={render(after)} /></article>
   )}
+  {slug === 'core-runtime-api' && GROUP_ORDER.map((g) => <><h3 class="label mt-10">{g}</h3><div class="mt-2 border-t border-line">{domains().filter((d) => d.group === g).map((d) => <a class={row} href={`/docs/api/${d.slug}`}><span class="text-fg">{d.title}</span><span>{d.summary}</span></a>)}</div></>)}
+  {slug === 'cloud-ai-api' && <><h3 class="label mt-10">All operations</h3><div class="mt-2 border-t border-line">{[...sb.ai, null, ...sb.account].map((g) => g === null ? <div class="border-b border-dashed border-line-2" role="separator"></div> : <a class={row} href={g.items[0].href}><span class="text-fg">{g.title}</span><span class="font-mono text-[12px] text-fg-3">{g.items.map((i) => i.label).join(' · ')}</span></a>)}</div></>}
 </Docs>

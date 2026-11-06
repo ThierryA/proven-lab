@@ -60,21 +60,25 @@ test('domain map: unique slugs, valid groups, every name exists in core', () => 
   assert.equal(placement.abilities, 'Interfaces'); assert.equal(placement['ai-client'], 'Interfaces');
 });
 
-test('WP Engine operations: Sites are Deployment; Credits and Analytics stay in the AI API; no MCP', () => {
+test('WP Engine operations: Sites, Credits and Analytics are in the AI API; no MCP', () => {
   const { operations } = rj('dist', 'wpe-operations.json');
-  const deployment = operations.filter((o) => o.section === 'deployment').map((o) => o.operationId).sort();
-  assert.deepEqual(deployment, ['deleteSite', 'getSite', 'heartbeatSite', 'registerSite', 'updateSitePrimaryCollection']);
-  const ai = operations.filter((o) => o.section === 'ai');
-  assert.ok(ai.length >= 30);
-  assert.ok(ai.every((o) => !(o.tags || []).includes('Sites')));
-  for (const id of ['createChatCompletion', 'searchCollection', 'createAgent', 'createSession', 'getCredits', 'getAnalytics']) assert.ok(ai.some((o) => o.operationId === id), id);
+  assert.ok(operations.every((o) => o.section === 'ai'));
+  for (const id of ['createChatCompletion', 'searchCollection', 'createAgent', 'createSession', 'getCredits', 'getAnalytics', 'registerSite', 'heartbeatSite']) assert.ok(operations.some((o) => o.operationId === id), id);
   assert.ok(operations.every((o) => !(o.tags || []).includes('MCP') && !/mcp/i.test(o.operationId) && !o.path.includes('/mcp')), 'WP Engine MCP endpoints must not be documented');
+});
+
+test('hook list has no variable-only names; stats are precise', () => {
+  const e = rj('dist', 'entities.json');
+  assert.deepEqual(e.hooks.filter((h) => /^\$[\w\[\]'"\->]+$/.test(h.name)).map((h) => h.name), []);
+  const st = rj('dist', 'stats.json');
+  assert.ok(st.functionsPublic < st.functions && st.functionsPublic > 3000);
+  assert.ok(st.cliLeafCommands < st.cliCommands && st.cliLeafCommands > 300);
 });
 
 test('WP Engine MCP is removed from docs, search data and the published spec', () => {
   const docs = rj('dist', 'docs.json');
   assert.deepEqual(docs.filter((d) => /:mcp/.test(d.id)).map((d) => d.id), []);
-  const yaml = readFileSync(join(ROOT, 'dist', 'openapi', 'wpe-ai.yaml'), 'utf8');
+  const yaml = readFileSync(join(ROOT, 'dist', 'openapi', 'cloud-ai-api.yaml'), 'utf8');
   assert.ok(!yaml.includes('/v1/mcp') && !yaml.includes('oauth-protected-resource'), 'MCP paths/metadata present');
   assert.ok(!/JSON-RPC/i.test(yaml), 'MCP JSON-RPC schemas still bundled');
   assert.ok(yaml.includes('/v1/chat/completions'));
@@ -83,13 +87,13 @@ test('WP Engine MCP is removed from docs, search data and the published spec', (
 
 test('blueprints have front matter and the expected set', () => {
   const bps = rj('dist', 'blueprints.json');
-  assert.deepEqual(bps.map((b) => b.slug).sort(), ['architecture', 'classic-wordpress', 'custom-app', 'wp-cli-for-agents', 'wpe-ai-experiences', 'wpe-deployment']);
+  assert.deepEqual(bps.map((b) => b.slug).sort(), ['ai-features', 'architecture', 'classic-wordpress', 'custom-app', 'wp-cli-for-agents', 'wpe-deployment']);
   for (const b of bps) { assert.ok(b.title && b.summary && b.md.length > 500, b.slug); }
 });
 
 test('llms.txt covers every section', () => {
   const t = readFileSync(join(ROOT, 'dist', 'llms.txt'), 'utf8');
-  for (const s of ['# Proven', 'WordPress core API domains', 'WP-CLI', 'AI API and Deployment', 'Machine interfaces', '@proven/mcp']) assert.ok(t.includes(s), s);
+  for (const s of ['# Proven Lab', 'Core Runtime API domains', 'WP-CLI', '## Cloud AI API', 'Machine interfaces', 'provenlab-api.yaml']) assert.ok(t.includes(s), s);
 });
 
 test('tool definitions are consistent across formats', () => {

@@ -21,23 +21,26 @@ test('healthz', async () => { const r = await get('/healthz'); assert.equal(r.st
 
 test('pages render with the right content', async () => {
   const cases = [
-    ['/', 'text/html', ['Why pay agents to rebuild a battle-tested platform', 'One WordPress runtime', 'data-setup="classic"', 'WP Admin', 'WordPress templating', 'Core Runtime API', 'WP-CLI', 'Deployment', 'optional']],
+    ['/', 'text/html', ['Why pay agents to rebuild a battle-tested platform', 'One runtime', 'data-setup="classic"', 'WP Admin', 'WordPress templating', 'Core Runtime API', 'WP-CLI', 'Deployment', 'optional']],
     ['/docs', 'text/html', ['Documentation', 'Core Runtime API', 'AI API', 'Deployment', 'WP-CLI']],
     ['/docs/api/fields', 'text/html', ['register_meta', 'Fields (Meta)']],
     ['/docs/api/abilities', 'text/html', ['wp_register_ability']],
     ['/docs/cli/post', 'text/html', ['wp post create']],
-    ['/docs/wpe/searchCollection', 'text/html', ['searchCollection', '/v1/kb/collections']],
-    ['/docs/wpe/getCredits', 'text/html', ['AI API', 'Credits']],
+    ['/docs/ai-api/searchCollection', 'text/html', ['searchCollection', '/v1/kb/collections']],
+    ['/docs/ai-api/getCredits', 'text/html', ['Cloud AI API', 'Credits']],
+    ['/docs/ai-api/registerSite', 'text/html', ['Cloud AI API', 'Site connection']],
     ['/docs/custom-app', 'text/html', ['register_post_meta']],
     ['/docs/classic-wordpress', 'text/html', ['single-project.php', 'WP Admin']],
     ['/docs/architecture', 'text/html', ['data-arch', 'WordPress runtime', 'AI API', 'Classic', 'Headless Frontend', 'Headless Admin', 'Headless Frontend + Admin', 'Data &amp;', 'sandboxed SSH session']],
     ['/docs/wpe-deployment', 'text/html', ['Headless Platform', 'optional', 'sandboxed SSH session', '.ssh.wpengine.net']],
-    ['/docs/connect', 'text/html', ['@proven/mcp']],
-    ['/llms.txt', 'text/plain', ['# Proven']],
+    ['/docs/connect', 'text/html', ['@provenlab/mcp']],
+    ['/docs/core-runtime-api', 'text/html', ['Core Runtime API', 'Data model', '/docs/api/content-types']],
+    ['/docs/cloud-ai-api', 'text/html', ['Cloud AI API', 'https://api.ai.wpengine.com/v1', 'Rate limits', '/docs/ai-api/createChatCompletion']],
+    ['/llms.txt', 'text/plain', ['# Proven Lab']],
     ['/llms-full.txt', 'text/plain', ['register_post_type']],
     ['/AGENTS.md', 'text/markdown', ['WordPress is the application layer']],
-    ['/openapi/kit-api.yaml', 'application/yaml', ['openapi: 3.1.0', 'get_function']],
-    ['/openapi/wpe-ai.yaml', 'application/yaml', ['AI Gateway']],
+    ['/openapi/provenlab-api.yaml', 'application/yaml', ['openapi: 3.1.0', 'get_function']],
+    ['/openapi/cloud-ai-api.yaml', 'application/yaml', ['AI Gateway']],
     ['/tools/openai.json', 'application/json', ['get_cli_command']],
     ['/tools/anthropic.json', 'application/json', ['input_schema']],
   ];
@@ -49,19 +52,17 @@ test('pages render with the right content', async () => {
   }
 });
 
-test('sidebar separates Core Runtime API, WP-CLI, AI API and Deployment; no Platform; credits/analytics are set apart', async () => {
+test('sidebar separates Core Runtime API, WP-CLI, Cloud AI API and Deployment; no Platform; non-tool groups set apart', async () => {
   const page = await (await get('/docs/api/fields')).text();
   const html = page.slice(page.indexOf('<aside'), page.indexOf('</aside>'));
-  const sections = [...html.matchAll(/<h5[^>]*>([^<]+)<\/h5>/g)].map((m) => m[1]);
-  assert.deepEqual(sections, ['Guides', 'Core Runtime API', 'WP-CLI', 'AI API', 'Deployment']);
-  assert.ok(!/>\s*Platform\s*</.test(html));
-  const deployment = html.slice(html.indexOf('>Deployment</h5>'));
-  assert.ok(deployment.includes('registerSite') && !deployment.includes('getCredits'));
-  const ai = html.slice(html.indexOf('>AI API</h5>'), html.indexOf('>Deployment</h5>'));
-  assert.ok(ai.includes('createChatCompletion') && ai.includes('getCredits') && !ai.includes('registerSite') && !/mcpStreamable/i.test(ai));
+  const order = ['Guides', 'Core Runtime API', 'WP-CLI', 'Cloud AI API', 'Deployment'].map((t) => html.indexOf(t));
+  assert.ok(order.every((i, k) => i > -1 && (k === 0 || i > order[k - 1])), `section order ${order}`);
+  assert.ok(!/>\s*Platform\s*</.test(html) && !html.includes('WP Engine AI API'));
+  const ai = html.slice(html.indexOf('Cloud AI API'), html.lastIndexOf('Deployment'));
+  assert.ok(ai.includes('createChatCompletion') && ai.includes('getCredits') && ai.includes('registerSite') && !/mcpStreamable/i.test(ai));
   const sep = ai.indexOf('role="separator"');
   assert.ok(sep > ai.indexOf('createSession'), 'separator comes after the tool groups');
-  assert.ok(ai.indexOf('getCredits') > sep && ai.indexOf('getAnalytics') > sep, 'credits and analytics sit below the separator');
+  assert.ok(ai.indexOf('getCredits') > sep && ai.indexOf('getAnalytics') > sep && ai.indexOf('registerSite') > sep, 'site connection, credits and analytics sit below the separator');
 });
 
 test('404s, methods and path traversal', async () => {
@@ -85,12 +86,12 @@ test('REST mirror of the tools', async () => {
   const miss = await (await get('/api/get_function?name=register_postmeta')).json();
   assert.ok(miss.error && Array.isArray(miss.didYouMean));
   assert.equal((await get('/api/not_a_tool')).status, 404);
-  const deployment = await (await get('/api/list_wpe_operations?filter=deployment')).json();
-  assert.deepEqual(deployment.map((o) => o.operationId).sort(), ['deleteSite', 'getSite', 'heartbeatSite', 'registerSite', 'updateSitePrimaryCollection']);
-  const all = await (await get('/api/list_wpe_operations')).json();
+  const sites = await (await get('/api/list_ai_operations?filter=Sites')).json();
+  assert.deepEqual(sites.map((o) => o.operationId).sort(), ['deleteSite', 'getSite', 'heartbeatSite', 'registerSite', 'updateSitePrimaryCollection']);
+  const all = await (await get('/api/list_ai_operations')).json();
   assert.ok(all.some((o) => o.operationId === 'getCredits' && o.section === 'ai') && !all.some((o) => /mcp/i.test(o.operationId)));
-  assert.ok(!(await (await get('/api/search_docs?query=mcp+server+oauth&type=wpe-doc')).text()).includes('wpe:doc:ai:api:mcp'));
-  assert.equal((await (await get('/api/get_wpe_operation?operationId=mcpStreamableHttp')).json()).error?.startsWith('operation not found'), true);
+  assert.ok(!(await (await get('/api/search_docs?query=mcp+server+oauth&type=ai-doc')).text()).includes('wpe:doc:ai:api:mcp'));
+  assert.equal((await (await get('/api/get_ai_operation?operationId=mcpStreamableHttp')).json()).error?.startsWith('operation not found'), true);
   const cmd = await (await get('/api/get_cli_command?path=user%20application-password%20create')).json();
   assert.match(cmd.usage, /application-password create <user> <app-name>/);
 });
@@ -112,7 +113,7 @@ async function exerciseMcp(client) {
   const bp = await call('get_blueprint', { slug: 'custom-app' });
   assert.ok(bp.data.markdown.includes('register_post_meta'));
   assert.equal((await call('list_blueprints', {})).data.length, 6);
-  const op = await call('get_wpe_operation', { operationId: 'searchCollection' });
+  const op = await call('get_ai_operation', { operationId: 'searchCollection' });
   assert.equal(op.data.method, 'POST'); assert.equal(op.data.path, '/v1/kb/collections/{id}/search');
   assert.ok((await call('list_cli_commands', { filter: 'cron' })).data.length >= 5);
   const bad = await call('get_function', { name: 'nope_nope' });
@@ -125,10 +126,10 @@ test('MCP over streamable HTTP', async () => {
   await exerciseMcp(client); await client.close();
 });
 
-test('MCP over stdio (the @proven/mcp bin)', async () => {
+test('MCP over stdio (the @provenlab/mcp bin)', async () => {
   const client = new Client({ name: 'e2e', version: '1' });
   await client.connect(new StdioClientTransport({ command: 'node', args: [join(ROOT, 'packages', 'mcp-server', 'src', 'index.mjs')] }));
-  assert.equal(client.getServerVersion().name, 'proven');
+  assert.equal(client.getServerVersion().name, 'provenlab');
   await exerciseMcp(client); await client.close();
 });
 

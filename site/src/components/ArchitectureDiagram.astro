@@ -1,109 +1,110 @@
 ---
-// The one diagram that explains Proven: two runtimes side by side, one choice per row, the AI API underneath.
-// Click a setup to highlight the pieces it uses (data-in lists the setups a piece belongs to).
+// Fig. 1: two runtimes side by side, one choice per row, the Cloud AI API underneath.
+// Selecting a setup lights the pieces it uses (data-in lists the setups a piece belongs to).
 const setups = [
   { id: 'classic', name: 'Classic', admin: 'WP Admin', frontend: 'WordPress templating', runtimes: 'WordPress' },
-  { id: 'front', name: 'Headless Frontend', admin: 'WP Admin', frontend: 'Custom app', runtimes: 'WordPress + your app' },
-  { id: 'admin', name: 'Headless Admin', admin: 'Custom app', frontend: 'WordPress templating', runtimes: 'WordPress + your app' },
-  { id: 'both', name: 'Headless Frontend + Admin', admin: 'Custom app', frontend: 'Custom app', runtimes: 'WordPress + your app' },
+  { id: 'front', name: 'Headless Frontend', admin: 'WP Admin', frontend: 'Custom app', runtimes: 'WordPress + custom app' },
+  { id: 'admin', name: 'Headless Admin', admin: 'Custom app', frontend: 'WordPress templating', runtimes: 'WordPress + custom app' },
+  { id: 'both', name: 'Headless Frontend + Admin', admin: 'Custom app', frontend: 'Custom app', runtimes: 'WordPress + custom app' },
 ];
-const APP = 'front admin both'; // any setup with a separate app
-const tile = 'relative z-10 m-2 rounded-xl px-4 py-3 text-sm ring-1 transition duration-300';
-const optional = `${tile} border border-dashed bg-white ring-transparent dark:bg-slate-950`;
-const label = 'self-center pr-4 text-right font-mono text-[11px] font-semibold uppercase leading-tight tracking-wider text-slate-500';
-const conn = 'z-10 flex items-center justify-center px-1 text-center font-mono text-[10px] leading-tight text-slate-400';
-const aiTile = 'block rounded-xl bg-white px-4 py-3 text-sm ring-1 ring-indigo-500/40 transition hover:ring-indigo-500 dark:bg-slate-950 dark:ring-indigo-400/40';
+const APP = 'front admin both';
+const tile = 'relative z-10 m-2 border px-4 py-3 transition-[opacity,border-color,filter] duration-300';
+const option = `${tile} border-line bg-ink-2`;
+const rowLabel = 'label self-center pr-5 text-right leading-tight';
+const conn = 'z-10 flex items-center justify-center font-mono text-[10px] leading-tight text-fg-3';
+const name = 'text-[14px] text-fg';
+const sub = 'mt-0.5 text-[12px] text-fg-3';
 ---
-<div class="arch not-prose" data-arch>
-  <div class="flex flex-wrap items-center gap-2">
-    <span class="mr-1 text-sm font-semibold text-slate-900 dark:text-white">Show a setup:</span>
-    {setups.map((s) => <button type="button" data-setup={s.id} class="rounded-full px-3.5 py-1.5 text-sm font-semibold text-slate-700 ring-1 ring-slate-900/10 transition hover:ring-sky-500 dark:text-slate-200 dark:ring-white/15">{s.name}</button>)}
-    <button type="button" data-setup="" class="rounded-full px-3 py-1.5 text-sm text-slate-500 hover:text-slate-900 dark:hover:text-white">All options</button>
+<figure class="arch not-prose" data-arch>
+  <!-- Setup chips -->
+  <div class="mb-6 flex flex-wrap items-center gap-2">
+    <span class="label mr-2">Setup</span>
+    {setups.map((s) => <button type="button" data-setup={s.id} class="chip border border-line-2 px-3 py-1.5 text-[13px] text-fg-2 transition-colors hover:border-fg-3 hover:text-fg">{s.name}</button>)}
+    <button type="button" data-setup="" class="chip-all px-2 py-1.5 font-mono text-[11px] text-fg-3 hover:text-fg">Show all</button>
   </div>
 
-  <!-- Desktop: the two runtimes as columns, one choice per row, the AI API as the bottom row -->
-  <div class="mt-6 hidden grid-cols-[5.5rem_minmax(0,1fr)_2.25rem_minmax(0,1.4fr)] lg:grid">
-    <!-- runtime boxes (background layer) -->
-    <div data-in={APP} class="col-start-2 row-span-4 row-start-1 rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 transition duration-300 dark:border-slate-700 dark:bg-slate-900/40"></div>
-    <div class="col-start-4 row-span-4 row-start-1 rounded-2xl bg-sky-500/[0.06] ring-1 ring-sky-500/40 dark:bg-sky-400/[0.06] dark:ring-sky-400/40"></div>
+  <!-- Desktop -->
+  <div class="hidden grid-cols-[6rem_minmax(0,1fr)_2.5rem_minmax(0,1.4fr)] lg:grid">
+    <div data-in={APP} class="col-start-2 row-span-4 row-start-1 border border-dashed border-line-2 transition-[opacity,filter] duration-300"></div>
+    <div class="col-start-4 row-span-4 row-start-1 border border-line-2"></div>
 
-    <!-- headers -->
-    <div data-in={APP} class="relative z-10 col-start-2 row-start-1 px-5 pt-4 pb-1 transition duration-300">
-      <p class="font-semibold text-slate-900 dark:text-white">Your app</p><p class="text-xs text-slate-500">optional · separate runtime (Node, Next.js…)</p></div>
+    <div data-in={APP} class="relative z-10 col-start-2 row-start-1 px-5 pt-4 pb-1 transition-[opacity,filter] duration-300">
+      <p class={name}>Custom app</p><p class={sub}>optional · its own runtime (Node, Next.js and others)</p></div>
     <div class="relative z-10 col-start-4 row-start-1 px-5 pt-4 pb-1">
-      <p class="flex items-center gap-2 font-semibold text-slate-900 dark:text-white"><span class="rounded bg-sky-500/10 px-1.5 py-0.5 font-mono text-[10px] font-bold text-sky-600 dark:text-sky-400">PHP</span>WordPress runtime</p><p class="text-xs text-slate-500">always there · does the work</p></div>
+      <p class={name}>Runtime <span class="font-mono text-[11px] text-fg-3">WordPress · PHP</span></p><p class={sub}>always deployed · data, users, permissions, hooks</p></div>
 
-    <!-- row: admin -->
-    <div class={`${label} col-start-1 row-start-2`}>Admin</div>
-    <div data-in="admin both" class={`${optional} col-start-2 row-start-2 border-slate-300 dark:border-slate-600`}><p class="font-semibold text-slate-900 dark:text-white">Custom app</p><p class="text-xs text-slate-500">headless admin: your own admin UI</p></div>
+    <div class={`${rowLabel} col-start-1 row-start-2`}>Admin</div>
+    <div data-in="admin both" class={`${option} col-start-2 row-start-2`}><p class={name}>Your admin UI</p><p class={sub}>calls the runtime over REST</p></div>
     <div class={`${conn} col-start-3 row-start-2`}>or</div>
-    <div data-in="classic front" class={`${optional} col-start-4 row-start-2 border-sky-400/60`}><p class="font-semibold text-slate-900 dark:text-white">WP Admin</p><p class="text-xs text-slate-500">built in, inside WordPress</p></div>
+    <div data-in="classic front" class={`${option} col-start-4 row-start-2`}><p class={name}>WP Admin</p><p class={sub}>built in</p></div>
 
-    <!-- row: frontend -->
-    <div class={`${label} col-start-1 row-start-3`}>Frontend</div>
-    <div data-in="front both" class={`${optional} col-start-2 row-start-3 border-slate-300 dark:border-slate-600`}><p class="font-semibold text-slate-900 dark:text-white">Custom app</p><p class="text-xs text-slate-500">headless frontend: your own site</p></div>
+    <div class={`${rowLabel} col-start-1 row-start-3`}>Frontend</div>
+    <div data-in="front both" class={`${option} col-start-2 row-start-3`}><p class={name}>Your frontend</p><p class={sub}>calls the runtime over REST or WPGraphQL</p></div>
     <div class={`${conn} col-start-3 row-start-3`}>or</div>
-    <div data-in="classic admin" class={`${optional} col-start-4 row-start-3 border-sky-400/60`}><p class="font-semibold text-slate-900 dark:text-white">WordPress templating</p><p class="text-xs text-slate-500">classic: themes render pages, inside WordPress</p></div>
+    <div data-in="classic admin" class={`${option} col-start-4 row-start-3`}><p class={name}>WordPress templating</p><p class={sub}>themes render the pages</p></div>
 
-    <!-- row: data & logic -->
-    <div class={`${label} col-start-1 row-start-4`}>Data &amp;<br/>logic</div>
-    <div data-in={APP} class="relative z-10 col-start-2 row-start-4 m-2 mb-4 flex items-center justify-end rounded-xl px-3 py-3 text-right text-sm font-semibold text-slate-700 transition duration-300 dark:text-slate-300">REST · Abilities</div>
-    <div data-in={APP} class={`${conn} col-start-3 row-start-4 transition duration-300`}><span class="text-lg">→</span></div>
-    <a href="/docs/api/content-types" class={`${tile} col-start-4 row-start-4 mb-4 bg-white ring-sky-500/50 hover:ring-sky-500 dark:bg-slate-950 dark:ring-sky-400/50`}>
-      <p class="font-semibold text-sky-700 dark:text-sky-300">Core Runtime API</p>
-      <p class="mt-0.5 text-xs text-slate-600 dark:text-slate-400">content types · fields · users · capabilities · hooks · Abilities · REST</p>
-      <p class="mt-1.5 font-mono text-[11px] text-emerald-600 dark:text-emerald-400">&gt;_ driven by WP-CLI</p></a>
+    <div class={`${rowLabel} col-start-1 row-start-4`}>Data &amp;<br/>logic</div>
+    <div data-in={APP} class="relative z-10 col-start-2 row-start-4 m-2 mb-4 flex items-center justify-end px-3 py-3 font-mono text-[12px] text-fg-2 transition-[opacity,filter] duration-300">REST API · Abilities API</div>
+    <div data-in={APP} class={`${conn} col-start-3 row-start-4 text-sm transition-[opacity,filter] duration-300`}>→</div>
+    <a href="/docs/api/content-types" class={`${tile} col-start-4 row-start-4 mb-4 border-fg-3 bg-ink-2 hover:border-fg`}>
+      <p class={name}>Core Runtime API</p>
+      <p class={sub}>content types · fields · users · capabilities · hooks · Abilities API · REST API</p>
+      <p class="mt-1.5 font-mono text-[11px] text-fg-2">&gt;_ driven by WP-CLI<span class="text-signal">*</span></p></a>
 
-    <!-- links down to the AI API -->
-    <div data-in={APP} class={`${conn} col-start-2 row-start-5 gap-1.5 py-2 transition duration-300`}><span class="text-base">⇅</span>server-side calls</div>
-    <div class={`${conn} col-start-4 row-start-5 gap-1.5 py-2`}><span class="text-base">⇅</span>content sync · site link · Abilities · <span class="text-emerald-600 dark:text-emerald-400">WP-CLI*</span></div>
+    <div data-in={APP} class={`${conn} col-start-2 row-start-5 h-10 transition-[opacity,filter] duration-300`}>│ server-side calls</div>
+    <div class={`${conn} col-start-4 row-start-5 h-10`}>│ content sync · site connection · Abilities</div>
 
-    <!-- row: AI -->
-    <div class={`${label} col-start-1 row-start-6`}>AI</div>
-    <div class="col-span-3 col-start-2 row-start-6 rounded-2xl bg-indigo-500/[0.06] p-4 ring-1 ring-indigo-500/40 dark:bg-indigo-400/[0.06] dark:ring-indigo-400/40">
-      <div class="flex flex-wrap items-baseline gap-x-3"><p class="flex items-center gap-2 font-semibold text-slate-900 dark:text-white"><span class="rounded bg-indigo-500/10 px-1.5 py-0.5 font-mono text-[10px] font-bold text-indigo-600 dark:text-indigo-400">AI</span>AI API</p><p class="text-xs text-slate-500">its own AI infrastructure · powers the agents · used by every setup</p></div>
-      <div class="mt-3 grid grid-cols-3 gap-3">
-        <a href="/docs/wpe/createChatCompletion" class={aiTile}><p class="font-semibold text-slate-900 dark:text-white">Gateway</p><p class="text-xs text-slate-500">models, images, speech</p></a>
-        <a href="/docs/wpe/searchCollection" class={aiTile}><p class="font-semibold text-slate-900 dark:text-white">Knowledge base</p><p class="text-xs text-slate-500">search over your content</p></a>
-        <a href="/docs/wpe/createAgent" class={aiTile}><p class="font-semibold text-slate-900 dark:text-white">Agents &amp; sessions</p><p class="text-xs text-slate-500">chat and agent experiences</p></a>
+    <div class={`${rowLabel} col-start-1 row-start-6`}>AI</div>
+    <div class="col-span-3 col-start-2 row-start-6 border border-line-2 bg-[radial-gradient(var(--color-line)_1px,transparent_1px)] bg-[size:12px_12px] p-3">
+      <div class="flex flex-wrap items-baseline gap-x-3 px-2 pt-1"><p class={name}>Cloud AI API</p><p class={sub}>optional · its own infrastructure · models, search and agents for the AI features you build</p></div>
+      <div class="mt-3 grid grid-cols-3">
+        <a href="/docs/ai-api/createChatCompletion" class={`${option} hover:border-fg-3`}><p class={name}>Gateway</p><p class={sub}>chat, images, speech, transcription</p></a>
+        <a href="/docs/ai-api/searchCollection" class={`${option} hover:border-fg-3`}><p class={name}>Knowledge base</p><p class={sub}>search over your content</p></a>
+        <a href="/docs/ai-api/createAgent" class={`${option} hover:border-fg-3`}><p class={name}>Agents and sessions</p><p class={sub}>conversations grounded in your content</p></a>
       </div>
     </div>
   </div>
 
-  <!-- Mobile: stacked -->
-  <div class="mt-6 space-y-3 lg:hidden">
-    <div class="rounded-2xl p-4 ring-1 ring-slate-900/10 dark:ring-white/10"><p class="font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-500">Admin</p>
-      <div class="mt-2 grid grid-cols-2 gap-2 text-sm"><div data-in="classic front" class="rounded-lg border border-dashed border-sky-400/60 p-2 transition"><b class="text-slate-900 dark:text-white">WP Admin</b><br/><span class="text-xs">inside WordPress</span></div><div data-in="admin both" class="rounded-lg border border-dashed border-slate-300 p-2 transition dark:border-slate-600"><b class="text-slate-900 dark:text-white">Custom app</b><br/><span class="text-xs">separate (headless admin)</span></div></div></div>
-    <div class="rounded-2xl p-4 ring-1 ring-slate-900/10 dark:ring-white/10"><p class="font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-500">Frontend</p>
-      <div class="mt-2 grid grid-cols-2 gap-2 text-sm"><div data-in="classic admin" class="rounded-lg border border-dashed border-sky-400/60 p-2 transition"><b class="text-slate-900 dark:text-white">WordPress templating</b><br/><span class="text-xs">inside WordPress</span></div><div data-in="front both" class="rounded-lg border border-dashed border-slate-300 p-2 transition dark:border-slate-600"><b class="text-slate-900 dark:text-white">Custom app</b><br/><span class="text-xs">separate (headless frontend)</span></div></div></div>
-    <div class="rounded-2xl bg-sky-500/[0.06] p-4 ring-1 ring-sky-500/40"><p class="font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-500">Data &amp; logic</p><p class="mt-1 font-semibold text-slate-900 dark:text-white">WordPress runtime · PHP</p><p class="text-sm">Core Runtime API: content types, fields, users, capabilities, hooks, Abilities, REST. Driven by WP-CLI.</p></div>
-    <p class="text-center text-slate-400">⇅</p>
-    <div class="rounded-2xl bg-indigo-500/[0.06] p-4 ring-1 ring-indigo-500/40"><p class="font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-500">AI</p><p class="mt-1 font-semibold text-slate-900 dark:text-white">AI API · AI infrastructure</p><p class="text-sm">Gateway · Knowledge base · Agents &amp; sessions. Powers the agents.</p></div>
+  <!-- Mobile -->
+  <div class="space-y-px border border-line bg-line lg:hidden">
+    <div class="bg-ink p-4"><p class="label">Admin</p><div class="mt-2 grid grid-cols-2 gap-2"><div data-in="classic front" class={option + ' m-0'}><p class={name}>WP Admin</p><p class={sub}>inside the runtime</p></div><div data-in="admin both" class={option + ' m-0 border-dashed border-line-2'}><p class={name}>Your admin UI</p><p class={sub}>custom app</p></div></div></div>
+    <div class="bg-ink p-4"><p class="label">Frontend</p><div class="mt-2 grid grid-cols-2 gap-2"><div data-in="classic admin" class={option + ' m-0'}><p class={name}>WordPress templating</p><p class={sub}>inside the runtime</p></div><div data-in="front both" class={option + ' m-0 border-dashed border-line-2'}><p class={name}>Your frontend</p><p class={sub}>custom app</p></div></div></div>
+    <div class="bg-ink p-4"><p class="label">Data &amp; logic</p><p class={name + ' mt-2'}>Runtime · Core Runtime API</p><p class={sub}>content types, fields, users, capabilities, hooks, Abilities API, REST API. Driven by WP-CLI.</p></div>
+    <div class="bg-ink p-4"><p class="label">AI</p><p class={name + ' mt-2'}>Cloud AI API</p><p class={sub}>gateway, knowledge base, agents and sessions</p></div>
   </div>
 
-  <!-- Setups -->
-  <div class="mt-6 grid gap-3 sm:grid-cols-2">
+  <!-- Setups: click a row -->
+  <div class="mt-8 border-t border-line">
+    <div class="label grid grid-cols-[1.4fr_1fr_1fr_1.2fr] gap-4 border-b border-line py-2.5"><span>Setup</span><span>Admin</span><span>Frontend</span><span class="hidden sm:block">Runtimes</span></div>
     {setups.map((s) => (
-      <button type="button" data-setup={s.id} class="rounded-2xl p-5 text-left ring-1 ring-slate-900/10 transition hover:ring-sky-500/60 dark:ring-white/10 dark:hover:ring-sky-400/60">
-        <p class="font-semibold text-slate-900 dark:text-white">{s.name}</p>
-        <dl class="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-sm"><dt class="text-slate-500">Admin</dt><dd class="text-slate-800 dark:text-slate-200">{s.admin}</dd><dt class="text-slate-500">Frontend</dt><dd class="text-slate-800 dark:text-slate-200">{s.frontend}</dd><dt class="text-slate-500">Deploy</dt><dd class="text-slate-800 dark:text-slate-200">{s.runtimes}</dd></dl>
+      <button type="button" data-setup={s.id} class="group grid w-full grid-cols-[1.4fr_1fr_1fr_1.2fr] gap-4 border-b border-line py-3 text-left text-[13px] transition-colors hover:bg-ink-2">
+        <span class="flex items-center gap-2.5 text-fg"><span class="size-1.5 border border-fg-3 group-[.is-active]:border-signal group-[.is-active]:bg-signal"></span>{s.name}</span>
+        <span>{s.admin}</span><span>{s.frontend}</span><span class="hidden sm:block">{s.runtimes}</span>
       </button>
     ))}
   </div>
-  <p class="mt-3 text-sm text-slate-500">The AI API plugs in the same way in every setup. <span class="font-mono text-emerald-600 dark:text-emerald-400">WP-CLI*</span> On WP Engine, agents also run WP-CLI directly in a sandboxed SSH session next to the site.</p>
-</div>
+  <figcaption class="mt-4 font-mono text-[11px] leading-relaxed text-fg-3">
+    Fig. 1. Select a setup, above or in the table, to highlight the pieces it uses. The Cloud AI API plugs in the same way in every setup.<br/>
+    <span class="text-signal">*</span> On WP Engine, a coding agent with your SSH key can also run WP-CLI in a sandboxed SSH session next to the site.
+  </figcaption>
+</figure>
 
 <style>
-  [data-off] { opacity: 0.2; filter: grayscale(1); }
-  [data-setup].is-active { box-shadow: inset 0 0 0 2px rgb(14 165 233); }
+  [data-off] { opacity: 0.18; filter: grayscale(1); }
+  .is-lit { border-color: var(--color-signal) !important; }
+  .chip.is-active { border-color: var(--color-signal); color: var(--color-fg); }
 </style>
 
 <script>
   for (const root of document.querySelectorAll<HTMLElement>('[data-arch]')) {
     const select = (id: string) => {
-      root.querySelectorAll<HTMLElement>('[data-in]').forEach((el) => el.toggleAttribute('data-off', !!id && !el.dataset.in!.split(' ').includes(id)));
+      root.querySelectorAll<HTMLElement>('[data-in]').forEach((el) => {
+        const on = !id || el.dataset.in!.split(' ').includes(id);
+        el.toggleAttribute('data-off', !on);
+        el.classList.toggle('is-lit', !!id && on);
+      });
       root.querySelectorAll<HTMLElement>('[data-setup]').forEach((b) => b.classList.toggle('is-active', !!id && b.dataset.setup === id));
     };
-    root.querySelectorAll<HTMLElement>('[data-setup]').forEach((b) => b.addEventListener('click', () => select(b.classList.contains('is-active') ? '' : b.dataset.setup!)));
+    root.querySelectorAll<HTMLElement>('[data-setup]').forEach((b) => b.addEventListener('click', () => select(!b.dataset.setup || b.classList.contains('is-active') ? '' : b.dataset.setup)));
   }
 </script>

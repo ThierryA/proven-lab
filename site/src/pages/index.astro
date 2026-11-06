@@ -2,118 +2,151 @@
 import Base from '../layouts/Base.astro';
 import ArchitectureDiagram from '../components/ArchitectureDiagram.astro';
 import { stats as getStats, wpe } from '../lib/data.mjs';
-const stats = getStats();
+import { TOOLS } from '../../../packages/mcp-server/src/tools.mjs';
+const s = getStats();
 const fmt = (n) => n.toLocaleString('en-US');
+const aiOps = wpe().operations.length;
+
 const why = [
-  ['Efficiency', 'Reuse, don\'t regenerate', 'Users, permissions, content modeling, validation, media, cron, search. Reusing systems that already run at massive scale is cheaper, more reliable and far more scalable than asking an agent to rebuild them, and re-debug them, on every project.'],
-  ['Mature ecosystem', 'Years of collective intelligence', 'Battle-tested code, a huge security research community and an established disclosure and patching process. An agent-written auth layer has none of that. WordPress core has all of it.'],
-  ['Decoupled value', 'You don\'t need to love wp-admin', 'The value was never the admin screen. It is the core API layer underneath: registered post types, meta, capabilities, hooks, the REST API. Build your own admin and frontend in Node and never open wp-admin.'],
-  ['Bridging the AI gap', 'Infrastructure agents can use', 'The WP Engine AI API adds what core doesn\'t: an AI gateway, a managed knowledge base for semantic search, agents and sessions, all wired to your site.'],
+  ['Efficiency', 'Less code to write and debug', 'Users, permissions, content modeling, input validation, media handling and scheduled events already exist and run on millions of sites. Reusing them leaves the agent less code to write, review and debug on every project.'],
+  ['Mature ecosystem', 'Two decades of production use', 'The runtime is open source, has a security team, a public bug bounty and a coordinated release process. Authentication an agent writes from scratch has had none of that review.'],
+  ['Decoupled value', 'The value is the API, not the admin screen', 'Registered post types and meta, capabilities, hooks and the REST API work the same whether you use WP Admin or build your own admin and frontend.'],
+  ['AI infrastructure', 'What the runtime does not provide', 'The Cloud AI API adds a gateway to models, a managed knowledge base for search over your content, and agents with sessions. Your code calls it from the runtime or from a custom app.'],
 ];
-const integrations = [
-  ['MCP', 'Streamable HTTP + stdio', 'Ten tools: search, exact signatures, hooks, blueprints, AI API operations.', '/docs/connect'],
-  ['OpenAPI', 'kit-api.yaml', 'For actions-style agents, plus the full AI API spec.', '/openapi/kit-api.yaml'],
-  ['Function calling', 'OpenAI · Anthropic', 'Drop-in tool definitions for any agent framework.', '/tools/openai.json'],
-  ['llms.txt', 'llms.txt · llms-full.txt', 'Context-ready docs and an AGENTS.md playbook.', '/llms.txt'],
+const compare = [
+  ['Authentication and roles', 'New code, new attack surface', 'Capabilities, cookie auth with nonces, application passwords'],
+  ['Content model', 'Hand-written schema and validation', 'register_post_type, register_meta, REST schemas'],
+  ['Custom actions', 'Ad-hoc endpoints', 'Abilities API: input and output schema, permission check'],
+  ['Search over content', 'A vector pipeline to build and host', 'Cloud AI API knowledge base'],
+  ['Review', 'Starts at zero on every project', 'Open source, used and reviewed on millions of sites'],
 ];
-const chip = 'rounded-md bg-white px-2 py-1 font-mono text-xs text-slate-700 ring-1 ring-slate-900/10 dark:bg-slate-900 dark:text-slate-300 dark:ring-white/10';
+const formats = [
+  ['MCP', `${TOOLS.length} tools over streamable HTTP (/mcp) or stdio`, '/docs/connect'],
+  ['OpenAPI', 'provenlab-api.yaml: the same tools as REST, for OpenAPI clients such as GPT Actions', '/openapi/provenlab-api.yaml'],
+  ['Tool schemas', 'OpenAI and Anthropic function-calling definitions; calls go to /api/<tool>', '/tools/openai.json'],
+  ['llms.txt', 'Plain-text index, a full dump and an AGENTS.md playbook', '/llms.txt'],
+];
+const steps = [
+  ['Ask', 'A user asks: "Create a Node app with its own admin and frontend."'],
+  ['Look up', 'The agent reads the architecture blueprint and checks exact signatures with get_function and get_hook.'],
+  ['Compose', 'It registers post types and meta, adds Abilities, and calls the Cloud AI API where the app needs AI.'],
+  ['Verify', 'It proves the result with WP-CLI and real requests, not by rereading its own code.'],
+];
+const section = 'mx-auto grid max-w-[90rem] gap-x-12 gap-y-6 border-t border-line px-5 py-20 sm:px-8 lg:grid-cols-[12rem_minmax(0,1fr)]';
 ---
-<Base title="Why pay agents to rebuild a battle-tested platform instead of building on top of it? · Proven">
+<Base title="Why pay agents to rebuild a battle-tested platform, instead of building on top of it? · Proven Lab">
 
 <!-- Hero -->
-<div class="relative overflow-hidden">
-  <div class="pointer-events-none absolute inset-x-0 -top-40 -z-10 flex justify-center blur-3xl" aria-hidden="true">
-    <div class="h-96 w-[60rem] bg-gradient-to-r from-sky-300/40 via-indigo-300/40 to-teal-200/40 dark:from-sky-500/20 dark:via-indigo-500/20 dark:to-teal-400/10"></div>
+<section class="mx-auto max-w-[90rem] px-5 pt-24 pb-20 sm:px-8 sm:pt-32">
+  <p class="label">Proven Lab · for coding agents</p>
+  <h1 class="mt-6 max-w-[17em] text-[clamp(2.25rem,5.2vw,4.4rem)] font-medium leading-[1.04] tracking-[-0.035em] text-fg">
+    Why pay agents to rebuild a <span class="whitespace-nowrap">battle-tested</span> platform, <span class="text-fg-3">instead of building on top of it?</span>
+  </h1>
+  <p class="mt-8 max-w-2xl text-[17px] leading-relaxed">
+    WordPress is a runtime with more than twenty years of production use and public security review. Proven Lab gives coding agents exact documentation of its PHP APIs, <span class="whitespace-nowrap">WP-CLI</span> and the Cloud AI API, so they build on it instead of rebuilding it.
+  </p>
+  <div class="mt-10 flex flex-wrap items-center gap-6">
+    <a href="/docs/connect" class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Connect your agent</a>
+    <a href="/docs/architecture" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">How it fits together</a>
   </div>
-  <div class="mx-auto max-w-[88rem] px-4 pb-20 pt-20 sm:px-6 lg:px-8">
-    <p class="font-mono text-sm font-semibold text-sky-600 dark:text-sky-400">Developer kit · MCP · OpenAPI · llms.txt</p>
-    <h1 class="mt-4 max-w-5xl text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl dark:text-white">
-      Why pay agents to rebuild a battle-tested platform, <span class="bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">instead of building on top of it?</span>
-    </h1>
-    <p class="mt-6 max-w-3xl text-lg leading-8">WordPress carries years of worldwide collective intelligence. Professionally built or vibe-coded, rebuilding it is slower, costlier and riskier. Build on top instead: more efficient, less costly, secure and scalable, with maximum flexibility and extensibility. The WordPress Core Runtime API, WP-CLI and the WP Engine AI API give agents a proven foundation, and this kit gives them the docs and tools to use it.</p>
-    <div class="mt-8 flex flex-wrap gap-3">
-      <a href="/docs/connect" class="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-700 dark:bg-sky-500 dark:hover:bg-sky-400">Connect your agent</a>
-      <a href="/docs/architecture" class="rounded-full px-6 py-3 text-sm font-semibold text-slate-900 ring-1 ring-slate-900/10 hover:ring-slate-900/25 dark:text-white dark:ring-white/15 dark:hover:ring-white/30">How it fits together →</a>
+
+  <dl class="mt-20 grid grid-cols-2 border-t border-line lg:grid-cols-4">
+    {[[fmt(s.functionsPublic), 'public core functions'], [fmt(s.hooks), 'hooks (actions and filters)'], [fmt(s.cliLeafCommands), `WP-CLI ${s.cliVersion} commands`], [String(aiOps), 'Cloud AI API operations']].map(([n, l]) => (
+      <div class="border-b border-line py-5 pr-4 lg:border-b-0"><dt class="text-2xl tracking-tight text-fg">{n}</dt><dd class="label mt-1.5">{l}</dd></div>
+    ))}
+  </dl>
+</section>
+
+<!-- 01 Why -->
+<section id="why" class={section}>
+  <p class="label">01 / Why</p>
+  <div>
+    <h2 class="max-w-2xl text-3xl font-medium tracking-tight text-fg">Reuse beats regenerate.</h2>
+    <p class="mt-4 max-w-2xl">Agents are good at wiring existing APIs together. Asking them to rebuild a CMS, an authentication system and a search engine on every project costs more and adds risk.</p>
+    <div class="mt-12 grid border-t border-l border-line md:grid-cols-2">
+      {why.map(([k, h, p], i) => (
+        <div class="border-r border-b border-line p-7">
+          <p class="label">1.{i + 1} {k}</p>
+          <h3 class="mt-4 text-lg text-fg">{h}</h3>
+          <p class="mt-2 text-[15px] leading-relaxed">{p}</p>
+        </div>
+      ))}
     </div>
-
-    <dl class="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-slate-900/10 ring-1 ring-slate-900/10 lg:grid-cols-5 dark:bg-white/10 dark:ring-white/10">
-      {[[fmt(stats.functions), 'core functions documented'], [fmt(stats.hooks), 'actions & filters'], [String(wpe().operations.filter((o) => o.section === 'ai').length), 'AI API operations'], [String(stats.cliCommands), 'WP-CLI commands'], ['WP ' + stats.wordpress, 'generated from source']].map(([n, l]) => <div class="bg-white p-6 dark:bg-slate-950"><dt class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">{n}</dt><dd class="mt-1 text-sm">{l}</dd></div>)}
-    </dl>
-  </div>
-</div>
-
-<!-- Why -->
-<section id="why" class="mx-auto max-w-[88rem] px-4 pt-12 sm:px-6 lg:px-8">
-  <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">Why reuse beats regenerate</h2>
-  <p class="mt-3 max-w-2xl text-lg">Agents are great at composing. They are expensive and risky when asked to reinvent a CMS, an auth system and a search engine on every project.</p>
-  <div class="mt-10 grid gap-6 md:grid-cols-2">
-    {why.map(([k, h, p]) => <div class="rounded-2xl p-7 ring-1 ring-slate-900/10 transition hover:ring-sky-500/40 dark:ring-white/10 dark:hover:ring-sky-400/40">
-      <p class="font-mono text-xs font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400">{k}</p>
-      <h3 class="mt-3 text-xl font-semibold tracking-tight text-slate-900 dark:text-white">{h}</h3>
-      <p class="mt-2 leading-7">{p}</p></div>)}
-  </div>
-  <div class="mt-6 grid gap-6 md:grid-cols-2">
-    <div class="rounded-2xl bg-rose-50 p-7 ring-1 ring-rose-200 dark:bg-rose-500/5 dark:ring-rose-500/20">
-      <p class="font-mono text-xs font-semibold uppercase tracking-wider text-rose-600 dark:text-rose-400">From scratch with an agent</p>
-      <ul class="mt-4 space-y-2 text-sm"><li>Custom auth, roles, sessions: new attack surface</li><li>Hand-rolled content model and validation</li><li>Bespoke search and vector pipeline to host</li><li>Every project starts at zero, reviewed by no one else</li></ul></div>
-    <div class="rounded-2xl bg-emerald-50 p-7 ring-1 ring-emerald-200 dark:bg-emerald-500/5 dark:ring-emerald-500/20">
-      <p class="font-mono text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Core runtime API + AI API</p>
-      <ul class="mt-4 space-y-2 text-sm"><li>Capabilities, application passwords, nonces: hardened for years</li><li>register_post_type, register_meta, Abilities: typed and permissioned</li><li>Managed knowledge base, gateway and agents</li><li>Open, portable, extensible with hooks</li></ul></div>
+    <table class="mt-12 w-full border-collapse text-[14px]">
+      <thead><tr class="label text-left"><th class="border-b border-line-2 py-3 pr-6 font-normal"></th><th class="border-b border-line-2 py-3 pr-6 font-normal">Rebuilt by an agent</th><th class="border-b border-line-2 py-3 font-normal text-fg">Built on the runtime</th></tr></thead>
+      <tbody>{compare.map(([k, a, b]) => <tr><td class="border-b border-line py-3 pr-6 text-fg-3">{k}</td><td class="border-b border-line py-3 pr-6 text-fg-3 line-through decoration-line-2">{a}</td><td class="border-b border-line py-3 text-fg">{b}</td></tr>)}</tbody>
+    </table>
   </div>
 </section>
 
-<!-- Stack -->
-<section id="stack" class="mx-auto max-w-[88rem] px-4 pt-28 sm:px-6 lg:px-8">
-  <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">One WordPress runtime. Your choice of admin and frontend.</h2>
-  <p class="mt-3 max-w-3xl text-lg">WordPress is the PHP runtime, and its API does the work. The admin and the frontend each run inside WordPress or as your own app. The AI API runs on its own infrastructure and powers the agents.</p>
-  <div class="mt-10"><ArchitectureDiagram /></div>
-  <p class="mt-4 text-sm"><a class="font-semibold text-sky-600 hover:underline dark:text-sky-400" href="/docs/architecture">Read the architecture guide →</a></p>
-  <div class="mt-10 grid gap-6 md:grid-cols-2">
-    <a href="/docs/cli/post" class="block rounded-2xl p-7 ring-1 ring-emerald-500/30 transition hover:ring-emerald-500 dark:ring-emerald-400/30 dark:hover:ring-emerald-400">
-      <div class="flex flex-wrap items-center gap-3"><span class="grid size-8 place-items-center rounded-lg bg-emerald-500/10 font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400">&gt;_</span><h3 class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">WP-CLI</h3><span class="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300">essential for agents</span></div>
-      <p class="mt-2 text-sm">The official command line for WordPress. Agents install, seed, inspect and verify a site from the shell, with exact flags for every command, no browser needed. Works for standard and headless builds, locally and over SSH.</p>
-      <div class="mt-5 flex flex-wrap gap-2">{['wp core install', 'wp post create --porcelain', 'wp eval', 'wp post-type list', 'wp user application-password create', 'wp scaffold', 'wp cron', 'wp db'].map((c) => <span class={chip}>{c}</span>)}</div></a>
-    <a href="/docs/wpe-deployment" class="block rounded-2xl p-6 ring-1 ring-amber-500/30 transition hover:ring-amber-500 dark:ring-amber-400/30 dark:hover:ring-amber-400">
-      <div class="flex flex-wrap items-center gap-3"><span class="grid size-8 place-items-center rounded-lg bg-amber-500/10 font-mono text-xs font-bold text-amber-600 dark:text-amber-400">WPE</span><h3 class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">Deployment</h3><span class="rounded-full bg-amber-500/10 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-300">optional · preferred</span></div>
-      <p class="mt-2 text-sm">WP Engine runs standard managed WordPress and the Headless Platform (Faust.js, WPGraphQL, Node.js frontends). On WP Engine, agents also run WP-CLI directly in a sandboxed SSH session next to the site. The Sites API connects your deployed site to the AI API. Everything stays portable to other hosts.</p>
-      <div class="mt-5 flex flex-wrap gap-2">{['Managed WordPress', 'Headless Platform', 'Sandboxed SSH + WP-CLI', 'Faust.js', 'WPGraphQL', 'Sites API'].map((c) => <span class={chip}>{c}</span>)}</div></a>
+<!-- 02 Architecture -->
+<section id="architecture" class={section}>
+  <p class="label">02 / Architecture</p>
+  <div>
+    <h2 class="max-w-3xl text-3xl font-medium tracking-tight text-fg">One runtime. Your choice of admin and frontend.</h2>
+    <p class="mt-4 max-w-2xl">The runtime always runs and does the work. The admin and the frontend each run inside it or as a separate custom app. The Cloud AI API runs on its own infrastructure.</p>
+    <div class="mt-12"><ArchitectureDiagram /></div>
+    <p class="mt-8 text-[14px]"><a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/architecture">Read the architecture blueprint</a></p>
   </div>
 </section>
 
-<!-- Agents -->
-<section id="agents" class="mx-auto max-w-[88rem] px-4 pt-28 sm:px-6 lg:px-8">
-  <div class="grid items-start gap-10 lg:grid-cols-2">
+<!-- 03 Tools -->
+<section id="tools" class={section}>
+  <p class="label">03 / Tools</p>
+  <div class="grid gap-12 lg:grid-cols-2">
     <div>
-      <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">Docs written for agents, kept current automatically</h2>
-      <p class="mt-3 text-lg">Not a handbook. Generated from WordPress core source, the developer handbooks and the live WP Engine AI OpenAPI spec, then served in every format agents consume.</p>
-      <ol class="mt-8 space-y-5">
-        {[['Ask', '"Create me a Node app with its own admin and frontend, using WordPress as the backend."'], ['Look up', 'The agent calls get_blueprint and get_function for exact core APIs, not guesses.'], ['Compose', 'register_post_type, register_meta, Abilities, REST. Plus the gateway and knowledge base.'], ['Ship', 'A real app on a proven stack. No wp-admin, no reinvented auth.']].map(([h, p], i) => <li class="flex gap-4"><span class="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-sky-500/10 font-mono text-xs font-bold text-sky-600 dark:text-sky-400">{i + 1}</span><div><p class="font-semibold text-slate-900 dark:text-white">{h}</p><p class="text-sm">{p}</p></div></li>)}
+      <h2 class="text-2xl font-medium tracking-tight text-fg">WP-CLI</h2>
+      <p class="mt-3 max-w-xl">The official command-line tool for WordPress. Coding agents install, seed, inspect and verify a site from the shell, in every setup, locally or on a remote host. Every command and flag is documented from the WP-CLI {s.cliVersion} release.</p>
+      <pre class="mt-6 border border-line bg-ink-2 p-5 font-mono text-[12.5px] leading-7 text-fg-2"><span class="text-fg-3">$</span> wp post-type list --fields=name,show_in_rest
+<span class="text-fg-3">$</span> wp post create --post_type=project --porcelain
+<span class="text-fg-3">$</span> wp user application-password create admin app --porcelain</pre>
+      <p class="mt-4 text-[14px]"><a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/wp-cli-for-agents">WP-CLI for agents</a></p>
+    </div>
+    <div>
+      <h2 class="text-2xl font-medium tracking-tight text-fg">Deployment <span class="label ml-2 align-middle">optional · recommended</span></h2>
+      <p class="mt-3 max-w-xl">WP Engine hosts the runtime on managed WordPress and a custom app on the Headless Platform. On WP Engine, a coding agent with your SSH key can run WP-CLI in a sandboxed SSH session next to the site. Nothing in Proven Lab requires WP Engine.</p>
+      <dl class="mt-6 border-t border-line text-[14px]">
+        {[['Runtime', 'Managed WordPress'], ['Custom app', 'Headless Platform (any Node framework)'], ['Coding agents', 'SSH Gateway + WP-CLI']].map(([k, v]) => <div class="flex justify-between gap-6 border-b border-line py-3"><dt class="text-fg-3">{k}</dt><dd class="text-right text-fg">{v}</dd></div>)}
+      </dl>
+      <p class="mt-4 text-[14px]"><a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/wpe-deployment">Deploying on WP Engine</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 For agents -->
+<section id="agents" class={section}>
+  <p class="label">04 / For agents</p>
+  <div>
+    <h2 class="max-w-3xl text-3xl font-medium tracking-tight text-fg">Documentation generated for agents.</h2>
+    <p class="mt-4 max-w-2xl">Built from the runtime's source code, its developer handbooks, the WP-CLI release and the Cloud AI API's published spec, and served in the formats agents read.</p>
+    <div class="mt-12 grid gap-12 lg:grid-cols-2">
+      <ol class="border-t border-line">
+        {steps.map(([h, p], i) => <li class="grid grid-cols-[3rem_1fr] border-b border-line py-4"><span class="label pt-0.5">0{i + 1}</span><div><p class="text-fg">{h}</p><p class="mt-1 text-[14px]">{p}</p></div></li>)}
       </ol>
-    </div>
-    <div class="overflow-hidden rounded-2xl bg-slate-900 shadow-xl ring-1 ring-slate-900/10 dark:bg-slate-900 dark:ring-white/10">
-      <div class="flex items-center gap-1.5 border-b border-white/10 px-4 py-3"><span class="size-3 rounded-full bg-slate-700"></span><span class="size-3 rounded-full bg-slate-700"></span><span class="size-3 rounded-full bg-slate-700"></span><span class="ml-3 font-mono text-xs text-slate-500">terminal</span></div>
-      <pre class="overflow-x-auto p-5 font-mono text-[13px] leading-7 text-slate-300"><span class="text-slate-500"># one line to give your agent WordPress superpowers</span>
-<span class="text-sky-400">$</span> claude mcp add proven -- npx @proven/mcp
+      <pre class="self-start border border-line bg-ink-2 p-5 font-mono text-[12.5px] leading-7 text-fg-2"><span class="text-fg-3"># add Proven Lab to Claude Code</span>
+<span class="text-signal">$</span> claude mcp add --transport http provenlab <span data-origin>https://&lt;your-host&gt;</span>/mcp
 
-<span class="text-sky-400">you ›</span> Create me a Node app that uses WordPress as
-        the backend, custom admin included.
-<span class="text-amber-300">agent</span> get_blueprint("custom-app")
-<span class="text-amber-300">agent</span> get_function("register_meta") <span class="text-slate-500"># user meta</span>
-<span class="text-amber-300">agent</span> get_wpe_operation("searchCollection")</pre>
+<span class="text-fg-3">user ›</span> Create a Node app on WordPress, with its own admin.
+<span class="text-fg">agent</span> get_blueprint("architecture")
+<span class="text-fg">agent</span> get_function("register_meta")
+<span class="text-fg">agent</span> get_cli_command("post-type list")</pre>
     </div>
-  </div>
-  <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-    {integrations.map(([k, h, p, href]) => <a href={href} class="block rounded-2xl p-6 ring-1 ring-slate-900/10 hover:ring-sky-500/40 dark:ring-white/10 dark:hover:ring-sky-400/40"><p class="font-mono text-xs font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400">{k}</p><h3 class="mt-2 font-semibold text-slate-900 dark:text-white">{h}</h3><p class="mt-1 text-sm">{p}</p></a>)}
+    <div class="mt-12 border-t border-line">
+      {formats.map(([k, v, href]) => <a href={href} class="grid grid-cols-[9rem_1fr_auto] items-baseline gap-6 border-b border-line py-4 text-[14px] hover:bg-ink-2"><span class="font-mono text-[12px] text-fg">{k}</span><span>{v}</span><span class="text-fg-3">→</span></a>)}
+    </div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="mx-auto max-w-[88rem] px-4 pt-28 sm:px-6 lg:px-8">
-  <div class="relative overflow-hidden rounded-3xl bg-slate-900 px-8 py-16 text-center dark:bg-slate-900 dark:ring-1 dark:ring-white/10">
-    <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-sky-500/20 via-transparent to-indigo-500/20"></div>
-    <h2 class="relative text-3xl font-bold tracking-tight text-white sm:text-4xl">An open, flexible stack that competes on what matters</h2>
-    <p class="relative mx-auto mt-3 max-w-xl text-slate-300">Proven core APIs, purpose-built AI infrastructure, and agents that build with both.</p>
-    <div class="relative mt-8 flex justify-center gap-3"><a href="/docs/connect" class="rounded-full bg-sky-500 px-6 py-3 text-sm font-semibold text-white hover:bg-sky-400">Get started</a><a href="/docs" class="rounded-full px-6 py-3 text-sm font-semibold text-white ring-1 ring-white/20 hover:ring-white/40">Browse the docs</a></div>
+<!-- Close -->
+<section class="mx-auto max-w-[90rem] border-t border-line px-5 pt-20 sm:px-8">
+  <h2 class="max-w-3xl text-[clamp(1.8rem,3.6vw,3rem)] font-medium leading-tight tracking-[-0.03em] text-fg">Build on a proven runtime, not from scratch.</h2>
+  <div class="mt-8 flex flex-wrap items-center gap-6">
+    <a href="/docs/connect" class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Connect your agent</a>
+    <a href="/docs" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">Browse the docs</a>
   </div>
 </section>
+
+<script is:inline>
+  document.querySelectorAll('[data-origin]').forEach((el) => { if (location.protocol.startsWith('http')) el.textContent = location.origin; });
+</script>
 </Base>

@@ -20,7 +20,7 @@ async function load() {
   for (const c of entities.classes) add('class', c.name, c.name, c.summary + ' ' + c.description, { summary: c.summary, url: c.url });
   for (const m of entities.methods) add('method', `${m.class}::${m.name}`, `${m.class}::${m.name}`, m.summary, { summary: m.summary, url: m.url });
   for (const h of entities.hooks) add('hook', h.name, h.name, h.summary + ' ' + h.description, { summary: h.summary, url: h.url });
-  for (const d of docs) add(d.source === 'wpengine' ? 'wpe-doc' : 'handbook', d.id, d.name, d.markdown.slice(0, 4000), { summary: d.markdown.slice(0, 160).replace(/\s+/g, ' '), url: d.url });
+  for (const d of docs) add(d.source === 'wpengine' ? 'ai-doc' : 'handbook', d.id, d.name, d.markdown.slice(0, 4000), { summary: d.markdown.slice(0, 160).replace(/\s+/g, ' '), url: d.url });
   for (const c of cli.commands) add('cli', c.path, c.path, c.description + ' ' + c.longdesc.slice(0, 1500), { summary: c.description, url: `https://developer.wordpress.org/cli/commands/${c.path.replace(/^wp /, '').replace(/ /g, '/')}/` });
   state = { cli, cliMap: new Map(cli.commands.map((c) => [c.path.replace(/^wp /, ''), c])), entities, domains, blueprints, wpe, docs, index, fn: new Map(entities.functions.map((x) => [x.name, x])), cls: new Map(entities.classes.map((x) => [x.name, x])), hook: new Map(entities.hooks.map((x) => [x.name, x])), op: new Map(wpe.operations.map((o) => [o.operationId, o])) };
   return state;
@@ -87,11 +87,11 @@ const handlers = {
     const s = await load(); const b = s.blueprints.find((x) => x.slug === slug);
     return b ? { slug, title: b.title, markdown: b.md } : { error: `unknown blueprint ${slug}`, available: s.blueprints.map((x) => x.slug) };
   },
-  async list_wpe_operations({ filter } = {}) {
+  async list_ai_operations({ filter } = {}) {
     const s = await load(); const f = filter?.toLowerCase();
     return s.wpe.operations.filter((o) => !f || [o.section, o.operationId, o.path, o.summary, ...(o.tags || [])].join(' ').toLowerCase().includes(f)).map((o) => ({ section: o.section, operationId: o.operationId, method: o.method, path: o.path, tags: o.tags, summary: o.summary }));
   },
-  async get_wpe_operation({ operationId }) {
+  async get_ai_operation({ operationId }) {
     const s = await load(); const o = s.op.get(operationId);
     return o ? { baseUrl: s.wpe.servers[0], ...o, securitySchemes: Object.keys(s.wpe.components.securitySchemes || {}) } : notFound('operation', operationId, s.op);
   },

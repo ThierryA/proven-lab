@@ -1,37 +1,46 @@
 # Connect your agent
 
-The same knowledge is available in every format agents use.
+Proven Lab runs as one Node server. It serves this site, an MCP endpoint at `/mcp`, and a REST mirror of the same tools at `/api/<tool>`.
 
-## Claude Code / Claude Desktop (MCP, stdio)
+## Claude Code (MCP over HTTP)
 
 ```bash
-claude mcp add proven -- npx @proven/mcp
+claude mcp add --transport http provenlab https://<your-provenlab-host>/mcp
 ```
 
-## Any MCP client (streamable HTTP)
+## Claude Code (MCP over stdio, from a local checkout)
 
-Run `npm run mcp:http` (or deploy it) and point your client at `https://your-host/mcp`.
+```bash
+claude mcp add provenlab -- node /path/to/provenlab/packages/mcp-server/src/index.mjs
+```
 
-## OpenAI / Anthropic function calling
+The npm package `@provenlab/mcp` is not published yet. Once it is: `claude mcp add provenlab -- npx @provenlab/mcp`.
 
-Load `/tools/openai.json` or `/tools/anthropic.json` as your tool list and forward calls to `GET /api/<tool>` (see `/openapi/kit-api.yaml`).
+## Other MCP clients
 
-## OpenAPI actions
+Point any client that supports streamable HTTP at `https://<your-provenlab-host>/mcp`. For stdio-only clients (such as Claude Desktop), add the stdio command above to the client's MCP configuration.
 
-Import `/openapi/kit-api.yaml`. For the WP Engine AI API itself, use `/openapi/wpe-ai.yaml`.
+## OpenAI and Anthropic function calling
 
-## Plain context
+Load `/tools/openai.json` or `/tools/anthropic.json` as the tool list and send each call to `GET` or `POST /api/<tool>` (see `/openapi/provenlab-api.yaml`).
+
+## OpenAPI (for example, GPT Actions)
+
+Import `/openapi/provenlab-api.yaml`. The Cloud AI API spec is at `/openapi/cloud-ai-api.yaml`.
+
+## Plain text for context windows
 
 - `/llms.txt`: index
-- `/llms-full.txt`: everything in one file
+- `/llms-full.txt`: all guides and API pages in one file
 - `/AGENTS.md`: playbook; copy it into your project root
 
 ## Tools
 
 | Tool | Use |
 |---|---|
-| `list_domains` / `get_domain` | Find core APIs by task area |
-| `search_docs` | Search functions, classes, hooks, handbooks, WP Engine docs |
-| `get_function` / `get_class` / `get_hook` | Exact signatures and parameters |
-| `list_blueprints` / `get_blueprint` | End-to-end build recipes |
-| `list_wpe_operations` / `get_wpe_operation` | WP Engine AI API reference |
+| `list_domains` / `get_domain` | Core APIs grouped by task area |
+| `search_docs` | Keyword search across functions, classes, hooks, handbooks, WP-CLI and WP Engine docs |
+| `get_function` / `get_class` / `get_hook` | Exact signatures, parameters and source location |
+| `list_cli_commands` / `get_cli_command` | WP-CLI commands with synopsis and options |
+| `list_blueprints` / `get_blueprint` | End-to-end guides |
+| `list_ai_operations` / `get_ai_operation` | Cloud AI API and Sites API operations |

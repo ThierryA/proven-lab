@@ -68,7 +68,7 @@
     "slug": "fields",
     "group": "Data model",
     "title": "Fields (Meta)",
-    "summary": "Typed, validated custom fields on posts, terms, users and comments. Register meta to get schemas, sanitization, auth and REST exposure.",
+    "summary": "Typed custom fields on posts, terms, users and comments. Registering a meta key adds its type, sanitization, authorization and REST exposure; values are validated against the schema when written over REST.",
     "functions": [
       "register_meta",
       "register_post_meta",
@@ -222,7 +222,7 @@
     "slug": "users",
     "group": "Users & access",
     "title": "Users",
-    "summary": "Create, read and update user accounts and the current-user context.",
+    "summary": "Create, read, update and delete user accounts, and the current-user context. wp_delete_user() is in wp-admin/includes/user.php: require it outside WP Admin.",
     "functions": [
       "wp_insert_user",
       "wp_create_user",
@@ -344,7 +344,7 @@
     "slug": "plugins-bootstrap",
     "group": "Extension",
     "title": "Plugins & Bootstrap",
-    "summary": "How code ships and loads: plugins, must-use plugins, activation, environments and multisite.",
+    "summary": "How code ships and loads: plugins, must-use plugins, activation, environments and multisite. is_plugin_active() and get_plugins() are in wp-admin/includes/plugin.php.",
     "functions": [
       "register_activation_hook",
       "register_deactivation_hook",
@@ -506,7 +506,7 @@
     "slug": "abilities",
     "group": "Interfaces",
     "title": "Abilities API",
-    "summary": "Typed, permissioned, discoverable actions. The way agents call into your site.",
+    "summary": "Actions with an input and output schema and a permission check, discoverable over REST (core since WordPress 6.9) and over MCP with the MCP Adapter plugin.",
     "functions": [
       "wp_register_ability",
       "wp_register_ability_category",
@@ -550,7 +550,7 @@
     "slug": "media",
     "group": "Services",
     "title": "Media & Files",
-    "summary": "Uploads, attachments, image sizes and the filesystem abstraction.",
+    "summary": "Uploads, attachments, image sizes and the filesystem abstraction. media_sideload_image(), media_handle_upload(), wp_handle_upload(), wp_generate_attachment_metadata() and WP_Filesystem() are in wp-admin/includes: require those files outside WP Admin.",
     "functions": [
       "wp_insert_attachment",
       "wp_generate_attachment_metadata",
@@ -581,7 +581,7 @@
     "slug": "http-client",
     "group": "Services",
     "title": "HTTP Client",
-    "summary": "Outbound requests: the safe way to call webhooks and external APIs (including the WP Engine AI API).",
+    "summary": "Outbound HTTP requests with the WordPress HTTP API, including calls to webhooks and the Cloud AI API. The wp_safe_remote_* functions reject local and private addresses.",
     "functions": [
       "wp_remote_get",
       "wp_remote_post",
@@ -607,7 +607,7 @@
     "slug": "cron-cache",
     "group": "Services",
     "title": "Cron, Cache & Transients",
-    "summary": "Background work and caching: scheduled events, the object cache and transients.",
+    "summary": "Scheduled events (WP-Cron runs on page loads; trigger it from a real cron job in production), the object cache and transients.",
     "functions": [
       "wp_schedule_event",
       "wp_schedule_single_event",

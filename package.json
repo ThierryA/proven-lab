@@ -1,9 +1,9 @@
 {
-  "name": "proven",
+  "name": "provenlab",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Proven: docs and tools that let AI agents build on WordPress core APIs, WP-CLI and the WP Engine AI API.",
+  "description": "Proven Lab: docs and tools that let AI agents build on WordPress core APIs, WP-CLI and the Cloud AI API.",
   "workspaces": [
     "packages/*",
     "site"

@@ -24,7 +24,8 @@ const dom = (kind, name) => tag.get(`${kind}:${name}`) || [];
 // A hook is often fired in several places; only one carries the docblock. Keep the best, remember all locations.
 function dedupeHooks(hooks) {
   const groups = new Map();
-  for (const h of hooks) groups.set(h.name, [...(groups.get(h.name) || []), h]);
+  // Skip names that are only a variable (do_action( $hook_name ) inside plugin.php, WP_Hook, admin page hooks): not documentable hooks.
+  for (const h of hooks) if (!/^\$[\w\[\]'"\->]+$/.test(h.name)) groups.set(h.name, [...(groups.get(h.name) || []), h]);
   return [...groups.values()].map((g) => {
     const score = (h) => (/is documented in/i.test(h.summary) ? 0 : 2) + (h.params.length ? 1 : 0) + (h.summary ? 1 : 0);
     const best = [...g].sort((a, b) => score(b) - score(a))[0];
@@ -51,8 +52,7 @@ const ops = [];
 for (const [path, item] of Object.entries(spec.paths)) for (const [method, op] of Object.entries(item)) {
   if (!op?.operationId) continue;
   if ((op.tags || []).includes('MCP')) continue; // WP Engine's MCP endpoints are intentionally not documented for now
-  const deployment = (op.tags || []).includes('Sites');
-  ops.push({ section: deployment ? 'deployment' : 'ai', operationId: op.operationId, method: method.toUpperCase(), path, tags: op.tags, summary: op.summary, description: op.description, parameters: op.parameters, requestBody: op.requestBody, responses: op.responses, security: op.security });
+  ops.push({ section: 'ai', operationId: op.operationId, method: method.toUpperCase(), path, tags: op.tags, summary: op.summary, description: op.description, parameters: op.parameters, requestBody: op.requestBody, responses: op.responses, security: op.security });
 }
 await w('wpe-operations.json', { servers: ['https://api.ai.wpengine.com'], version: spec.info.version, components: spec.components, operations: ops });
 await w('docs.json', [...wpeDocs.filter((d) => !/:mcp/.test(d.id)), ...(await Promise.all((await readdir(join(CORPUS, 'wp/handbooks'))).map((f) => rj(`wp/handbooks/${f}`)))).flat()].map((d) => ({ id: d.id, source: d.source, handbook: d.handbook, name: d.name, url: d.url, markdown: d.markdown })));
@@ -93,6 +93,17 @@ for (const f of await readdir(bpDir)) {
 }
 await w('blueprints.json', blueprints);
 
+// overviews (one per reference section)
+const ovDir = join(ROOT, 'content/overviews');
+const overviews = [];
+for (const f of await readdir(ovDir)) {
+  const raw = await readFile(join(ovDir, f), 'utf8');
+  const fm = raw.match(/^---\n([\s\S]*?)\n---\n/);
+  overviews.push({ slug: f.replace(/\.md$/, ''), ...(fm ? YAML.parse(fm[1]) : {}), md: raw.replace(/^---[\s\S]*?---\n/, '') });
+  await w(`overviews/${f}`, raw);
+}
+await w('overviews.json', overviews);
+
 // WP-CLI
 const cliData = await rj('wp/cli/commands.json');
 const cliTop = [...new Set(cliData.commands.map((c) => c.top))];
@@ -127,20 +138,22 @@ const agentsMd = await readFile(join(ROOT, 'content/AGENTS.md'), 'utf8');
 await w('AGENTS.md', agentsMd);
 
 // llms.txt + llms-full.txt
-const site = process.env.SITE_URL || 'https://example.com';
+// Absolute links only when SITE_URL is set; otherwise relative, so the files work on any host.
+const site = (process.env.SITE_URL || '').replace(/\/$/, '');
 const llms = [
-  '# Proven', '',
-  '> Docs and tools for AI agents that build applications on WordPress core APIs (post types, meta, users, hooks, blocks, Abilities, AI Client) combined with the WP Engine AI API (gateway, knowledge base, agents, MCP). Generated from WordPress ' + core.version + ' source and the live WP Engine AI API spec.', '',
+  '# Proven Lab', '',
+  '> Docs, an MCP server and tool schemas that let coding agents build on the WordPress Core Runtime API (post types, meta, users, hooks, blocks, Abilities API, AI Client), WP-CLI and the Cloud AI API (gateway, knowledge base, agents and sessions). Generated from WordPress ' + core.version + ' source, WP-CLI ' + cliData.version + ' and a snapshot of the Cloud AI API OpenAPI spec.', '',
   '## Start here', `- [Agent playbook](${site}/AGENTS.md): rules and workflow for agents building WordPress sites`,
+  ...overviews.map((o) => `- [${o.title}](${site}/overviews/${o.slug}.md): ${o.summary}`),
   ...blueprints.map((b) => `- [${b.title}](${site}/blueprints/${b.slug}.md): ${b.summary}`), '',
-  '## WordPress core API domains', ...domains.map((d) => `- [${d.group}: ${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',
+  '## Core Runtime API domains', ...domains.map((d) => `- [${d.group}: ${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',
   '## WP-CLI (`wp`): verify, scaffold and administer from the shell', ...cliPages.map((c) => `- [wp ${c.top}](${site}/cli/${c.top}.md): ${c.description}`), '',
-  '## AI API and Deployment (WP Engine)', `- [OpenAPI spec](${site}/openapi/wpe-ai.yaml)`, `- [Operations index](${site}/wpe-operations.json)`, ...ops.slice(0, 0), '',
-  '## Machine interfaces', `- MCP server: \`npx @proven/mcp\` (stdio) or ${site}/mcp (streamable HTTP)`, `- Kit API OpenAPI: ${site}/openapi/kit-api.yaml`, `- OpenAI function tools: ${site}/tools/openai.json`, `- Anthropic tools: ${site}/tools/anthropic.json`, '',
+  '## Cloud AI API', `- [OpenAPI spec](${site}/openapi/cloud-ai-api.yaml)`, `- [Operations index, incl. the Sites API](${site}/wpe-operations.json)`, '',
+  '## Machine interfaces', `- MCP server: ${site}/mcp (streamable HTTP), or stdio via packages/mcp-server/src/index.mjs`, `- Proven Lab API (OpenAPI): ${site}/openapi/provenlab-api.yaml`, `- OpenAI function tools: ${site}/tools/openai.json`, `- Anthropic tools: ${site}/tools/anthropic.json`, '',
 ].join('\n');
 await w('llms.txt', llms);
-const wpeOpsMd = '## AI API and Deployment operations (WP Engine)\n\n' + ops.map((o) => `- [${o.section}] \`${o.method} ${o.path}\` **${o.operationId}**: ${o.summary || ''}`).join('\n');
-await w('llms-full.txt', [llms, '\n---\n', agentsMd, ...blueprints.map((b) => `\n---\n\n# ${b.title}\n\n${stripMarkers(b.md)}`), '\n---\n', wpeOpsMd, ...domainPages.map((d) => `\n---\n\n${d.md}`), ...cliPages.map((c) => `\n---\n\n${c.md}`)].join('\n'));
+const wpeOpsMd = '## Cloud AI API operations\n\n' + ops.map((o) => `- [${o.section}] \`${o.method} ${o.path}\` **${o.operationId}**: ${o.summary || ''}`).join('\n');
+await w('llms-full.txt', [llms, '\n---\n', agentsMd, ...overviews.map((o) => `\n---\n\n# ${o.title}\n\n${o.md.replace(/^\s*# .*\n/, '')}`), ...blueprints.map((b) => `\n---\n\n# ${b.title}\n\n${stripMarkers(b.md).replace(/^\s*# .*\n/, '')}`), '\n---\n', wpeOpsMd, ...domainPages.map((d) => `\n---\n\n${d.md}`), ...cliPages.map((c) => `\n---\n\n${c.md}`)].join('\n'));
 
 // OpenAPI specs
 await mkdir(join(DIST, 'openapi'), { recursive: true });
@@ -153,17 +166,18 @@ await mkdir(join(DIST, 'openapi'), { recursive: true });
   const visit = (node) => { if (!node || typeof node !== 'object') return; for (const [k, v] of Object.entries(node)) { if (k === '$ref' && typeof v === 'string') { const m = v.match(/^#\/components\/(\w+)\/(.+)$/); if (m && !seen.has(v)) { seen.add(v); refs.add(v); visit(pub.components?.[m[1]]?.[m[2]]); } } else visit(v); } };
   visit(pub.paths);
   for (const kind of ['schemas', 'parameters', 'responses', 'requestBodies']) for (const name of Object.keys(pub.components?.[kind] || {})) if (!refs.has(`#/components/${kind}/${name}`)) delete pub.components[kind][name];
-  await writeFile(join(DIST, 'openapi/wpe-ai.yaml'), YAML.stringify(pub));
+  await writeFile(join(DIST, 'openapi/cloud-ai-api.yaml'), YAML.stringify(pub));
 }
-const kitApi = { openapi: '3.1.0', info: { title: 'Proven API', version: '0.1.0', description: 'Search and retrieve WordPress core API docs, blueprints and WP Engine AI API operations. Same capabilities as the MCP server.' }, servers: [{ url: site }], paths: {} };
+const kitApi = { openapi: '3.1.0', info: { title: 'Proven Lab API', version: '0.1.0', description: 'Search and retrieve WordPress Core Runtime API docs, WP-CLI commands, blueprints and Cloud AI API operations. The same 12 tools as the MCP server.' }, servers: [{ url: site || '/' }], paths: {} };
 for (const t of TOOLS) {
   const props = t.inputSchema.properties || {};
   kitApi.paths[`/api/${t.name}`] = { get: { operationId: t.name, summary: t.description.split('\n')[0], description: t.description,
     parameters: Object.entries(props).map(([name, s]) => ({ name, in: 'query', required: (t.inputSchema.required || []).includes(name), schema: s })),
     responses: { 200: { description: 'OK', content: { 'application/json': { schema: { type: 'object' } } } } } } };
 }
-await w('openapi/kit-api.yaml', YAML.stringify(kitApi));
+await w('openapi/provenlab-api.yaml', YAML.stringify(kitApi));
 await w('tools/openai.json', TOOLS.map((t) => ({ type: 'function', function: { name: t.name, description: t.description, parameters: t.inputSchema } })));
 await w('tools/anthropic.json', TOOLS.map((t) => ({ name: t.name, description: t.description, input_schema: t.inputSchema })));
-await w('stats.json', { wordpress: core.version, functions: entities.functions.length, classes: entities.classes.length, methods: entities.methods.length, hooks: entities.hooks.length, wpeOperations: ops.length, cliCommands: cliData.commands.length, cliVersion: cliData.version, wpeDocs: wpeDocs.length, domains: domains.length, blueprints: blueprints.length, builtAt: new Date().toISOString() });
+const isPublic = (f) => !(f.tags.access || []).includes('private') && !f.tags.deprecated;
+await w('stats.json', { wordpress: core.version, functions: entities.functions.length, functionsPublic: entities.functions.filter(isPublic).length, cliLeafCommands: cliData.commands.filter((c) => !c.hasChildren).length, classes: entities.classes.length, methods: entities.methods.length, hooks: entities.hooks.length, wpeOperations: ops.length, wpeVersion: spec.info.version, cliCommands: cliData.commands.length, cliVersion: cliData.version, wpeDocs: wpeDocs.length, domains: domains.length, blueprints: blueprints.length, builtAt: new Date().toISOString() });
 console.log('dist built', JSON.parse(await readFile(join(DIST, 'stats.json'), 'utf8')));

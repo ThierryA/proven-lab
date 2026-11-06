@@ -1,11 +1,11 @@
 {
-  "name": "@proven/mcp",
+  "name": "@provenlab/mcp",
   "version": "0.1.0",
   "type": "module",
-  "description": "MCP server giving agents WordPress core API docs, blueprints and the WP Engine AI API reference.",
+  "description": "MCP server giving agents WordPress core API docs, blueprints and the Cloud AI API reference.",
   "bin": {
     "mcp": "src/index.mjs",
-    "proven-mcp": "src/index.mjs"
+    "provenlab-mcp": "src/index.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0"

@@ -1,4 +1,4 @@
-// Pulls the WP Engine AI API OpenAPI spec and the developer docs (via sitemap).
+// Pulls the Cloud AI API OpenAPI spec and the developer docs (via sitemap).
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { parse as parseHtml } from 'node-html-parser';

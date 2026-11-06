@@ -43,7 +43,7 @@ $o['user_meta_update'] = $u->get_status(); $o['user_meta_value'] = $u->get_data(
 $o['abilities'] = function_exists( 'wp_get_abilities' ) ? array_map( fn( $a ) => $a->get_name(), array_values( wp_get_abilities() ) ) : null;
 $ability = function_exists( 'wp_get_ability' ) ? wp_get_ability( 'app/archive-project' ) : null;
 $o['ability_registered'] = (bool) $ability;
-if ( $ability ) { $ex = $ability->execute( [ 'id' => $id ] ); $o['ability_result'] = is_wp_error( $ex ) ? $ex->get_error_message() : $ex; }
+if ( $ability ) { $ex = $ability->execute( [ 'id' => $id ] ); $o['ability_result'] = is_wp_error( $ex ) ? $ex->get_error_message() : $ex; clean_post_cache( $id ); $o['status_after'] = get_post_status( $id ); }
 $ab = call( 'POST', '/wp-abilities/v1/abilities/app/archive-project/run', [ 'input' => [ 'id' => $id ] ] );
 $o['ability_rest_status'] = $ab->get_status();
 wp_set_current_user( 0 );
@@ -62,7 +62,7 @@ before(async () => {
     { step: 'writeFile', path: '/wordpress/wp-content/mu-plugins/app-abilities.php', data: abilities },
     { step: 'writeFile', path: '/wordpress/verify.php', data: VERIFY },
   ] };
-  const file = join(mkdtempSync(join(tmpdir(), 'proven-wp-')), 'blueprint.json');
+  const file = join(mkdtempSync(join(tmpdir(), 'provenlab-wp-')), 'blueprint.json');
   writeFileSync(file, JSON.stringify(bp));
   proc = spawn('npx', ['-y', '@wp-playground/cli@latest', 'server', `--blueprint=${file}`, `--port=${PORT}`], { stdio: 'ignore', detached: true });
   base = `http://127.0.0.1:${PORT}`;
@@ -100,6 +100,7 @@ t('capabilities are enforced by WordPress, not the UI', () => {
 t('the Abilities blueprint registers and executes', () => {
   assert.ok(result.ability_registered, `ability not registered; registered: ${JSON.stringify(result.abilities)}; diag: ${JSON.stringify(result.diag)}`);
   assert.deepEqual(result.ability_result, { archived: true });
+  assert.equal(result.status_after, 'archived', 'the ability really changed the post status');
   assert.equal(result.ability_rest_status, 200);
   assert.ok([401, 403].includes(result.anon_ability_rest_status), `anon ability status ${result.anon_ability_rest_status}`);
 });

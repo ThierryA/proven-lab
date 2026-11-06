@@ -1,29 +1,29 @@
 # Building WordPress applications (agent playbook)
 
-You are building an application where **WordPress is the application layer**: data model, users and permissions, validation, hooks, media, cron. The UI may be a Node app (admin and frontend), PHP templates, or both. wp-admin is optional.
+You are building an application where **WordPress is the application layer**: data model, users and permissions, validation, hooks, media, cron. The admin is WP Admin or a custom app; the frontend is WordPress templating or a custom app.
 
-## Tools you have (MCP server `proven`)
-- `list_domains`, `get_domain`: start here to find the right core APIs for a task.
-- `search_docs`: full-text search over core functions, classes, methods, hooks, handbooks and WP Engine docs.
+## Tools you have (MCP server `provenlab`)
+- `list_domains`, `get_domain`: start here to find the right Core Runtime API functions, classes and hooks for a task.
+- `search_docs`: keyword search over core functions, classes, methods, hooks, handbooks, WP-CLI commands and WP Engine docs.
 - `get_function`, `get_class`, `get_hook`: exact signatures, parameters, since-versions and source location. **Look up before you write**; never guess argument names.
-- `list_blueprints`, `get_blueprint`: end-to-end recipes (headless Node app, PHP-templated frontend, AI experiences).
-- `list_cli_commands`, `get_cli_command`: WP-CLI (`wp`) commands, exact flags and examples. **WP-CLI is how you verify and administer a site from the shell.**
-- `list_wpe_operations`, `get_wpe_operation`: the WP Engine API. Section `ai`: gateway, knowledge base, agents, sessions, credits. Section `deployment`: Sites.
+- `list_blueprints`, `get_blueprint`: end-to-end guides (architecture, Classic, custom app, WP-CLI, AI API, deployment).
+- `list_cli_commands`, `get_cli_command`: WP-CLI (`wp`) commands, exact flags and examples. **Use WP-CLI to verify and administer a site from the shell.**
+- `list_ai_operations`, `get_ai_operation`: the Cloud AI API. Gateway, knowledge base, agents and sessions; site connection, analytics and credits.
 
 ## Workflow
-1. Identify the setup (see `get_blueprint architecture`). WordPress is always the PHP runtime; the admin is WP Admin or a custom app, the frontend is WordPress templating or a custom app. **Classic** (WP Admin + templating) → `classic-wordpress`. **Headless Frontend** (WP Admin + custom frontend), **Headless Admin** (custom admin + templating) or **Headless Frontend + Admin** → `custom-app`. Default: "build me a website" → Classic, "build me an app" → Headless Frontend + Admin. Ask only if unclear.
-2. Model first. Register post types, taxonomies and **registered meta** (post, term, user) in a must-use plugin on `init`. Use `show_in_rest => true` for anything the Node/JS side must see.
+1. Identify the setup (see `get_blueprint architecture`). WordPress always runs; the admin is WP Admin or a custom app, the frontend is WordPress templating or a custom app. **Classic** (WP Admin + templating) → `classic-wordpress`. **Headless Frontend** (WP Admin + custom frontend) or **Headless Frontend + Admin** → `custom-app`. **Headless Admin** (custom admin + WordPress templating) → `custom-app` + `classic-wordpress`. Default: "build me a website" → Classic, "build me an app" → Headless Frontend + Admin. Ask only if unclear.
+2. Model first. Register post types, taxonomies and **registered meta** (post, term, user) in a must-use plugin on `init`. Set `show_in_rest => true` on anything a custom app reads or writes; post meta also needs the post type to support `custom-fields`.
 3. Permissions come from WordPress capabilities. Never reimplement authorization in the UI only; enforce it in `permission_callback` / `auth_callback` / `current_user_can`.
 4. Custom operations beyond CRUD become **Abilities** (`wp_register_ability`) so they are typed, permissioned and agent-discoverable.
 5. Extend through hooks (`add_action`, `add_filter`). Never edit WordPress core or third-party plugins.
-6. Deployment: WP Engine is preferred but optional. See `get_blueprint wpe-deployment`; keep host-specific code isolated so the app stays portable. WordPress deploys on managed WordPress; a custom app deploys on the Headless Platform or any Node host.
-7. AI features: use the WP Engine AI API via `get_blueprint wpe-ai-experiences`. Keys stay server-side.
+6. Deployment: WP Engine is preferred but optional. See `get_blueprint wpe-deployment`; keep host-specific code isolated so the app stays portable. WordPress runs on WP Engine managed WordPress; a custom app runs on the Headless Platform or any Node host.
+7. AI features: use the Cloud AI API via `get_blueprint ai-features`. Keys stay server-side.
 8. Verify with **WP-CLI** (`wp post-type list`, `wp eval`, `wp user application-password create`, `wp post create --porcelain`) and real HTTP requests against a local or staging WordPress, not by reading code. On WP Engine, run WP-CLI in the sandboxed SSH session: `ssh <env>@<env>.ssh.wpengine.net "cd /sites/<env> && wp ..."` (10-minute sessions, only the site folder persists). See `get_blueprint wp-cli-for-agents`. Use `--format=json` / `--porcelain`, and never run destructive commands on shared environments without approval.
 
 ## Hard rules
-- Sanitize input, validate against schema, escape output. Use `$wpdb->prepare()` for any SQL.
+- Sanitize input, validate it against the REST or ability schema, escape output. Use `$wpdb->prepare()` for any SQL.
 - Check `since` on every API you use against the target WordPress version; guard newer APIs with `function_exists()`.
 - Register on the right hook (`init` for types and meta, `rest_api_init` for routes, `wp_abilities_api_init` for abilities).
-- Don't flush rewrite rules on every request; do it on activation.
+- Flush rewrite rules once after changing post types or rewrite rules (`wp rewrite flush`), never on every request. Must-use plugins have no activation hook.
 - Secrets (application passwords, `wpe_` keys) never go to browser code or version control.
-- Prefer WordPress core APIs over custom tables or custom auth.
+- Prefer the Core Runtime API over custom tables or custom auth.

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Proven web server: serves the built site (site/dist) plus /mcp and /api/<tool>.
+// Proven Lab web server: serves the built site (site/dist) plus /mcp and /api/<tool>.
 // Zero framework. Listens on PORT (WP Engine Headless Platform expects 8080 or 3000).
 import { createServer } from 'node:http';
 import { createReadStream } from 'node:fs';
@@ -54,5 +54,5 @@ export function createApp() {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const port = Number(process.env.PORT) || 8080;
-  createApp().listen(port, '0.0.0.0', () => console.log(`Proven listening on :${port}`));
+  createApp().listen(port, '0.0.0.0', () => console.log(`Proven Lab listening on :${port}`));
 }

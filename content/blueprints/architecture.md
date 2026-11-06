@@ -1,6 +1,7 @@
 ---
+nav: "Architecture"
 title: "Architecture: one WordPress runtime, your choice of admin and frontend"
-summary: WordPress is the PHP runtime and its API does the work. Admin and frontend each run inside WordPress or as a separate custom app. The AI API runs on its own infrastructure and powers the agents.
+summary: WordPress always runs, and its Core Runtime API does the work. The admin and the frontend each run inside WordPress or as a separate custom app. The Cloud AI API runs on its own infrastructure and provides models, search and agents.
 ---
 
 # Architecture
@@ -15,7 +16,7 @@ Two runtimes, two choices.
   FRONTEND      │ Custom app         │ or  │ WordPress templating              │
   DATA & LOGIC  │ REST · Abilities ──┼────►│ Core Runtime API · WP-CLI         │
                 └─────────┬──────────┘     └─────────────────┬─────────────────┘
-                          ▼                                  ▼ content sync · site link · Abilities
+                          ▼                                  ▼ content sync · site connection · Abilities
                 ┌─────────────────────────────────────────────────────────────────┐
   AI            │ AI API · its own AI infrastructure · powers the agents          │
                 │ Gateway · Knowledge base · Agents & sessions                    │
@@ -24,9 +25,9 @@ Two runtimes, two choices.
 ```
 <!-- diagram:end -->
 
-## 1. WordPress is the PHP runtime
+## 1. WordPress always runs
 
-It is always there. The WordPress API (the **Core Runtime API**) handles the data model, users, permissions, hooks and actions, whichever admin and frontend you choose. Agents drive it with **WP-CLI**.
+WordPress runs on PHP in every setup. Its **Core Runtime API** (Proven Lab's name for the WordPress core PHP APIs) handles the data model, users, permissions and hooks (actions and filters), whichever admin and frontend you choose. Coding agents drive it with **WP-CLI**.
 
 ## 2. Admin: inside WordPress or a separate app
 
@@ -44,15 +45,15 @@ It is always there. The WordPress API (the **Core Runtime API**) handles the dat
 
 Running the admin or the frontend as a separate app is what *headless* means here: **Headless Frontend**, **Headless Admin**, or both.
 
-## 4. The AI API powers the agents
+## 4. The AI API provides models, search and agents
 
-The AI API runs on WP Engine's AI infrastructure, not inside WordPress. It provides the model gateway, the knowledge base for search, and agents with sessions. It talks to WordPress where needed: indexing content into the knowledge base, connecting the site, and calling Abilities.
+The Cloud AI API runs on WP Engine's infrastructure, not inside WordPress. It provides the gateway to models, the knowledge base for search, and agents with sessions for the AI features you build. It works with WordPress where needed: your code indexes content into the knowledge base, and the WP Engine AI plugin connects the site so WP Engine AI can use its Abilities.
 
-**On WP Engine, agents also get a shell.** When WordPress is deployed on WP Engine, agents can run commands in a sandboxed SSH session next to the site and use WP-CLI directly: inspect, seed, update and verify the live site without a browser. See `wpe-deployment`.
+**On WP Engine, coding agents can also use WP-CLI on the deployed site.** They run commands in a sandboxed SSH session next to the site (WP Engine SSH Gateway): inspect, seed, update and verify without a browser. See `wpe-deployment`.
 
 ## The four setups
 
-| Setup | Admin | Frontend | Runtimes to deploy | Blueprint |
+| Setup | Admin | Frontend | Runtimes | Blueprint |
 |---|---|---|---|---|
 | **Classic** | WP Admin | WordPress templating | WordPress | `classic-wordpress` |
 | **Headless Frontend** | WP Admin | Custom app | WordPress + your app | `custom-app` |

@@ -1,6 +1,6 @@
-// HTTP surface shared by the standalone MCP server and the Proven web server:
+// HTTP surface shared by the standalone MCP server and the Proven Lab web server:
 //   /mcp           streamable-HTTP MCP (stateless)
-//   /api/<tool>    plain REST mirror of every tool (see dist/openapi/kit-api.yaml)
+//   /api/<tool>    plain REST mirror of every tool (see dist/openapi/provenlab-api.yaml)
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createServer } from './server.mjs';
 import { callTool } from './core.mjs';

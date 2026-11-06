@@ -1,21 +1,22 @@
 ---
+nav: "Classic"
 title: "Classic: WP Admin and WordPress templating"
 summary: Everything runs in the WordPress runtime. Editors use WP Admin, and WordPress renders the frontend with its PHP templates. The simplest setup, one runtime to deploy.
 ---
 
 # Classic: WP Admin and WordPress templating
 
-**Admin:** WP Admin · **Frontend:** WordPress templating · **Runtimes:** WordPress only.
+**Admin:** WP Admin · **Frontend:** WordPress templating · **Runtimes:** WordPress.
 
-Pick this for "build me a website": content-led, SEO first, fewest moving parts. To swap the admin or the frontend for a custom app later (Headless Admin, Headless Frontend), see `custom-app`; the data model does not change.
+Pick this for "build me a website": content-led, server-rendered pages, fewest moving parts. To swap the admin or the frontend for a custom app later (Headless Admin, Headless Frontend), see `custom-app`; the data model does not change.
 
 ## 1. Define the model
 
-Same as every setup: a must-use plugin in `wp-content/mu-plugins/` that registers post types, taxonomies and fields on `init` (`register_post_type`, `register_taxonomy`, `register_post_meta`, `register_meta`). WP Admin picks them up automatically: `show_ui` comes from `public`, and fields appear in the editor when the post type supports `custom-fields`.
+Same as every setup: a must-use plugin in `wp-content/mu-plugins/` that registers post types, taxonomies and fields on `init` (`register_post_type`, `register_taxonomy`, `register_post_meta`, `register_meta`). WP Admin lists the post type automatically (`show_ui` defaults to the value of `public`). Set `show_in_rest => true` on post types and taxonomies so the block editor can edit them; without it the post type falls back to the classic editor. Registered meta has no editing UI by default: add one with `add_meta_box()`, a block editor sidebar panel, or block bindings.
 
 ## 2. Render with the template hierarchy
 
-A theme (block theme or classic PHP theme) renders each page. WordPress picks the template from the hierarchy: `single-{post_type}.php`, `archive-{post_type}.php`, `page.php`, `index.php`, plus `template-parts/*`.
+A theme (block theme or classic PHP theme) renders each page. WordPress picks the template from the template hierarchy, for example `single-{post_type}.php`, `archive-{post_type}.php` (only if the post type sets `has_archive`), `page.php`, then `index.php`. Reusable partials go in `template-parts/` and load with `get_template_part()`.
 
 ```php
 <?php
@@ -39,7 +40,7 @@ Escape on output (`esc_html`, `esc_attr`, `esc_url`, `wp_kses_post`) and sanitiz
 
 ## 3. Add AI
 
-Call the AI API from PHP with the WordPress AI Client (`wp_ai_client_prompt`) or `wp_remote_post`, and keep the knowledge base in sync from `save_post`. See `wpe-ai-experiences`.
+Call the Cloud AI API from PHP with the WordPress AI Client (`wp_ai_client_prompt`) or `wp_remote_post`, and keep the knowledge base in sync from `save_post`. See `ai-features`.
 
 ## 4. Verify with WP-CLI
 

@@ -7,4 +7,4 @@ const port = process.env.PORT || 8787;
 createHttp(async (req, res) => {
   const url = new URL(req.url, 'http://x');
   if (!(await kitHandler(req, res, url))) json(res, 404, { error: 'not found', mcp: '/mcp' });
-}).listen(port, () => console.error(`proven mcp on :${port}`));
+}).listen(port, () => console.error(`provenlab mcp on :${port}`));
