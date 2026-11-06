@@ -1,17 +1,31 @@
-# Use your agent
+# Start building
 
-Proven Lab runs at `{{BASE}}`. No account, API key or install is needed.
+Build with the coding agent you already use. Nothing to install, no account or API key for Proven Lab.
 
-## Just ask
+## 1. Open your agent
 
-Give any coding agent that can fetch URLs your request and the Proven Lab URL. Describe what you want in your own words; the URL is the only part that matters.
+Any coding agent that can read web pages works:
 
-**Start a new app**
+- **Claude Code**, in the terminal, the desktop app or your editor
+- **Codex**, in the terminal, the app or your editor
+- **Cursor**, **GitHub Copilot**, **Gemini CLI**, **Windsurf**, or the agent built into your editor
+
+## 2. Describe what you want, and add the Proven Lab link
+
+Write your request in your own words and end it with the link:
 
 ```text
 Build a members directory.
 Use Proven Lab: {{BASE}}
 ```
+
+## 3. Answer a few questions
+
+Your agent reads the Proven Lab instructions, asks what it needs (the kind of site, where to build it), builds it, and shows you the result. You sign in where needed and approve before anything goes live.
+
+## Example requests
+
+**A new app**
 
 ```text
 Build a booking app for my yoga studio, with class schedules, member
@@ -25,7 +39,7 @@ tracks client projects, deadlines and invoices.
 Use Proven Lab: {{BASE}}
 ```
 
-**Add a feature to a website you already run on WordPress**
+**A feature for a website you already run on WordPress**
 
 ```text
 I have a website on WordPress. Create a recipe feature: ingredients and
@@ -47,13 +61,6 @@ suggest categories and tags when I save them.
 Use Proven Lab: {{BASE}}
 ```
 
-```text
-I have a WordPress site for my hardware store. Add an assistant that
-answers questions about our products and opening hours from the content
-already on the site.
-Use Proven Lab: {{BASE}}
-```
-
 **Not a developer? Nothing to install**
 
 ```text
@@ -72,7 +79,7 @@ staging on every push, with production after I approve.
 Use Proven Lab: {{BASE}}
 ```
 
-**Work on a site hosted on WP Engine**
+**A site hosted on WP Engine**
 
 ```text
 My site is hosted on WP Engine. On staging, add an events section with
@@ -80,66 +87,31 @@ a calendar and RSVPs, then show me before anything goes to production.
 Use Proven Lab: {{BASE}}
 ```
 
-The agent reads the playbook at `{{BASE}}/AGENTS.md`, asks you which setup you want, and looks up exact signatures, blueprints and WP-CLI commands by calling the tools over HTTP, for example `{{BASE}}/api/get_function?name=register_meta`. Everything below is optional: it makes lookups faster and keeps the playbook in your project.
+## Optional: connect Proven Lab to your agent
 
-## 1. Connect the MCP server
+Not needed to start. Connecting makes lookups faster and keeps the instructions in your project.
 
-Optional. One command or one config entry, no files in your project.
-
-```bash
-claude mcp add --transport http provenlab {{MCP_URL}}
-```
-
-That is for Claude Code; add `--scope project` to share it with your team through `.mcp.json`. Other clients:
-
-| Client | Configuration |
-|---|---|
-| Cursor | `.cursor/mcp.json`: `{"mcpServers": {"provenlab": {"url": "{{MCP_URL}}"}}}` |
-| VS Code | `.vscode/mcp.json`: `{"servers": {"provenlab": {"type": "http", "url": "{{MCP_URL}}"}}}` |
-| Any client with streamable HTTP | Server name `provenlab`, URL `{{MCP_URL}}` |
-| No MCP support | Call the tools over HTTP: `curl "{{BASE}}/api/get_function?name=register_meta"` |
-
-## 2. Add the kit to a project
-
-Optional. The kit makes every agent that opens the project follow the same playbook: `AGENTS.md` (read by most coding agents), `CLAUDE.md` (imports `AGENTS.md` for Claude Code), MCP configs for Claude Code, Cursor and VS Code, and a Claude Code skill.
-
-Ask your agent:
-
-```text
-Set up Proven Lab in this project by following {{BASE}}/kit/SETUP.md
-```
-
-Or run the installer in the project root. It adds missing files and leaves existing ones alone:
-
-```bash
-curl -fsSL {{BASE}}/install.sh | sh
-```
-
-Once the npm package is published, `npx @provenlab/mcp init` does the same and also merges existing MCP configs.
-
-## 3. Claude Code plugin
-
-Optional. One install adds the MCP server, the `provenlab` skill and two commands, `/provenlab:new-app` and `/provenlab:setup-project`:
+**Claude Code:** install the plugin (Proven Lab tools, skill and `/provenlab:new-app`):
 
 ```text
 /plugin install provenlab --marketplace ThierryA/proven-lab
 ```
 
-The plugin and its marketplace are in the public GitHub repository [ThierryA/proven-lab](https://github.com/ThierryA/proven-lab). To add the marketplace first and install later: `/plugin marketplace add ThierryA/proven-lab`, then `/plugin install provenlab@provenlab`.
+Or add only the tools: `claude mcp add --transport http provenlab {{MCP_URL}}` (add `--scope project` to share it with your team).
 
-## Other formats
+**Other agents:** add an MCP server named `provenlab` with the URL `{{MCP_URL}}`:
 
-- **OpenAI and Anthropic function calling:** load `{{BASE}}/tools/openai.json` or `{{BASE}}/tools/anthropic.json` and send each call to `GET` or `POST {{BASE}}/api/<tool>`.
-- **OpenAPI** (for example, GPT Actions): `{{BASE}}/openapi/provenlab-api.yaml`. The Cloud AI API spec is at `{{BASE}}/openapi/cloud-ai-api.yaml`.
-- **Plain text for context windows:** `{{BASE}}/llms.txt` (index), `{{BASE}}/llms-full.txt` (everything), `{{BASE}}/AGENTS.md` (playbook).
-
-## Tools
-
-| Tool | Use |
+| Agent | Configuration |
 |---|---|
-| `list_domains` / `get_domain` | Core API grouped by task area |
-| `search_docs` | Keyword search across functions, classes, hooks, handbooks, WP-CLI and Cloud AI API docs |
-| `get_function` / `get_class` / `get_hook` | Exact signatures, parameters and source location |
-| `list_cli_commands` / `get_cli_command` | WP-CLI commands with synopsis and options |
-| `list_blueprints` / `get_blueprint` | End-to-end guides |
-| `list_ai_operations` / `get_ai_operation` | Cloud AI API operations |
+| Cursor | `.cursor/mcp.json`: `{"mcpServers": {"provenlab": {"url": "{{MCP_URL}}"}}}` |
+| VS Code (GitHub Copilot) | `.vscode/mcp.json`: `{"servers": {"provenlab": {"type": "http", "url": "{{MCP_URL}}"}}}` |
+| Any agent with remote MCP | Server name `provenlab`, URL `{{MCP_URL}}` |
+
+**Keep the instructions in a project:** ask your agent `Set up Proven Lab in this project by following {{BASE}}/kit/SETUP.md`, or run `curl -fsSL {{BASE}}/install.sh | sh` in the project folder. It adds `AGENTS.md` (read by most coding agents), `CLAUDE.md`, MCP configs and a Claude Code skill, and leaves existing files alone (or `npx @provenlab/mcp init` once the package is published).
+
+## For tool builders
+
+- **Tools over HTTP:** `GET {{BASE}}/api/<tool>?<args>`, for example `{{BASE}}/api/get_function?name=register_meta`.
+- **Function calling:** `{{BASE}}/tools/openai.json` and `{{BASE}}/tools/anthropic.json`; **OpenAPI:** `{{BASE}}/openapi/provenlab-api.yaml`.
+- **Plain text:** `{{BASE}}/llms.txt`, `{{BASE}}/llms-full.txt` and `{{BASE}}/AGENTS.md`.
+- Tools: `list_domains`, `get_domain`, `search_docs`, `get_function`, `get_class`, `get_hook`, `list_cli_commands`, `get_cli_command`, `list_blueprints`, `get_blueprint`, `list_ai_operations`, `get_ai_operation`.

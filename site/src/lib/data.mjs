@@ -13,7 +13,7 @@ const pkgRoot = JSON.parse(readFileSync(join(process.cwd(), '..', 'package.json'
 export const BASE = (process.env.SITE_URL || pkgRoot.homepage || '').replace(/\/$/, '');
 // The docs menu follows the runbook in AGENTS.md: one group per step, guides in the order agents use them.
 export const RUNBOOK = [
-  { title: 'Start', pages: [['Use your agent', '/docs/connect']] },
+  { title: 'Start', pages: [['Start building', '/docs/connect']] },
   { title: '1 · Plan', slugs: ['architecture'] },
   { title: '2 · Workspace', slugs: ['local-development', 'wpengine-cloud'] },
   { title: '3 · Build', slugs: ['classic-wordpress', 'custom-app'] },

@@ -6,7 +6,7 @@ import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
 export function getStaticPaths() {
   return [...blueprints().map((b) => ({ params: { slug: b.slug }, props: { kind: 'Guide', slug: b.slug, title: b.title, does: b.agent_does, you: b.you_do, md: b.md.replace(/^\s*# .*\n/, '') } })),
     ...overviews().map((o) => ({ params: { slug: o.slug }, props: { kind: 'Overview', slug: o.slug, title: o.title, md: o.md } })),
-    { params: { slug: 'connect' }, props: { kind: 'Guide', title: 'Use your agent', md: connectMd() } }];
+    { params: { slug: 'connect' }, props: { kind: 'Guide', title: 'Start building', md: connectMd() } }];
 }
 const { kind, slug, title, md, does, you } = Astro.props;
 // Guides show people a short summary; the full instructions (what agents read) sit below, collapsed.
@@ -27,7 +27,7 @@ const prose = 'prose prose-lab';
       <div class="border-r border-b border-line p-5"><p class="label">What your agent does</p><ul class="mt-3 space-y-2 text-[14px] leading-relaxed">{does.map((d) => <li class="flex gap-2"><span class="text-signal">›</span><span>{d}</span></li>)}</ul></div>
       <div class="border-r border-b border-line p-5"><p class="label">What you do</p><ul class="mt-3 space-y-2 text-[14px] leading-relaxed text-fg">{you.map((d) => <li class="flex gap-2"><span class="text-fg-3">·</span><span>{d}</span></li>)}</ul></div>
     </div>
-    <p class="mt-4 text-[13px] text-fg-3">You don't run any of the steps below: your agent reads them and does the work. <a class="text-fg-2 underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/connect">Use your agent</a></p>
+    <p class="mt-4 text-[13px] text-fg-3">You don't run any of the steps below: your agent reads them and does the work. <a class="text-fg-2 underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/connect">Start building</a></p>
   </>}
   {isGuide
     ? <details class="agent-steps mt-10 border-t border-line pt-6" open={openByDefault || undefined}>
