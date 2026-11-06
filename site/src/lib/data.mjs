@@ -11,10 +11,9 @@ export const stats = () => rj('stats.json');
 export const domainMd = (slug) => readFileSync(dist('domains', `${slug}.md`), 'utf8');
 const pkgRoot = JSON.parse(readFileSync(join(process.cwd(), '..', 'package.json'), 'utf8'));
 export const BASE = (process.env.SITE_URL || pkgRoot.homepage || '').replace(/\/$/, '');
-export const runbookMd = () => readFileSync(dist('AGENTS.md'), 'utf8');
 // The docs menu follows the runbook in AGENTS.md: one group per step, guides in the order agents use them.
 export const RUNBOOK = [
-  { title: 'Start', pages: [['Use your agent', '/docs/connect'], ['Runbook for agents', '/docs/runbook']] },
+  { title: 'Start', pages: [['Use your agent', '/docs/connect']] },
   { title: '1 · Plan', slugs: ['architecture'] },
   { title: '2 · Workspace', slugs: ['local-development', 'wpengine-cloud'] },
   { title: '3 · Build', slugs: ['classic-wordpress', 'custom-app'] },
@@ -24,7 +23,7 @@ export const RUNBOOK = [
 ];
 export const runbookGroups = () => RUNBOOK.map((g) => ({
   title: g.title,
-  items: g.pages ? g.pages.map(([label, href]) => ({ label, href })) : g.slugs.map((slug) => blueprints().find((b) => b.slug === slug)).filter(Boolean).map((b) => ({ label: b.nav || b.title, href: `/docs/${b.slug}`, summary: b.summary })),
+  items: g.pages ? g.pages.map(([label, href]) => ({ label, href })) : g.slugs.map((slug) => blueprints().find((b) => b.slug === slug)).filter(Boolean).map((b) => ({ label: b.nav || b.title, href: `/docs/${b.slug}`, summary: (b.agent_does || []).join(' ') || b.summary })),
 }));
 export const connectMd = () => readFileSync(join(process.cwd(), 'src', 'content', 'connect.md'), 'utf8').replaceAll('{{BASE}}', BASE).replaceAll('{{MCP_URL}}', `${BASE}/mcp`);
 export const GROUP_ORDER = ['Data model', 'Data access', 'Users & access', 'Extension', 'Rendering', 'Interfaces', 'Services'];

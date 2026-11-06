@@ -22,7 +22,7 @@ test('healthz', async () => { const r = await get('/healthz'); assert.equal(r.st
 test('pages render with the right content', async () => {
   const cases = [
     ['/', 'text/html', ['Why pay agents to rebuild a battle-tested platform', 'data-hero-term', 'current industry', 'the fix: ', 'One application layer', 'data-setup="classic"', 'WP Admin', 'WordPress templating', 'Core API', 'WP-CLI', 'Deployment', 'optional']],
-    ['/docs', 'text/html', ['Documentation', 'runbook', '6 · Ship', 'Core API', 'AI API', 'WP-CLI']],
+    ['/docs', 'text/html', ['Documentation', 'six steps', '6 · Ship', 'Core API', 'AI API', 'WP-CLI']],
     ['/docs/api/fields', 'text/html', ['register_meta', 'Fields (Meta)']],
     ['/docs/api/abilities', 'text/html', ['wp_register_ability']],
     ['/docs/cli/post', 'text/html', ['wp post create']],
@@ -55,7 +55,7 @@ test('pages render with the right content', async () => {
 test('sidebar follows the runbook steps, then Core API, WP-CLI and Cloud AI API; no Platform; non-tool groups set apart', async () => {
   const page = await (await get('/docs/api/fields')).text();
   const html = page.slice(page.indexOf('<aside'), page.indexOf('</aside>'));
-  let from = 0; const order = ['Runbook', '1 · Plan', '2 · Workspace', '3 · Build', '4 · AI', '5 · Verify', '6 · Ship', 'Core API', 'WP-CLI', 'Cloud AI API'].map((t) => (from = html.indexOf(t, from)));
+  let from = 0; const order = ['How it works', '1 · Plan', '2 · Workspace', '3 · Build', '4 · AI', '5 · Verify', '6 · Ship', 'Core API', 'WP-CLI', 'Cloud AI API'].map((t) => (from = html.indexOf(t, from)));
   assert.ok(order.every((i, k) => i > -1 && (k === 0 || i > order[k - 1])), `section order ${order}`);
   assert.ok(!/>\s*Platform\s*</.test(html) && !html.includes('WP Engine AI API'));
   const ai = html.slice(html.lastIndexOf('Cloud AI API'));

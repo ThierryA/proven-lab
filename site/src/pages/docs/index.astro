@@ -8,8 +8,8 @@ const row = 'grid grid-cols-[minmax(0,14rem)_1fr] gap-6 border-b border-line py-
 <Docs title="Docs">
   <p class="label">Documentation</p>
   <h1 class="mt-4 text-4xl font-medium tracking-tight text-fg">Build on WordPress with a coding agent.</h1>
-  <p class="mt-4 max-w-2xl">Agents follow one runbook in six steps, whether the user is a professional developer or has never written code. Each step has one guide; the Core API, WP-CLI and Cloud AI API references below give the exact details.</p>
-  <p class="mt-4 text-[14px]"><a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/runbook">Read the runbook</a> · <a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/connect">Use your agent</a></p>
+  <p class="mt-4 max-w-2xl">Describe what you want and your agent does the rest, in six steps. You only sign in, answer a few questions and approve before anything goes live. Developers and non-developers alike.</p>
+  <p class="mt-4 text-[14px]"><a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/connect">Use your agent</a></p>
 
   {runbookGroups().filter((g) => g.title !== 'Start').map((g) => <><h2 class="label mt-10">{g.title}</h2><div class="mt-2 border-t border-line">{g.items.map((i) => <a class={row} href={i.href}><span class="text-fg">{i.label}</span><span>{i.summary}</span></a>)}</div></>)}
 
