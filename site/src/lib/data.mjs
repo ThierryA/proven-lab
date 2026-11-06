@@ -24,7 +24,7 @@ export function sidebar() {
     return Object.entries(tags).map(([title, items]) => ({ title, items })).sort((a, b) => ACCOUNT.indexOf(a.title) - ACCOUNT.indexOf(b.title));
   };
   return {
-    guides: [...['architecture', 'local-development', 'hosted-sites', 'classic-wordpress', 'custom-app', 'best-practices', 'wpe-ai-plugins', 'ai-features'].map((slug) => blueprints().find((b) => b.slug === slug)).filter(Boolean).map((b) => ({ label: b.nav || b.title, href: `/docs/${b.slug}` })), { label: 'Connect your agent', href: '/docs/connect' }],
+    guides: [...['architecture', 'local-development', 'hosted-sites', 'classic-wordpress', 'custom-app', 'best-practices', 'wpe-ai-plugins', 'ai-features'].map((slug) => blueprints().find((b) => b.slug === slug)).filter(Boolean).map((b) => ({ label: b.nav || b.title, href: `/docs/${b.slug}` })), { label: 'Use your agent', href: '/docs/connect' }],
     core: groups,
     cli: [{ title: 'Commands', items: cli().tops.map((t) => ({ label: `wp ${t.top}`, href: `/docs/cli/${t.top}` })) }],
     ai: byTag('ai').filter((g) => !ACCOUNT.includes(g.title)),

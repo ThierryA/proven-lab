@@ -7,6 +7,7 @@ import { stats as getStats, wpe } from '../lib/data.mjs';
 import { TOOLS } from '../../../packages/mcp-server/src/tools.mjs';
 const s = getStats();
 const mcpUrl = new URL('/mcp', Astro.site).href;
+const home = new URL('/', Astro.site).href.replace(/\/$/, '');
 const fmt = (n) => n.toLocaleString('en-US');
 const aiOps = wpe().operations.length;
 
@@ -54,9 +55,14 @@ const section = 'mx-auto grid max-w-[80rem] gap-x-12 gap-y-6 border-t border-lin
   <p class="text-[17px] leading-relaxed">
     Let agents leverage the most widely used open-source website platform, with more than twenty years of collective intelligence. Proven Lab gives coding agents the exact framework to build new or update existing applications that are <em class="text-signal">reliable</em>, <em class="text-signal">secure</em> and <em class="text-signal">scalable</em>, more <em class="text-signal">efficiently</em> and at <em class="text-signal">lower cost</em>.
   </p>
-  <div class="mt-10 flex flex-wrap items-center gap-6">
-    <a href="/docs/connect" class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Connect your agent</a>
-    <a href="/docs/architecture" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">How it fits together</a>
+  <div class="mt-10" data-prompt>
+    <p class="label">Paste into your agent · nothing to install</p>
+    <p class="mt-3 flex gap-2 border border-line-2 bg-ink-2 px-4 py-3 font-mono text-[13px] leading-relaxed text-fg"><span class="text-signal">›</span> <span class="min-w-0 [overflow-wrap:anywhere]" data-prompt-text>Build a members directory with Proven Lab: <span class="block text-fg-2">{home}</span></span></p>
+    <p class="mt-3 text-[13px] leading-relaxed text-fg-3">For agents: read <a class="font-mono text-fg-2 underline decoration-line-2 underline-offset-4 hover:decoration-signal" href={`${home}/AGENTS.md`}>/AGENTS.md</a>, then call any tool at <a class="font-mono text-fg-2 underline decoration-line-2 underline-offset-4 hover:decoration-signal" href={`${home}/api/list_blueprints`}>/api/&lt;tool&gt;</a>. No install, account or API key.</p>
+    <div class="mt-6 flex flex-wrap items-center gap-6">
+      <button type="button" data-copy-prompt class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Use your agent</button>
+      <a href="/docs/connect" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">More ways to connect</a>
+    </div>
   </div>
   </div>
   <div class="min-w-0"><HeroTerminal /></div>
@@ -137,14 +143,16 @@ const section = 'mx-auto grid max-w-[80rem] gap-x-12 gap-y-6 border-t border-lin
       <ol class="min-w-0 border-t border-line">
         {steps.map(([h, p], i) => <li class="grid grid-cols-[3rem_1fr] border-b border-line py-4"><span class="label pt-0.5">0{i + 1}</span><div><p class="text-fg">{h}</p><p class="mt-1 text-[14px]">{p}</p></div></li>)}
       </ol>
-      <pre class="min-w-0 self-start overflow-x-auto border border-line bg-ink-2 p-5 font-mono text-[12.5px] leading-7 text-fg-2"><span class="text-fg-3"># add Proven Lab to Claude Code</span>
-<span class="text-signal">$</span> claude mcp add --transport http provenlab \
-    {mcpUrl}
+      <pre class="min-w-0 self-start overflow-x-auto border border-line bg-ink-2 p-5 font-mono text-[12.5px] leading-7 text-fg-2"><span class="text-fg-3"># no install: give your agent the URL</span>
+<span class="text-fg-3">user ›</span> Build a Node app with its own admin
+        with Proven Lab: {home}
+<span class="text-fg">agent</span> GET {home}/AGENTS.md
+<span class="text-fg">agent</span> GET /api/get_blueprint?slug=architecture
+<span class="text-fg">agent</span> GET /api/get_function?name=register_meta
 
-<span class="text-fg-3">user ›</span> Build a Node app with its own admin.
-<span class="text-fg">agent</span> get_blueprint("architecture")
-<span class="text-fg">agent</span> get_function("register_meta")
-<span class="text-fg">agent</span> get_cli_command("post-type list")</pre>
+<span class="text-fg-3"># optional: connect the MCP server</span>
+<span class="text-signal">$</span> claude mcp add --transport http provenlab \
+    {mcpUrl}</pre>
     </div>
     <div class="mt-12 border-t border-line">
       {formats.map(([k, v, href]) => <a href={href} class="grid grid-cols-[9rem_1fr_auto] items-baseline gap-6 border-b border-line py-4 text-[14px] hover:bg-ink-2"><span class="font-mono text-[12px] text-fg">{k}</span><span>{v}</span><span class="text-fg-3">→</span></a>)}
@@ -158,11 +166,23 @@ const section = 'mx-auto grid max-w-[80rem] gap-x-12 gap-y-6 border-t border-lin
 <section class="mx-auto max-w-[80rem] px-5 py-20 sm:px-8">
   <h2 class="max-w-3xl text-[clamp(1.8rem,3.6vw,3rem)] font-medium leading-tight tracking-[-0.03em] text-fg">Build on a proven platform, not from scratch.</h2>
   <div class="mt-8 flex flex-wrap items-center gap-6">
-    <a href="/docs/connect" class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Connect your agent</a>
+    <button type="button" data-copy-prompt class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Use your agent</button>
     <a href="/docs" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">Browse the docs</a>
   </div>
 </section>
 </div>
 
 
+<script>
+  // "Use your agent" copies the starter prompt; paste it into any coding agent.
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-copy-prompt]')) {
+    const label = btn.textContent;
+    btn.addEventListener('click', async () => {
+      const text = document.querySelector('[data-prompt-text]')?.textContent || '';
+      try { await navigator.clipboard.writeText(text); btn.textContent = 'Copied. Paste it into your agent'; }
+      catch { document.querySelector('[data-prompt]')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      setTimeout(() => { btn.textContent = label; }, 2600);
+    });
+  }
+</script>
 </Base>

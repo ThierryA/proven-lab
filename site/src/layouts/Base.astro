@@ -8,7 +8,7 @@ import { stats } from '../lib/data.mjs';
 const { title = 'Proven Lab', description = 'Docs, an MCP server and tool schemas that let coding agents build on WordPress core, WP-CLI and the Cloud AI API.' } = Astro.props;
 const s = stats();
 const path = Astro.url.pathname;
-const links = [['Docs', '/docs'], ['Architecture', '/docs/architecture'], ['Connect', '/docs/connect']];
+const links = [['Docs', '/docs'], ['Architecture', '/docs/architecture'], ['Use your agent', '/docs/connect']];
 ---
 <!doctype html>
 <html lang="en" class="antialiased">
@@ -17,7 +17,7 @@ const links = [['Docs', '/docs'], ['Architecture', '/docs/architecture'], ['Conn
   <title>{title}</title><meta name="description" content={description} />
   <meta name="theme-color" content="#0b0b0c" />
   <link rel="icon" href="/favicon.ico" sizes="any" /><link rel="icon" type="image/svg+xml" href="/favicon.svg" /><link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" /><link rel="alternate" type="text/markdown" href="/AGENTS.md" title="Agent playbook" />
 </head>
 <body class="bg-ink font-sans text-fg-2">
 <header class="sticky top-0 z-40 border-b border-line bg-ink/90 backdrop-blur-sm">

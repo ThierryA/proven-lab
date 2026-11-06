@@ -1,10 +1,20 @@
-# Connect your agent
+# Use your agent
 
-Proven Lab runs at `{{BASE}}`. Everything below uses that server: the MCP endpoint `{{MCP_URL}}`, the same tools over HTTP at `/api/<tool>`, and the kit files at `/kit/`. No account or API key is needed.
+Proven Lab runs at `{{BASE}}`. No account, API key or install is needed.
+
+## Just ask
+
+Give any coding agent that can fetch URLs the request and the Proven Lab URL:
+
+```text
+Build a members directory with Proven Lab: {{BASE}}
+```
+
+The agent reads the playbook at `{{BASE}}/AGENTS.md`, asks you which setup you want, and looks up exact signatures, blueprints and WP-CLI commands by calling the tools over HTTP, for example `{{BASE}}/api/get_function?name=register_meta`. Everything below is optional: it makes lookups faster and keeps the playbook in your project.
 
 ## 1. Connect the MCP server
 
-The fastest way: one command or one config entry, no files in your project.
+Optional. One command or one config entry, no files in your project.
 
 ```bash
 claude mcp add --transport http provenlab {{MCP_URL}}
@@ -21,7 +31,7 @@ That is for Claude Code; add `--scope project` to share it with your team throug
 
 ## 2. Add the kit to a project
 
-The kit makes every agent that opens the project follow the same playbook: `AGENTS.md` (read by most coding agents), `CLAUDE.md` (imports `AGENTS.md` for Claude Code), MCP configs for Claude Code, Cursor and VS Code, and a Claude Code skill.
+Optional. The kit makes every agent that opens the project follow the same playbook: `AGENTS.md` (read by most coding agents), `CLAUDE.md` (imports `AGENTS.md` for Claude Code), MCP configs for Claude Code, Cursor and VS Code, and a Claude Code skill.
 
 Ask your agent:
 
@@ -39,7 +49,7 @@ Once the npm package is published, `npx @provenlab/mcp init` does the same and a
 
 ## 3. Claude Code plugin
 
-One install adds the MCP server, the `provenlab` skill and two commands, `/provenlab:new-app` and `/provenlab:setup-project`:
+Optional. One install adds the MCP server, the `provenlab` skill and two commands, `/provenlab:new-app` and `/provenlab:setup-project`:
 
 ```text
 /plugin install provenlab --marketplace ThierryA/proven-lab

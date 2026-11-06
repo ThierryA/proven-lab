@@ -6,7 +6,7 @@ import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
 export function getStaticPaths() {
   return [...blueprints().map((b) => ({ params: { slug: b.slug }, props: { kind: 'Blueprint', title: b.title, md: `# ${b.title}\n\n` + b.md.replace(/^\s*# .*\n/, '') } })),
     ...overviews().map((o) => ({ params: { slug: o.slug }, props: { kind: 'Overview', slug: o.slug, title: o.title, md: o.md } })),
-    { params: { slug: 'connect' }, props: { kind: 'Guide', title: 'Connect your agent', md: connectMd() } }];
+    { params: { slug: 'connect' }, props: { kind: 'Guide', title: 'Use your agent', md: connectMd() } }];
 }
 const { kind, slug, title, md } = Astro.props;
 const sb = sidebar();

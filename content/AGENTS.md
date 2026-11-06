@@ -6,12 +6,14 @@ You are building an application where **WordPress is the application layer**: da
 
 ## Connect
 
+Nothing to install. If the user only gave you the Proven Lab URL, everything you need is reachable over HTTP; do not ask them to install anything before you start.
+
+- Proven Lab tools over HTTP (no install): `GET {{BASE}}/api/<tool>?<args>`, for example `curl "{{BASE}}/api/get_function?name=register_meta"`, `curl "{{BASE}}/api/get_blueprint?slug=architecture"` or `curl "{{BASE}}/api/search_docs?query=register+user+meta"`. Blueprints are also plain markdown at `{{BASE}}/blueprints/<slug>.md`.
+- Proven Lab MCP server (optional, faster): `{{MCP_URL}}` (streamable HTTP). Claude Code: `claude mcp add --transport http provenlab {{MCP_URL}}`
 - WP Engine MCP server (hosted sites, Abilities, SSH sandbox): `claude mcp add --transport http --scope user wpengine https://api.ai.wpengine.com/v1/mcp`, then authenticate in `/mcp` with a WP Engine account.
-- Proven Lab MCP server (streamable HTTP): `{{MCP_URL}}`. Claude Code: `claude mcp add --transport http provenlab {{MCP_URL}}`
-- No MCP? Every tool is also a plain HTTP call: `GET {{BASE}}/api/<tool>?<args>`, for example `curl "{{BASE}}/api/get_function?name=register_meta"` or `curl "{{BASE}}/api/search_docs?query=register+user+meta"`.
 - Plain-text docs: `{{BASE}}/llms.txt` (index) and `{{BASE}}/llms-full.txt` (everything).
 
-## Tools you have (MCP server `provenlab`)
+## Tools you have (MCP server `provenlab`, or `GET {{BASE}}/api/<tool>`)
 - `list_domains`, `get_domain`: start here to find the right Core API functions, classes and hooks for a task.
 - `search_docs`: keyword search over core functions, classes, methods, hooks, handbooks, WP-CLI commands and WP Engine docs.
 - `get_function`, `get_class`, `get_hook`: exact signatures, parameters, since-versions and source location. **Look up before you write**; never guess argument names.
