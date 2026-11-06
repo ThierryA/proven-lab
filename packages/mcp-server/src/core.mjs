@@ -1,8 +1,11 @@
 import { readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const DIST = process.env.WP_KIT_DIST || join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'dist');
+const here = dirname(fileURLToPath(import.meta.url));
+// Published package ships its data in ./data; in the repo it reads the built dist/.
+const DIST = process.env.PROVEN_DIST || (existsSync(join(here, '..', 'data', 'entities.json')) ? join(here, '..', 'data') : join(here, '..', '..', '..', 'dist'));
 const rj = async (f) => JSON.parse(await readFile(join(DIST, f), 'utf8'));
 
 let state;

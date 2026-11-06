@@ -13,3 +13,4 @@ site/public/tools
 site/public/*.txt
 site/public/*.json
 site/public/AGENTS.md
+packages/mcp-server/data

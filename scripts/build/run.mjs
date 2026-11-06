@@ -121,14 +121,14 @@ await w('AGENTS.md', agentsMd);
 // llms.txt + llms-full.txt
 const site = process.env.SITE_URL || 'https://example.com';
 const llms = [
-  '# WP Agentic Kit', '',
+  '# Proven', '',
   '> Docs and tools for AI agents that build applications on WordPress core APIs (post types, meta, users, hooks, blocks, Abilities, AI Client) combined with the WP Engine AI API (gateway, knowledge base, agents, MCP). Generated from WordPress ' + core.version + ' source and the live WP Engine AI API spec.', '',
   '## Start here', `- [Agent playbook](${site}/AGENTS.md): rules and workflow for agents building WordPress sites`,
   ...blueprints.map((b) => `- [${b.title}](${site}/blueprints/${b.slug}.md): ${b.summary}`), '',
   '## WordPress core API domains', ...domains.map((d) => `- [${d.group}: ${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',
   '## WP-CLI (`wp`): verify, scaffold and administer from the shell', ...cliPages.map((c) => `- [wp ${c.top}](${site}/cli/${c.top}.md): ${c.description}`), '',
   '## AI API and Hosting (WP Engine)', `- [OpenAPI spec](${site}/openapi/wpe-ai.yaml)`, `- [Operations index](${site}/wpe-operations.json)`, ...ops.slice(0, 0), '',
-  '## Machine interfaces', `- MCP server: \`npx wp-agentic-kit-mcp\` (stdio) or ${site}/mcp (streamable HTTP)`, `- Kit API OpenAPI: ${site}/openapi/kit-api.yaml`, `- OpenAI function tools: ${site}/tools/openai.json`, `- Anthropic tools: ${site}/tools/anthropic.json`, '',
+  '## Machine interfaces', `- MCP server: \`npx @proven/mcp\` (stdio) or ${site}/mcp (streamable HTTP)`, `- Kit API OpenAPI: ${site}/openapi/kit-api.yaml`, `- OpenAI function tools: ${site}/tools/openai.json`, `- Anthropic tools: ${site}/tools/anthropic.json`, '',
 ].join('\n');
 await w('llms.txt', llms);
 const wpeOpsMd = '## AI API and Hosting operations (WP Engine)\n\n' + ops.map((o) => `- [${o.section}] \`${o.method} ${o.path}\` **${o.operationId}**: ${o.summary || ''}`).join('\n');
@@ -137,7 +137,7 @@ await w('llms-full.txt', [llms, '\n---\n', agentsMd, ...blueprints.map((b) => `\
 // OpenAPI specs
 await mkdir(join(DIST, 'openapi'), { recursive: true });
 await cp(join(CORPUS, 'wpe/openapi.yaml'), join(DIST, 'openapi/wpe-ai.yaml'));
-const kitApi = { openapi: '3.1.0', info: { title: 'WP Agentic Kit API', version: '0.1.0', description: 'Search and retrieve WordPress core API docs, blueprints and WP Engine AI API operations. Same capabilities as the MCP server.' }, servers: [{ url: site }], paths: {} };
+const kitApi = { openapi: '3.1.0', info: { title: 'Proven API', version: '0.1.0', description: 'Search and retrieve WordPress core API docs, blueprints and WP Engine AI API operations. Same capabilities as the MCP server.' }, servers: [{ url: site }], paths: {} };
 for (const t of TOOLS) {
   const props = t.inputSchema.properties || {};
   kitApi.paths[`/api/${t.name}`] = { get: { operationId: t.name, summary: t.description.split('\n')[0], description: t.description,

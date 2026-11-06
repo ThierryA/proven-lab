@@ -5,7 +5,7 @@ The same knowledge is available in every format agents use.
 ## Claude Code / Claude Desktop (MCP, stdio)
 
 ```bash
-claude mcp add wp-agentic-kit -- npx wp-agentic-kit-mcp
+claude mcp add proven -- npx @proven/mcp
 ```
 
 ## Any MCP client (streamable HTTP)

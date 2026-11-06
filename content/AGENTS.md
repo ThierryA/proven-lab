@@ -2,7 +2,7 @@
 
 You are building an application where **WordPress is the application layer**: data model, users and permissions, validation, hooks, media, cron. The UI may be a Node app (admin and frontend), PHP templates, or both. wp-admin is optional.
 
-## Tools you have (MCP server `wp-agentic-kit`)
+## Tools you have (MCP server `proven`)
 - `list_domains`, `get_domain`: start here to find the right core APIs for a task.
 - `search_docs`: full-text search over core functions, classes, methods, hooks, handbooks and WP Engine docs.
 - `get_function`, `get_class`, `get_hook`: exact signatures, parameters, since-versions and source location. **Look up before you write**; never guess argument names.

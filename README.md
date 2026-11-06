@@ -1,4 +1,4 @@
-# WP Agentic Kit
+# Proven
 
 Developer kit for building AI experiences on **WordPress core APIs** + the **WP Engine AI API**. Agents get exact, current documentation and tools so they can say "create me a Node app on WordPress" and compose proven systems instead of rebuilding them.
 
@@ -25,13 +25,13 @@ npm run mcp:http        # /mcp (streamable HTTP) and /api/<tool>
 cd site && npm run build   # developer site + one-pager
 ```
 
-Add the MCP server to Claude Code: `claude mcp add wp-agentic-kit -- node /path/to/packages/mcp-server/src/index.mjs`
+Add the MCP server to Claude Code: `claude mcp add proven -- node /path/to/packages/mcp-server/src/index.mjs`
 
 ## Outputs (`dist/`)
 `llms.txt`, `llms-full.txt`, `AGENTS.md`, `domains/*.md`, `blueprints/*.md`, `entities.json`, `wpe-operations.json`, `openapi/{kit-api,wpe-ai}.yaml`, `tools/{openai,anthropic}.json`.
 
 ## Roadmap
 - Scheduled GitHub Action running `npm run sync` and publishing
-- Publish `wp-agentic-kit-mcp` to npm; deploy `mcp:http`
+- Publish `@proven/mcp` to npm (needs an npm org named proven); deploy `mcp:http`
 - Index hooks/methods per WP version (`WP_VERSION`) and diff between versions
 - More blueprints (WooCommerce, multisite, auth flows)

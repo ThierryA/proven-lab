@@ -4,7 +4,7 @@ import { TOOLS } from './tools.mjs';
 import { callTool } from './core.mjs';
 
 export function createServer() {
-  const server = new Server({ name: 'wp-agentic-kit', version: '0.1.0' }, { capabilities: { tools: {} } });
+  const server = new Server({ name: 'proven', version: '0.1.0' }, { capabilities: { tools: {} } });
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));
   server.setRequestHandler(CallToolRequestSchema, async ({ params }) => {
     try {

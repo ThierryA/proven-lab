@@ -5,7 +5,7 @@ import TurndownService from 'turndown';
 
 export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const CORPUS = join(ROOT, 'corpus');
-const UA = 'wp-agentic-experiences-ingest/0.1 (+docs sync for AI agents)';
+const UA = 'proven-ingest/0.1 (+docs sync for AI agents)';
 
 export async function fetchRetry(url, { tries = 4, json = false } = {}) {
   for (let i = 0; i < tries; i++) {

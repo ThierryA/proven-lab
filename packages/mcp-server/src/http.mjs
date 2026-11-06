@@ -25,4 +25,4 @@ createHttp(async (req, res) => {
     if (m && TOOLS.some((t) => t.name === m[1])) return json(res, 200, await callTool(m[1], Object.fromEntries(url.searchParams)));
     json(res, 404, { error: 'not found', mcp: '/mcp', tools: TOOLS.map((t) => `/api/${t.name}`) });
   } catch (e) { json(res, 500, { error: String(e.message || e) }); }
-}).listen(process.env.PORT || 8787, () => console.error(`wp-agentic-kit on :${process.env.PORT || 8787}`));
+}).listen(process.env.PORT || 8787, () => console.error(`proven on :${process.env.PORT || 8787}`));
