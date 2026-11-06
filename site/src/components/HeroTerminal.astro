@@ -2,13 +2,17 @@
 // Hero panel: the message as agent sessions in a terminal, looping between building a new app
 // and updating an existing site. The first session is rendered complete on the server
 // (no-JS, reduced motion, crawlers); the script types the sessions at reading pace, in a loop.
-type Row = { kind: 'you' | 'agent' | 'out'; text?: string; html?: string };
+type Row = { kind: 'you' | 'agent' | 'out' | 'label'; text?: string; html?: string };
+const INDUSTRY: Row = { kind: 'label', html: '# current industry' };
+const FIX: Row = { kind: 'label', html: '# the fix: <span class="t-sig">Proven Lab</span>' };
 const sessions: Row[][] = [
   [
     { kind: 'you', text: 'Build me an app with users, content and search.' },
-    { kind: 'agent', text: 'Rebuild auth, roles, admin, REST API and search from scratch?' },
+    INDUSTRY,
+    { kind: 'agent', text: 'Rebuilds auth, roles, admin, REST API and search from scratch.' },
     { kind: 'out', html: '<span class="t-x">✗</span> slow   <span class="t-x">✗</span> costly   <span class="t-x">✗</span> unreviewed' },
-    { kind: 'agent', text: 'Building on the platform instead.' },
+    FIX,
+    { kind: 'agent', text: 'Builds on the platform instead.' },
     { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">Core API    </span> content, users, permissions, hooks, REST' },
     { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">WP-CLI      </span> every step verified from the shell' },
     { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">Cloud AI API</span> models, search and agents, no API key' },
@@ -17,9 +21,11 @@ const sessions: Row[][] = [
   ],
   [
     { kind: 'you', text: 'Add a members area to my existing site.' },
-    { kind: 'agent', text: 'Rewrite the site in a new stack first?' },
+    INDUSTRY,
+    { kind: 'agent', text: 'Rewrites the site in a new stack first.' },
     { kind: 'out', html: '<span class="t-x">✗</span> migration   <span class="t-x">✗</span> lost content   <span class="t-x">✗</span> downtime' },
-    { kind: 'agent', text: 'Extending what is already there instead.' },
+    FIX,
+    { kind: 'agent', text: 'Extends what is already there instead.' },
     { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">Core API    </span> roles, capabilities, user fields' },
     { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">WP-CLI      </span> checked on staging before production' },
     { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">Cloud AI API</span> member search over your content' },
@@ -38,8 +44,8 @@ const prompt = { you: 'you ›', agent: 'agent ›' } as const;
     <div class="t-screen space-y-1.5 px-5 py-5 font-mono text-[12px] leading-[1.7] sm:text-[13px]" data-term-screen>
       {sessions[0].map((r) => (
         <div class={`t-row t-${r.kind}`}>
-          {r.kind !== 'out' && <span class="t-prompt">{prompt[r.kind]}</span>}
-          {r.kind === 'out' ? <span class="t-body" set:html={r.html} /> : <span class="t-body">{r.text}</span>}
+          {(r.kind === 'you' || r.kind === 'agent') && <span class="t-prompt">{prompt[r.kind]}</span>}
+          {r.html ? <span class="t-body" set:html={r.html} /> : <span class="t-body">{r.text}</span>}
         </div>
       ))}
     </div>
@@ -47,10 +53,11 @@ const prompt = { you: 'you ›', agent: 'agent ›' } as const;
 </figure>
 
 <style is:global>
-  .hero-term .t-screen { min-height: 19.5em; transition: opacity 0.6s ease; }
+  .hero-term .t-screen { min-height: 23.5em; transition: opacity 0.6s ease; }
   .hero-term .t-screen.is-clearing { opacity: 0; }
   .hero-term .t-row { display: flex; gap: 0.75ch; white-space: pre-wrap; animation: term-in 0.5s ease-out both; }
   .hero-term .t-out { padding-left: 8ch; color: var(--color-fg-2); }
+  .hero-term .t-label { color: var(--color-fg-3); margin-top: 0.6em; }
   .hero-term .t-you .t-body { color: var(--color-fg); }
   .hero-term .t-agent .t-body { color: var(--color-fg-2); }
   .hero-term .t-prompt { flex: none; width: 7ch; color: var(--color-fg-3); }
@@ -62,12 +69,12 @@ const prompt = { you: 'you ›', agent: 'agent ›' } as const;
   .hero-term .t-caret::after { content: '▍'; color: var(--color-signal); animation: term-blink 1s steps(1) infinite; }
   @keyframes term-in { from { opacity: 0; } to { opacity: 1; } }
   @keyframes term-blink { 50% { opacity: 0; } }
-  @media (max-width: 640px) { .hero-term .t-out { padding-left: 2ch; } .hero-term .t-prompt { width: auto; } .hero-term .t-screen { min-height: 27em; } }
+  @media (max-width: 640px) { .hero-term .t-out { padding-left: 2ch; } .hero-term .t-prompt { width: auto; } .hero-term .t-screen { min-height: 31em; } }
   @media (prefers-reduced-motion: reduce) { .hero-term .t-row { animation: none; } }
 </style>
 
 <script>
-  type Row = { kind: 'you' | 'agent' | 'out'; text?: string; html?: string };
+  type Row = { kind: 'you' | 'agent' | 'out' | 'label'; text?: string; html?: string };
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const PROMPT = { you: 'you ›', agent: 'agent ›' };
   const TITLES = ['agent session · build', 'agent session · update'];
@@ -87,7 +94,7 @@ const prompt = { you: 'you ›', agent: 'agent ›' } as const;
     const row = (r: Row) => {
       const el = document.createElement('div');
       el.className = `t-row t-${r.kind}`;
-      if (r.kind !== 'out') { const p = document.createElement('span'); p.className = 't-prompt'; p.textContent = PROMPT[r.kind]; el.appendChild(p); }
+      if (r.kind === 'you' || r.kind === 'agent') { const p = document.createElement('span'); p.className = 't-prompt'; p.textContent = PROMPT[r.kind]; el.appendChild(p); }
       const body = document.createElement('span'); body.className = 't-body'; el.appendChild(body);
       return { el, body };
     };
@@ -104,7 +111,7 @@ const prompt = { you: 'you ›', agent: 'agent ›' } as const;
         for (const r of sessions[n]) {
           const { el, body } = row(r);
           screen.appendChild(el);
-          if (r.kind === 'out') { body.innerHTML = r.html || ''; await sleep(800); continue; }
+          if (r.kind === 'out' || r.kind === 'label') { body.innerHTML = r.html || ''; await sleep(r.kind === 'label' ? 900 : 800); continue; }
           const text = r.text || '';
           body.classList.add('t-caret');
           const speed = r.kind === 'you' ? 45 : 26;
