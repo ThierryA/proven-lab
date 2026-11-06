@@ -18,12 +18,12 @@ const sections = [
   <aside class="sticky top-14 hidden h-[calc(100vh-3.5rem)] w-64 shrink-0 overflow-y-auto border-r border-line py-8 pr-6 lg:block" aria-label="Documentation">
     <p class="text-[13px] text-fg">How it works</p>
     <p class="mt-1 text-[12px] leading-snug text-fg-3">What your agent does, step by step.</p>
-    {sb.guides.map((g) => (
-      <div class="mt-4">
-        <p class="label">{g.title}</p>
-        <ul class="mt-1.5 border-l border-line">{g.items.map((i) => <li><a href={i.href} class={link(on(i.href))}>{i.label}</a></li>)}</ul>
-      </div>
-    ))}
+    {sb.guides.map((g) => g.title === 'Start'
+      ? <ul class="mt-4 border-l border-line">{g.items.map((i) => <li><a href={i.href} class={link(on(i.href))}>{i.label}</a></li>)}</ul>
+      : <details class="group mt-3" open={open(g.items) || undefined}>
+          <summary class="label flex cursor-pointer list-none items-center gap-1.5 hover:text-fg-2 [&::-webkit-details-marker]:hidden"><span class="transition group-open:rotate-90">›</span>{g.title}</summary>
+          <ul class="mt-1.5 border-l border-line">{g.items.map((i) => <li><a href={i.href} class={link(on(i.href))}>{i.label}</a></li>)}</ul>
+        </details>)}
     {sections.map((sec) => (
       <div class="mt-9 border-t border-line pt-5">
         <p class="flex items-baseline gap-2 text-[13px] text-fg"><span class="font-mono text-[10px] text-fg-3">{sec.tag}</span>{sec.title}</p>
