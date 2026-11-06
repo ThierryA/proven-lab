@@ -41,7 +41,7 @@ const prompt = { you: 'you ›', agent: 'agent ›' } as const;
       <span class="size-2 rounded-full bg-line-2"></span><span class="size-2 rounded-full bg-line-2"></span><span class="size-2 rounded-full bg-line-2"></span>
       <span class="ml-3 font-mono text-[11px] text-fg-3" data-term-title>agent session · build</span>
     </div>
-    <div class="t-screen space-y-1.5 px-5 py-5 font-mono text-[12px] leading-[1.7] sm:text-[13px]" data-term-screen>
+    <div class="t-screen space-y-1.5 px-5 py-5 font-mono text-[12px] leading-[1.7] sm:text-[13px] xl:px-7 xl:text-[14px]" data-term-screen>
       {sessions[0].map((r) => (
         <div class={`t-row t-${r.kind}`}>
           {(r.kind === 'you' || r.kind === 'agent') && <span class="t-prompt">{prompt[r.kind]}</span>}
