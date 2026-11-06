@@ -3,6 +3,10 @@
     "provenlab": {
       "type": "http",
       "url": "{{MCP_URL}}"
+    },
+    "wpengine": {
+      "type": "http",
+      "url": "https://api.ai.wpengine.com/v1/mcp"
     }
   }
 }

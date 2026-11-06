@@ -2,6 +2,9 @@
   "mcpServers": {
     "provenlab": {
       "url": "{{MCP_URL}}"
+    },
+    "wpengine": {
+      "url": "https://api.ai.wpengine.com/v1/mcp"
     }
   }
 }

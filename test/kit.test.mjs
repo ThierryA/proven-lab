@@ -28,7 +28,9 @@ test('kit files, manifest, setup guide and installer are served with real URLs',
     assert.equal(r.status, 200, f);
     assert.ok(!body.includes('{{'), `${f} has unfilled placeholders`);
   }
-  assert.equal(JSON.parse(await (await fetch(`${base}/kit/.mcp.json`)).text()).mcpServers.provenlab.url, `${home}/mcp`);
+  const kitMcp = JSON.parse(await (await fetch(`${base}/kit/.mcp.json`)).text()).mcpServers;
+  assert.equal(kitMcp.provenlab.url, `${home}/mcp`);
+  assert.equal(kitMcp.wpengine.url, 'https://api.ai.wpengine.com/v1/mcp');
   assert.equal(JSON.parse(await (await fetch(`${base}/kit/.vscode/mcp.json`)).text()).servers.provenlab.type, 'http');
   const setup = await (await fetch(`${base}/kit/SETUP.md`)).text();
   assert.ok(setup.includes(`claude mcp add --transport http provenlab ${home}/mcp`));
@@ -110,4 +112,14 @@ test('agents are told to use the Cloud AI API for AI and to follow best practice
   for (const s of ['/v1/audio/transcriptions', 'MediaRecorder', 'base64', 'transcribe:write']) assert.ok(ai.includes(s), s);
   const bp = await (await fetch(`${base}/blueprints/best-practices.md`)).text();
   for (const s of ['wp-coding-standards/wpcs', 'phpcs.xml.dist', 'WP_UnitTestCase', 'install-wp-tests.sh', 'phpstan', 'Plugin Check', 'Definition of done']) assert.ok(bp.includes(s), s);
+});
+
+test('agents default to the WP Engine AI plugins and use the WP Engine MCP server for hosted sites', async () => {
+  const agents = await (await fetch(`${base}/AGENTS.md`)).text();
+  for (const s of ['wpe-ai-plugins', "using_provider( 'wpengine' )", 'hosted-sites', 'https://api.ai.wpengine.com/v1/mcp']) assert.ok(agents.includes(s), s);
+  const plugins = await (await fetch(`${base}/blueprints/wpe-ai-plugins.md`)).text();
+  for (const s of ['wpe-hub?download', 'wpe-ai-connector?download', 'wpe-ai-chatbot?download', 'power-coworker?download', 'wpe_ai_connector_authorize_request', 'power-chatbot/embedded-chatbot', 'cannot be automated', 'mint_browser_session', '/v1/sessions/${session_id}/events', 'does not use the connector']) assert.ok(plugins.includes(s), s);
+  const hosted = await (await fetch(`${base}/blueprints/hosted-sites.md`)).text();
+  for (const s of ['sandbox_edit', 'wpe_create_backup', 'staging', 'approval', '--scope user wpengine']) assert.ok(hosted.includes(s), s);
+  assert.equal(rj('plugins', 'provenlab', '.mcp.json').mcpServers.wpengine.url, 'https://api.ai.wpengine.com/v1/mcp');
 });

@@ -28,5 +28,6 @@ Use the `provenlab` MCP tools. If they are not connected, call the same tools ov
 4. Custom actions are Abilities (`wp_register_ability`).
 5. Verify with WP-CLI and real requests before saying it works. Never run destructive commands on shared environments without approval.
 6. Keys and application passwords stay on the server.
-7. AI capabilities (speech to text, text to speech, chat, summaries, images, alt text, search, agents) use the Cloud AI API, called from the server: not the Web Speech API or another provider, unless the user asks (`get_blueprint ai-features`).
+7. AI capabilities use the Cloud AI API through the WP Engine AI plugins by default, with no API key: install `wpe-hub` and `wpe-ai-connector` (plus the chatbot or Coworker when needed), ask the user to click Connect once, then `wp_ai_client_prompt()->using_provider( 'wpengine' )` on the server, and browser session tokens so interactive features talk to the Cloud AI API directly from the browser (`get_blueprint wpe-ai-plugins`). Not the Web Speech API or another provider unless the user asks.
+9. Hosted sites: use the `wpengine` MCP server (`get_blueprint hosted-sites`). Content through Abilities or WP-CLI, drafts first; file changes only with approval, a backup and staging first.
 8. Follow `get_blueprint best-practices`: WordPress Coding Standards (PHPCS), PHPUnit tests with the WordPress test suite, PHPStan, Plugin Check. Its definition of done applies.

@@ -82,12 +82,13 @@ test('WP Engine MCP is removed from docs, search data and the published spec', (
   assert.ok(!yaml.includes('/v1/mcp') && !yaml.includes('oauth-protected-resource'), 'MCP paths/metadata present');
   assert.ok(!/JSON-RPC/i.test(yaml), 'MCP JSON-RPC schemas still bundled');
   assert.ok(yaml.includes('/v1/chat/completions'));
-  for (const f of ['llms.txt', 'llms-full.txt']) assert.ok(!/\/v1\/mcp|mcpStreamableHttp/.test(readFileSync(join(ROOT, 'dist', f), 'utf8')), f);
+  // The MCP server is documented as a tool for agents (hosted-sites); its endpoints stay out of the API reference.
+  for (const f of ['llms.txt', 'llms-full.txt']) assert.ok(!/mcpStreamableHttp|mcpProtectedResourceMetadata/.test(readFileSync(join(ROOT, 'dist', f), 'utf8')), f);
 });
 
 test('blueprints have front matter and the expected set', () => {
   const bps = rj('dist', 'blueprints.json');
-  assert.deepEqual(bps.map((b) => b.slug).sort(), ['ai-features', 'architecture', 'best-practices', 'classic-wordpress', 'custom-app', 'local-development', 'wp-cli-for-agents', 'wpe-deployment']);
+  assert.deepEqual(bps.map((b) => b.slug).sort(), ['ai-features', 'architecture', 'best-practices', 'classic-wordpress', 'custom-app', 'hosted-sites', 'local-development', 'wp-cli-for-agents', 'wpe-ai-plugins', 'wpe-deployment']);
   for (const b of bps) { assert.ok(b.title && b.summary && b.md.length > 500, b.slug); }
 });
 

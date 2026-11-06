@@ -3,6 +3,10 @@
     "provenlab": {
       "type": "http",
       "url": "https://h01j8ie82uxpc31tlr1b9sqsz.js.wpenginepowered.com/mcp"
+    },
+    "wpengine": {
+      "type": "http",
+      "url": "https://api.ai.wpengine.com/v1/mcp"
     }
   }
 }

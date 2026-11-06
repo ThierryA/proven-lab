@@ -14,6 +14,8 @@ The server is `provenlab`, streamable HTTP, at `{{MCP_URL}}`. No API key is need
 | Other MCP clients | Add a streamable HTTP server with the URL above |
 | No MCP support | Call the same tools over HTTP: `curl "{{BASE}}/api/<tool>?<args>"` |
 
+Also add the **WP Engine MCP server** (`wpengine`, `https://api.ai.wpengine.com/v1/mcp`, streamable HTTP, OAuth) for hosted sites: `claude mcp add --transport http --scope user wpengine https://api.ai.wpengine.com/v1/mcp`, then authenticate in `/mcp`. The kit's MCP config files include both servers.
+
 ## 2. Add the project files
 
 Fetch each file from `{{BASE}}/kit/<path>`:
@@ -22,7 +24,7 @@ Fetch each file from `{{BASE}}/kit/<path>`:
 |---|---|---|
 | `AGENTS.md` | Playbook for every agent | Append a section `## Proven Lab` that says to follow `{{BASE}}/AGENTS.md`, and copy in its Workflow and Hard rules |
 | `CLAUDE.md` | Makes Claude Code read `AGENTS.md` | Add the line `@AGENTS.md` if it is not there |
-| `.mcp.json` | Claude Code project MCP config | Add the `provenlab` entry under `mcpServers`; keep the other servers |
+| `.mcp.json` | Claude Code project MCP config (`provenlab` and `wpengine`) | Add both entries under `mcpServers`; keep the other servers |
 | `.cursor/mcp.json` | Cursor MCP config | Add the `provenlab` entry under `mcpServers` |
 | `.vscode/mcp.json` | VS Code MCP config | Add the `provenlab` entry under `servers` |
 | `.claude/skills/provenlab/SKILL.md` | Claude Code skill: when and how to use the tools | Replace it only if it is an older Proven Lab skill |

@@ -48,8 +48,9 @@ Then, with the user's agreement on the site name:
 1. `local_list_sites`: reuse an existing site if the user names one.
 2. `local_create_site` with `name`: creates and starts a site with WordPress installed (admin user `admin`, password `admin`; change it for anything shared).
 3. `local_get_site`: the site's URL and `path`. Write the must-use plugin to `<path>/app/public/wp-content/mu-plugins/`.
-4. Verify with the `wp_*` tools (`wp_eval`, `wp_post_create`, `wp_post_list`) or WP-CLI.
-5. `local_wpe_push` and `local_wpe_pull` sync the site with a WP Engine environment when the user is ready.
+4. Install the WP Engine AI plugins with `wp_plugin_install` and `wp_plugin_activate` (`wpe-ai-plugins`) and ask the user to click Connect once in the site's WP Admin.
+5. Verify with the `wp_*` tools (`wp_eval`, `wp_post_create`, `wp_post_list`) or WP-CLI.
+6. `local_wpe_push` and `local_wpe_pull` sync the site with a WP Engine environment when the user is ready.
 
 The add-on's tools include `wp_eval` and database import and export: use them on local sites only, and ask before destructive actions.
 
