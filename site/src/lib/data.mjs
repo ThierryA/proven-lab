@@ -16,7 +16,7 @@ export const RUNBOOK = [
   { title: 'Start', pages: [['Start building', '/docs/connect']] },
   { title: '1 · New or existing', slugs: ['architecture', 'existing-project'] },
   { title: '2 · Workspace', slugs: ['local-development', 'wpengine-cloud'] },
-  { title: '3 · Build', slugs: ['classic-wordpress', 'custom-app'] },
+  { title: '3 · Build', slugs: ['classic-wordpress', 'custom-app', 'frontend-design'] },
   { title: '4 · AI', slugs: ['wpe-ai-plugins', 'ai-features'] },
   { title: '5 · Verify', slugs: ['wp-cli-for-agents', 'best-practices'] },
   { title: '6 · Ship', slugs: ['wpe-deployment'] },

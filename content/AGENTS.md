@@ -51,6 +51,7 @@ Developers: wait for the answers and never pick the setup for them. Non-develope
 ### 3. Build the app as a plugin
 
 - **Classic:** `classic-wordpress`. **Any headless setup:** `custom-app` (Headless Admin also uses `classic-wordpress` for the frontend).
+- **Anything people see** (theme, headless frontend, custom admin): follow `frontend-design`. Agree a three-line design brief, build from design tokens, use real content, and review screenshots at phone, tablet and desktop widths before showing the user.
 - **Existing project:** add to the project's own plugin, or a new plugin if there is none, and follow its conventions (`existing-project`).
 - The app is **a regular plugin** in `wp-content/plugins/<app>/`, activated with `wp plugin activate <app>`. Not a must-use plugin, never a theme's `functions.php`, never WordPress core.
 - Model first: post types, taxonomies and registered meta on `init`, with `show_in_rest => true` for anything a custom app uses.

@@ -143,6 +143,8 @@ add_action( 'wp_abilities_api_init', function () {
 
 ## 5. Frontend rendering
 
+Design the admin and the frontend with `frontend-design`: tokens, one component library, every state, screenshot review.
+
 - **SSR/ISR** from Node: fetch `GET /wp/v2/projects?slug=...&_embed` and render. Use `_fields` to cut payload size.
 - **Block content**: `content.rendered` is already HTML. For custom rendering use `?context=edit` and `content.raw`, then parse it on Node with `@wordpress/block-serialization-default-parser`.
 - **Cache invalidation**: add a `save_post` / `transition_post_status` hook in PHP that calls `wp_remote_post()` to a Node `/revalidate` webhook.

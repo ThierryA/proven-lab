@@ -23,6 +23,8 @@ Same as every setup: a plugin in `wp-content/plugins/<app>/` (activated with `wp
 
 ## 2. Render with the template hierarchy
 
+For the look itself (brief, `theme.json` tokens, layout, screenshot review), follow `frontend-design`.
+
 A theme (block theme or classic PHP theme) renders each page. WordPress picks the template from the template hierarchy, for example `single-{post_type}.php`, `archive-{post_type}.php` (only if the post type sets `has_archive`), `page.php`, then `index.php`. Reusable partials go in `template-parts/` and load with `get_template_part()`.
 
 ```php
