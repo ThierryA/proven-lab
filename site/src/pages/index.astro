@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import ArchitectureDiagram from '../components/ArchitectureDiagram.astro';
 import GridBackground from '../components/GridBackground.astro';
+import IronyFilm from '../components/IronyFilm.astro';
 import { stats as getStats, wpe } from '../lib/data.mjs';
 import { TOOLS } from '../../../packages/mcp-server/src/tools.mjs';
 const s = getStats();
@@ -64,6 +65,12 @@ const section = 'mx-auto grid max-w-[90rem] gap-x-12 gap-y-6 border-t border-lin
 </section>
 
 </div>
+
+<!-- Film -->
+<section id="film" class={section}>
+  <p class="label">Film · 0:32</p>
+  <div class="max-w-5xl"><IronyFilm /></div>
+</section>
 
 <!-- 01 Why -->
 <section id="why" class={section}>
