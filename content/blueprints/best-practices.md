@@ -1,10 +1,12 @@
 ---
-nav: "Best practices"
-title: "WordPress best practices: standards, tests and quality checks"
+nav: "Quality checks"
+title: "Quality checks: WordPress best practices"
 summary: "Apply on every project: WordPress Coding Standards (PHPCS), PHPUnit with the WordPress test suite, static analysis, JavaScript tooling, Plugin Check, security, i18n, performance and CI."
 ---
 
-# WordPress best practices
+# Quality checks: WordPress best practices
+
+> **Runbook step 5 · Verify,** for developers. Set the tooling up at the start of step 3 and run it before saying the work is done. **Next:** step 6, `wpe-deployment`.
 
 Apply these on every project, whatever the setup. Add the tooling at the start, run it before saying the work is done, and keep it in CI.
 

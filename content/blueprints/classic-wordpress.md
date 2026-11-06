@@ -1,10 +1,12 @@
 ---
 nav: "Classic"
-title: "Classic: WP Admin and WordPress templating"
+title: "Build: Classic (WP Admin and WordPress templating)"
 summary: Everything runs inside WordPress. Editors use WP Admin, and WordPress renders the frontend with its PHP templates. The simplest setup, one runtime to deploy.
 ---
 
-# Classic: WP Admin and WordPress templating
+# Build: Classic (WP Admin and WordPress templating)
+
+> **Runbook step 3 · Build,** for the Classic setup, and for the frontend of Headless Admin. **Next:** step 4, `wpe-ai-plugins` if the app needs AI; otherwise step 5, `wp-cli-for-agents`.
 
 **Admin:** WP Admin · **Frontend:** WordPress templating · **Deploy:** WordPress.
 

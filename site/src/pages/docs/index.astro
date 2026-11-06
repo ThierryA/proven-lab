@@ -1,34 +1,30 @@
 ---
 import Docs from '../../layouts/Docs.astro';
-import { domains, blueprints, cli, sidebar, GROUP_ORDER } from '../../lib/data.mjs';
+import { domains, cli, sidebar, runbookGroups, GROUP_ORDER } from '../../lib/data.mjs';
 const all = domains();
 const sb = sidebar();
-const bp = (slug) => blueprints().find((b) => b.slug === slug);
 const row = 'grid grid-cols-[minmax(0,14rem)_1fr] gap-6 border-b border-line py-3 text-[14px] hover:bg-ink-2';
 ---
 <Docs title="Docs">
   <p class="label">Documentation</p>
   <h1 class="mt-4 text-4xl font-medium tracking-tight text-fg">Build on WordPress with a coding agent.</h1>
-  <p class="mt-4 max-w-2xl">Four references (the Core API, WP-CLI, the Cloud AI API and deployment on WP Engine) and the blueprints that tie them together. Every setup is covered: Classic and the three headless setups.</p>
+  <p class="mt-4 max-w-2xl">Agents follow one runbook in six steps, whether the user is a professional developer or has never written code. Each step has one guide; the Core API, WP-CLI and Cloud AI API references below give the exact details.</p>
+  <p class="mt-4 text-[14px]"><a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/runbook">Read the runbook</a> · <a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/connect">Use your agent</a></p>
 
-  <h2 class="label mt-14">Blueprints</h2>
-  <div class="mt-3 border-t border-line">{['architecture', 'local-development', 'hosted-sites', 'classic-wordpress', 'custom-app', 'best-practices', 'wpe-ai-plugins', 'wp-cli-for-agents', 'ai-features', 'wpe-deployment'].map(bp).filter(Boolean).map((b) => <a class={row} href={`/docs/${b.slug}`}><span class="text-fg">{b.nav || b.title}</span><span>{b.summary}</span></a>)}</div>
+  {runbookGroups().filter((g) => g.title !== 'Start').map((g) => <><h2 class="label mt-10">{g.title}</h2><div class="mt-2 border-t border-line">{g.items.map((i) => <a class={row} href={i.href}><span class="text-fg">{i.label}</span><span>{i.summary}</span></a>)}</div></>)}
 
   <h2 class="mt-16 flex items-baseline gap-3 text-2xl font-medium tracking-tight text-fg"><span class="font-mono text-[11px] text-fg-3">PHP</span>Core API</h2>
   <p class="mt-2 text-[14px]">Proven Lab's name for the WordPress core PHP APIs: functions, classes and hooks, extracted from WordPress source and grouped by task area. <a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/core-api">Overview</a></p>
   {GROUP_ORDER.map((g) => <><h3 class="label mt-8">{g}</h3><div class="mt-2 border-t border-line">{all.filter((d) => d.group === g).map((d) => <a class={row} href={`/docs/api/${d.slug}`}><span class="text-fg">{d.title}</span><span>{d.summary}</span></a>)}</div></>)}
 
   <h2 class="mt-16 flex items-baseline gap-3 text-2xl font-medium tracking-tight text-fg"><span class="font-mono text-[11px] text-fg-3">CLI</span>WP-CLI</h2>
-  <p class="mt-2 text-[14px]">The official command-line tool for WordPress: {cli().commands.filter((c) => !c.hasChildren).length} commands from the WP-CLI {cli().version} release. <a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/wp-cli-for-agents">WP-CLI for agents</a></p>
+  <p class="mt-2 text-[14px]">The official command-line tool for WordPress: {cli().commands.filter((c) => !c.hasChildren).length} commands from the WP-CLI {cli().version} release. <a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/wp-cli-for-agents">Verify with WP-CLI</a></p>
   <div class="mt-4 grid border-t border-l border-line sm:grid-cols-2 xl:grid-cols-3">{cli().tops.map((t) => <a class="border-r border-b border-line p-3 hover:bg-ink-2" href={`/docs/cli/${t.top}`}><span class="font-mono text-[12px] text-fg">wp {t.top}</span><span class="mt-1 block text-[12px] leading-snug text-fg-3">{t.description}</span></a>)}</div>
 
   <h2 class="mt-16 flex items-baseline gap-3 text-2xl font-medium tracking-tight text-fg"><span class="font-mono text-[11px] text-fg-3">AI</span>Cloud AI API</h2>
-  <p class="mt-2 text-[14px]">An OpenAI Chat Completions-compatible gateway, a knowledge base, and agents with sessions. <a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/cloud-ai-api">Overview</a> · <a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/ai-features">AI features</a></p>
+  <p class="mt-2 text-[14px]">An OpenAI Chat Completions-compatible gateway, a knowledge base, and agents with sessions. <a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/cloud-ai-api">Overview</a> · <a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/wpe-ai-plugins">AI features</a></p>
   <div class="mt-4 border-t border-line">{sb.ai.map((g) => <a class={row} href={g.items[0].href}><span class="text-fg">{g.title}</span><span class="font-mono text-[12px] text-fg-3">{g.items.map((i) => i.label).join(' · ')}</span></a>)}</div>
   <div class="border-t border-dashed border-line-2" role="separator"></div>
   <div>{sb.account.map((g) => <a class={row} href={g.items[0].href}><span class="text-fg">{g.title}</span><span class="font-mono text-[12px] text-fg-3">{g.items.map((i) => i.label).join(' · ')}</span></a>)}</div>
 
-  <h2 class="mt-16 flex items-baseline gap-3 text-2xl font-medium tracking-tight text-fg"><span class="font-mono text-[11px] text-fg-3">WPE</span>Deployment</h2>
-  <p class="mt-2 text-[14px]">Optional; Proven Lab recommends WP Engine. Managed WordPress runs WordPress in every setup, the Headless Platform runs a custom app, and coding agents can use WP-CLI over SSH.</p>
-  <div class="mt-4 border-t border-line"><a class={row} href="/docs/wpe-deployment"><span class="text-fg">Deploying on WP Engine</span><span>Managed WordPress, Headless Platform, SSH and WP-CLI, portability.</span></a></div>
 </Docs>

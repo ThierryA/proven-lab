@@ -1,10 +1,12 @@
 ---
-nav: "Deploying on WP Engine"
-title: Deploying on WP Engine (optional, preferred)
+nav: "Ship: staging, then production"
+title: "Ship: staging, then production"
 summary: "Ship from a Git repository to a WP Engine staging environment, then to production after a check; or deploy without a repository. Managed WordPress for the application layer, the Headless Platform for a custom app, SSH with WP-CLI for coding agents, and how to stay portable."
 ---
 
-# Deploying on WP Engine
+# Ship: staging, then production
+
+> **Runbook step 6 · Ship,** for developers (non-developers: `build-on-wpengine`, section 5). Every release goes to staging first and to production only after the user says yes.
 
 Deploying on WP Engine is **optional**; Proven Lab recommends it. Nothing in the Core API requires it, and the Cloud AI API works from any host. WP Engine adds managed WordPress, the Headless Platform for custom apps, staging and production environments, and SSH access with WP-CLI for coding agents.
 
@@ -118,7 +120,7 @@ For **Headless Frontend**, **Headless Admin** and **Headless Frontend + Admin** 
 
 You can also run your custom app on any Node host; WordPress stays on its own hosting either way.
 
-## Agents on WP Engine: sandboxed SSH and WP-CLI
+## Agents on WP Engine: WP-CLI through the WP Engine MCP server
 
 On WP Engine, a coding agent runs **WP-CLI directly next to the site** through the WP Engine MCP server's sandbox (`sandbox_bash`, `hosted-sites`). The MCP server handles access with the user's sign-in: do not generate SSH keys or set up the SSH Gateway for the agent.
 

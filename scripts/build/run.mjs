@@ -95,6 +95,10 @@ for (const f of await readdir(bpDir)) {
   blueprints.push({ slug, ...meta, md: raw.replace(/^---[\s\S]*?---\n/, '') });
   await w(`blueprints/${f}`, stripMarkers(raw));
 }
+// Runbook order (AGENTS.md, steps 1 to 6): list_blueprints, llms.txt and the docs show guides in the order agents use them.
+const RUNBOOK_ORDER = ['architecture', 'local-development', 'build-on-wpengine', 'hosted-sites', 'classic-wordpress', 'custom-app', 'wpe-ai-plugins', 'ai-features', 'wp-cli-for-agents', 'best-practices', 'wpe-deployment'];
+const rank = (s) => (RUNBOOK_ORDER.indexOf(s) + 1 || 99);
+blueprints.sort((a, b) => rank(a.slug) - rank(b.slug));
 await w('blueprints.json', blueprints);
 
 // overviews (one per reference section)
@@ -170,9 +174,9 @@ const llms = [
   '# Proven Lab', '',
   '> Docs, an MCP server and tool schemas that let coding agents build on the WordPress Core API (post types, meta, users, hooks, blocks, Abilities API, AI Client), WP-CLI and the Cloud AI API (chat, images, text to speech, transcription, knowledge base search, agents and sessions). Generated from WordPress ' + core.version + ' source, WP-CLI ' + cliData.version + ' and a snapshot of the Cloud AI API OpenAPI spec.', '',
   `Agents: nothing to install. If a user asked you to build or update an app "with Proven Lab", read ${site}/AGENTS.md first, then call any tool over HTTP: GET ${site}/api/<tool>?<args> (for example ${site}/api/get_blueprint?slug=architecture). Connecting the MCP server at ${site}/mcp is optional.`, '',
-  '## Start here', `- [Agent playbook](${site}/AGENTS.md): read first. Rules and workflow for agents building on WordPress`, `- [Set up a project](${site}/kit/SETUP.md): optional. Connect the MCP server and add the kit files`,
-  ...overviews.map((o) => `- [${o.title}](${site}/overviews/${o.slug}.md): ${o.summary}`),
-  ...blueprints.map((b) => `- [${b.title}](${site}/blueprints/${b.slug}.md): ${b.summary}`), '',
+  '## Start here', `- [Runbook for agents](${site}/AGENTS.md): read first. Six steps from the first question to production, for developers and non-developers`, `- [Set up a project](${site}/kit/SETUP.md): optional. Connect the MCP server and add the kit files`,
+  '', '## Guides, in runbook order', ...blueprints.map((b) => `- [${b.title}](${site}/blueprints/${b.slug}.md): ${b.summary}`), '',
+  '## Overviews', ...overviews.map((o) => `- [${o.title}](${site}/overviews/${o.slug}.md): ${o.summary}`), '',
   '## Core API domains', ...domains.map((d) => `- [${d.group}: ${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',
   '## WP-CLI (`wp`): verify, scaffold and administer from the shell', ...cliPages.map((c) => `- [wp ${c.top}](${site}/cli/${c.top}.md): ${c.description}`), '',
   '## Cloud AI API', `- [OpenAPI spec](${site}/openapi/cloud-ai-api.yaml)`, `- [Operations index, incl. the Sites API](${site}/wpe-operations.json)`, '',

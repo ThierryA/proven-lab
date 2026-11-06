@@ -1,10 +1,12 @@
 ---
-nav: "AI without an API key"
-title: "AI without an API key: the WP Engine AI plugins"
+nav: "AI features (no API key)"
+title: "AI features: the WP Engine AI plugins, no API key"
 summary: "The default way to add AI to a WordPress site: install the WP Engine AI plugins, connect the site once in WP Admin, and every AI feature (PHP, frontend chat, agents, search over content) uses the site's connection instead of an API key."
 ---
 
-# AI without an API key: the WP Engine AI plugins
+# AI features: the WP Engine AI plugins, no API key
+
+> **Runbook step 4 · AI,** the default for every AI feature on a WordPress site. Code that runs outside WordPress: `ai-features`. **Next:** step 5, `wp-cli-for-agents`.
 
 Use these plugins by default for every AI feature on a WordPress site. The site connects to the Cloud AI API once; after that, PHP code, the frontend chat widget and agents get short-lived credentials from that connection. Nobody creates, stores or rotates an API key.
 

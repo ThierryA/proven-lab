@@ -1,10 +1,12 @@
 ---
-nav: "Architecture"
-title: "Architecture: one application layer, your choice of admin and frontend"
+nav: "Choose a setup"
+title: "Choose a setup: Classic or headless"
 summary: "WordPress is the application layer: it always runs, and its Core API does the work. The admin and the frontend each run inside WordPress or as a separate custom app. The Cloud AI API runs on its own infrastructure and provides models (chat, images, speech, transcription), search and agents."
 ---
 
-# Architecture
+# Choose a setup: Classic or headless
+
+> **Runbook step 1 · Plan.** Read this to explain the four setups and recommend one. **Next:** step 2, set up the workspace (`local-development` or `build-on-wpengine`).
 
 WordPress is the application layer; a custom app is optional. Two choices: the admin and the frontend.
 
@@ -62,15 +64,15 @@ The Cloud AI API runs on WP Engine's infrastructure, not inside WordPress. It pr
 
 The AI API plugs in the same way in every setup.
 
-## For agents: ask, don't assume
+## Recommending a setup
 
-Before writing any code, ask the user which setup they want, unless they already said. Offer the four setups above, each in one line, with a recommendation from the request:
+Developers choose (runbook step 1): ask the user which setup they want, offering the four setups, each in one line, with a recommendation from the request, and wait. For non-developers, propose **Classic** in plain words and continue unless they object.
+
+Recommendations:
 
 - A content site or blog → **Classic**.
 - Editors keep WP Admin, the frontend is a React/Next.js app → **Headless Frontend**.
 - A themed site with a purpose-built admin instead of WP Admin → **Headless Admin**.
 - An application with its own UI → **Headless Frontend + Admin**.
 
-In the same message, settle where WordPress runs locally: check whether Local is installed and offer to create the site there, or recommend installing it (`local-development`). Wait for the answer.
-
-Whatever the setup: define the model once in a plugin, let WordPress capabilities decide who can do what, turn custom actions into Abilities, and verify with WP-CLI (locally, or on WP Engine through the sandboxed SSH session).
+Whatever the setup: define the model once in a plugin, let WordPress capabilities decide who can do what, turn custom actions into Abilities, and verify with WP-CLI (locally, or on WP Engine through the WP Engine MCP server's sandbox).

@@ -1,10 +1,12 @@
 ---
-nav: "Local development"
-title: "Local development with Local"
+nav: "On your computer (Local)"
+title: "Workspace on the user's computer: Local"
 summary: "Run WordPress on the developer's machine with Local (localwp.com, by WP Engine): check whether it is installed, suggest it if not, and create and drive sites through Local's MCP server when it is available."
 ---
 
-# Local development with Local
+# Workspace on the user's computer: Local
+
+> **Runbook step 2 · Workspace,** for developers and anyone who has Local or wants WordPress on their computer. No Local and no wish to install anything: `build-on-wpengine`. **Next:** step 3, `classic-wordpress` or `custom-app`.
 
 [Local](https://localwp.com) (free, by WP Engine, macOS, Windows and Linux) is the recommended way to run WordPress on the developer's machine. It creates a complete site (web server, PHP, MySQL, WP-CLI) in one step, and it can push and pull to WP Engine.
 

@@ -1,50 +1,104 @@
-# Building on WordPress with Proven Lab (agent playbook)
+# Proven Lab runbook for coding agents
 
-You are building an application where **WordPress is the application layer**: data model, users and permissions, validation, hooks, media, cron. The admin is WP Admin or a custom app; the frontend is WordPress templating or a custom app.
+You build or update applications where **WordPress is the application layer**: data model, users and permissions, validation, hooks, media and cron come from WordPress. The admin and the frontend are WordPress or a custom app. AI comes from the Cloud AI API. Hosting on WP Engine is optional and recommended.
 
-**First, before any code: ask the user which setup they want and where WordPress runs locally (Workflow, step 1). Never choose the setup for them.**
+Follow the six steps below in order. Each step names the one guide to read: `get_blueprint <slug>`, or `curl "{{BASE}}/api/get_blueprint?slug=<slug>"`.
 
-## Connect
+## Access: nothing to install
 
-Nothing to install. If the user only gave you the Proven Lab URL, everything you need is reachable over HTTP; do not ask them to install anything before you start.
+- **Tools over HTTP:** `GET {{BASE}}/api/<tool>?<args>`, for example `curl "{{BASE}}/api/get_function?name=register_meta"`. Guides are also plain markdown at `{{BASE}}/blueprints/<slug>.md`.
+- **Proven Lab MCP server** (optional, faster): `claude mcp add --transport http provenlab {{MCP_URL}}`.
+- Do not ask the user to install anything before you start.
 
-- Proven Lab tools over HTTP (no install): `GET {{BASE}}/api/<tool>?<args>`, for example `curl "{{BASE}}/api/get_function?name=register_meta"`, `curl "{{BASE}}/api/get_blueprint?slug=architecture"` or `curl "{{BASE}}/api/search_docs?query=register+user+meta"`. Blueprints are also plain markdown at `{{BASE}}/blueprints/<slug>.md`.
-- Proven Lab MCP server (optional, faster): `{{MCP_URL}}` (streamable HTTP). Claude Code: `claude mcp add --transport http provenlab {{MCP_URL}}`
-- WP Engine MCP server (hosted sites, Abilities, sandbox): `claude mcp add --transport http --scope user wpengine https://api.ai.wpengine.com/v1/mcp`, then authenticate in `/mcp` with a WP Engine account.
-- Plain-text docs: `{{BASE}}/llms.txt` (index) and `{{BASE}}/llms-full.txt` (everything).
+## Who you are working with
 
-## Tools you have (MCP server `provenlab`, or `GET {{BASE}}/api/<tool>`)
-- `list_domains`, `get_domain`: start here to find the right Core API functions, classes and hooks for a task.
-- `search_docs`: keyword search over core functions, classes, methods, hooks, handbooks, WP-CLI commands and WP Engine docs.
-- `get_function`, `get_class`, `get_hook`: exact signatures, parameters, since-versions and source location. **Look up before you write**; never guess argument names.
-- `list_blueprints`, `get_blueprint`: end-to-end guides (architecture, local development, no install on WP Engine, hosted sites, Classic, custom app, best practices, WP-CLI, AI without an API key, AI features, deployment).
-- `list_cli_commands`, `get_cli_command`: WP-CLI (`wp`) commands, exact flags and examples. **Use WP-CLI to verify and administer a site from the shell.**
-- `list_ai_operations`, `get_ai_operation`: the Cloud AI API (chat, images, speech, transcription, knowledge base, agents and sessions). `get_ai_operation` returns `howToCall`: who may call the operation and a ready PHP call that uses the site connection, no API key.
+Read the request and adapt. Use the developer path when the user writes about code, Git, a terminal or tests; otherwise use the non-developer path. If unsure, ask once: "Do you want to work with the code yourself, or should I handle everything?"
 
-## Workflow
-1. **Ask the user before writing any code**, in one message, unless they already said. Match the user: if they do not mention code, Git or a terminal, use plain words, ask only what you need, and offer the no-install path first.
-   - **Which setup?** Classic (WP Admin + WordPress templating, one deployment) · Headless Frontend (WP Admin + your own frontend app) · Headless Admin (your own admin app + WordPress templating) · Headless Frontend + Admin (your own admin and frontend app). Add a one-line recommendation from the request: a content site → Classic; an app with its own UI → Headless Frontend + Admin.
-   - **Where do you want to build?** First check whether Local (localwp.com) is installed. Offer:
-     - **On your computer with Local** (developers; recommended when Local is installed): create the site in Local, with Local's MCP server when available (`get_blueprint local-development`).
-     - **Directly on WP Engine, nothing to install** (easiest without Local, needs a WP Engine account): build on a staging environment through the WP Engine MCP server's sandbox, then go live (`get_blueprint build-on-wpengine`).
-     - WordPress Playground or Docker, if the user prefers.
-   - **Developers: which repository?** Create a new one (with `gh` when signed in), use an existing one, or none for now (`get_blueprint wpe-deployment`, section 1). Skip this question for someone who does not code.
-   - Wait for the answer. Do not pick a setup on the user's behalf.
-   Then follow the matching blueprint (see `get_blueprint architecture`): **Classic** → `classic-wordpress`. **Headless Frontend** or **Headless Frontend + Admin** → `custom-app`. **Headless Admin** → `custom-app` + `classic-wordpress`.
-2. Model first. Register post types, taxonomies and **registered meta** (post, term, user) in **a regular plugin** (`wp-content/plugins/<app>/`, activated with `wp plugin activate`), on `init`. Not a must-use plugin: a plugin can be activated and deactivated, has activation hooks, and passes Plugin Check. Set `show_in_rest => true` on anything a custom app reads or writes; post meta also needs the post type to support `custom-fields`.
-3. Permissions come from WordPress capabilities. Never reimplement authorization in the UI only; enforce it in `permission_callback` / `auth_callback` / `current_user_can`.
-4. Custom operations beyond CRUD become **Abilities** (`wp_register_ability`) so they are typed, permissioned and agent-discoverable.
-5. Extend through hooks (`add_action`, `add_filter`). Never edit WordPress core or third-party plugins.
-6. Deployment: WP Engine is preferred but optional. **Always staging first, then production after the user checks staging and says yes.** From a repository, use WP Engine's GitHub Action (push to `main` deploys staging; production after approval); without one, push from Local to staging, or follow `build-on-wpengine`. Never copy an environment over a live production site. See `get_blueprint wpe-deployment`; keep host-specific code isolated so the app stays portable. WordPress runs on WP Engine managed WordPress; a custom app runs on the Headless Platform or any Node host.
-7. **AI features use the Cloud AI API, through the WP Engine AI plugins by default** (`get_blueprint wpe-ai-plugins`): install them with WP-CLI, ask the user to click Connect once in WP Admin, then use `wp_ai_client_prompt()->using_provider( 'wpengine' )` for text, images and speech, `wpe_auth_api_request()` for **every other endpoint** (transcription, alt text, summaries, knowledge base, agents; `get_ai_operation` gives the exact PHP call), and for interactive features let the browser talk to the Cloud AI API directly with a short-lived browser session token (as the chatbot does), with no API key. Do not send every AI request through the server. Capabilities: speech to text (`createTranscription`), text to speech, chat, summaries, images, alt text, search and agents. Not browser APIs such as the Web Speech API, and not another provider, unless the user asks. Call it from your server or WordPress; keys stay server-side. See `get_blueprint ai-features`.
-8. **Follow WordPress best practices** on every project: WordPress Coding Standards (PHPCS), PHPUnit tests with the WordPress test suite, PHPStan, Plugin Check, security, i18n and performance rules. See `get_blueprint best-practices`; its definition of done applies.
-9. **Hosted sites** (already on WP Engine, or content changes on staging and production): use the WP Engine MCP server (`get_blueprint hosted-sites`): Abilities or WP-CLI in its sandbox for content, drafts first; file changes only with the user's approval, a backup, staging first and the smallest edit.
-10. Verify with **WP-CLI** (`wp post-type list`, `wp eval`, `wp user application-password create`, `wp post create --porcelain`) and real HTTP requests against a local or staging WordPress, not by reading code. On WP Engine, run WP-CLI with the WP Engine MCP server's `sandbox_bash` (10-minute sessions, only the site folder persists); do not generate SSH keys or set up the SSH Gateway yourself, the MCP server handles access. See `get_blueprint wp-cli-for-agents`. Use `--format=json` / `--porcelain`, and never run destructive commands on shared environments without approval.
+| | Developer | Non-developer |
+|---|---|---|
+| Questions | Setup, where to build, repository; wait for the answers | What the site is for and its name, in plain words; propose the rest in one line and continue unless they object |
+| Setup | Their choice (step 1) | Classic: "I'll build it as a regular WordPress site" |
+| Where to build | Local on their computer | Directly on WP Engine, nothing to install |
+| Repository | New, existing, or none for now | None; offer one later |
+| Checks | Coding standards, PHPUnit, PHPStan, Plugin Check | PHP lint, WP-CLI checks, the pages load |
+| Shipping | GitHub Action: staging, then production after approval | Staging link, then production after they say yes |
+
+Never ask a non-developer to run commands or edit files. When a person must act (signing in, clicking **Connect**, approving), say exactly where to click.
+
+## The runbook
+
+### 1. Ask, then plan
+
+Ask in one message, only what the user has not said yet:
+
+- **Which setup?** Classic (WP Admin and WordPress templating) · Headless Frontend (WP Admin and your own frontend app) · Headless Admin (your own admin app and WordPress templating) · Headless Frontend + Admin (your own admin and frontend app). Recommend one in a line: a content site → Classic; an app with its own interface → Headless Frontend + Admin. Guide: `architecture`.
+- **Where to build?** Check whether Local (localwp.com) is installed, then offer: on your computer with Local (recommended when installed), or directly on WP Engine with nothing to install (needs a WP Engine account), or WordPress Playground.
+- **Developers: which repository?** Create a new one, use an existing one, or none for now.
+
+Developers: wait for the answers and never pick the setup for them. Non-developers: follow the table above.
+
+### 2. Set up the workspace
+
+- **On the user's computer:** `local-development` (Local, with Local's MCP server when available; otherwise Playground or Docker).
+- **Directly on WP Engine, nothing to install:** `build-on-wpengine` (the WP Engine MCP server creates the site and a staging environment; you build in its sandbox).
+- **The site already runs on WP Engine:** `hosted-sites`.
+- Developers with a repository: create or connect it now (`wpe-deployment`, section 1).
+
+### 3. Build the app as a plugin
+
+- **Classic:** `classic-wordpress`. **Any headless setup:** `custom-app` (Headless Admin also uses `classic-wordpress` for the frontend).
+- The app is **a regular plugin** in `wp-content/plugins/<app>/`, activated with `wp plugin activate <app>`. Not a must-use plugin, never a theme's `functions.php`, never WordPress core.
+- Model first: post types, taxonomies and registered meta on `init`, with `show_in_rest => true` for anything a custom app uses.
+- Permissions are WordPress capabilities, enforced in `permission_callback`, `auth_callback` and `current_user_can()`, never only in the interface.
+- Custom actions are **Abilities** (`wp_register_ability`). Extend through hooks; never edit core or third-party plugins.
+- **Look up before you write:** `get_function`, `get_class`, `get_hook` for exact signatures; `get_cli_command` before running WP-CLI.
+
+### 4. Add AI, if the app needs it
+
+Guide: `wpe-ai-plugins`. Every AI capability uses the Cloud AI API through the WP Engine AI plugins, with **no API key**: install them with WP-CLI, ask the user to click **Connect** once in WP Admin, then:
+
+- `wp_ai_client_prompt()->using_provider( 'wpengine' )` for text, images and speech;
+- `wpe_auth_api_request()` for every other endpoint: transcription (`createTranscription`), alt text, summaries, the knowledge base, agents (`get_ai_operation` returns the exact PHP call);
+- a short-lived browser session token for interactive chat, so the browser talks to the Cloud AI API directly.
+
+Not the Web Speech API or another provider unless the user asks. Code outside WordPress and API keys: `ai-features`.
+
+### 5. Verify
+
+- Prove every change with **WP-CLI** and real HTTP requests, not by rereading code: `wp-cli-for-agents`. Locally run `wp` in the site; on WP Engine use the WP Engine MCP server's `sandbox_bash`.
+- Developers: the quality checks and definition of done in `best-practices` (WordPress Coding Standards, PHPUnit, PHPStan, Plugin Check).
+- Report what you checked and how.
+
+### 6. Ship: staging, then production
+
+Guide: `wpe-deployment` (non-developers: `build-on-wpengine`, section 5).
+
+- **Always staging first.** Send the user the staging link and what to check. Production only after they say yes.
+- From a repository: WP Engine's GitHub Action deploys to staging on every push to `main`, and to production after approval.
+- Without a repository: push from Local to staging, or write the plugin's files on staging through the WP Engine MCP server.
+- Never copy an environment over a production site that has real content. Back up before changing production.
+- WP Engine is optional: the app is a plugin, so it deploys to any WordPress host.
 
 ## Hard rules
-- Sanitize input, validate it against the REST or ability schema, escape output. Use `$wpdb->prepare()` for any SQL.
-- Check `since` on every API you use against the target WordPress version; guard newer APIs with `function_exists()`.
-- Register on the right hook (`init` for types and meta, `rest_api_init` for routes, `wp_abilities_api_init` for abilities).
-- Flush rewrite rules once after changing post types or rewrite rules (`wp rewrite flush`), never on every request: in the plugin's activation hook (`register_activation_hook()`) or with WP-CLI.
-- Secrets (application passwords, `wpe_` keys) never go to browser code or version control.
-- Prefer the Core API over custom tables or custom auth.
+
+- Sanitize input, validate against the REST or ability schema, escape output. `$wpdb->prepare()` for any SQL.
+- Check `since` on every API against the target WordPress version; guard newer APIs with `function_exists()`.
+- Register on the right hook: `init` for types and meta, `rest_api_init` for routes, `wp_abilities_api_init` for Abilities.
+- Flush rewrite rules once after changing post types (`wp rewrite flush` or the plugin's activation hook), never on every request.
+- Secrets (application passwords, API keys) never go to browser code or version control.
+- On WP Engine, use the WP Engine MCP server (`https://api.ai.wpengine.com/v1/mcp`, OAuth sign-in) for WP-CLI and files. Do not generate SSH keys or configure the SSH Gateway yourself.
+- Never run destructive commands on shared environments, publish content, or change production without the user's approval.
+- Prefer the Core API over custom tables or custom authentication.
+
+## Tools
+
+| Tool | Use |
+|---|---|
+| `list_blueprints`, `get_blueprint` | The guides named in this runbook |
+| `list_domains`, `get_domain` | Find the Core API functions, classes and hooks for a task |
+| `get_function`, `get_class`, `get_hook` | Exact signatures, parameters, since-versions |
+| `search_docs` | Keyword search across everything |
+| `list_cli_commands`, `get_cli_command` | WP-CLI commands and flags |
+| `list_ai_operations`, `get_ai_operation` | Cloud AI API operations, with `howToCall` (a ready PHP call, no API key) |
+
+Plain-text docs: `{{BASE}}/llms.txt` and `{{BASE}}/llms-full.txt`.

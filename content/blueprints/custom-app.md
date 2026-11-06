@@ -1,10 +1,12 @@
 ---
-nav: "Custom app (headless setups)"
-title: "Custom app: Headless Frontend, Headless Admin, or both"
+nav: "Custom app (headless)"
+title: "Build: custom app (Headless Frontend, Headless Admin, or both)"
 summary: WordPress keeps running and does the work. Your custom app (for example Node) runs separately and owns the admin, the frontend, or both, using WordPress over the REST API and the Abilities API. Covers the three headless setups.
 ---
 
-# Custom app on WordPress
+# Build: custom app (Headless Frontend, Headless Admin, or both)
+
+> **Runbook step 3 · Build,** for any headless setup. **Next:** step 4, `wpe-ai-plugins` if the app needs AI; otherwise step 5, `wp-cli-for-agents`.
 
 **Admin:** custom app or WP Admin · **Frontend:** custom app or WordPress templating · **Deploy:** WordPress + your app.
 

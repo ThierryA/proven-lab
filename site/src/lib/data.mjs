@@ -11,6 +11,21 @@ export const stats = () => rj('stats.json');
 export const domainMd = (slug) => readFileSync(dist('domains', `${slug}.md`), 'utf8');
 const pkgRoot = JSON.parse(readFileSync(join(process.cwd(), '..', 'package.json'), 'utf8'));
 export const BASE = (process.env.SITE_URL || pkgRoot.homepage || '').replace(/\/$/, '');
+export const runbookMd = () => readFileSync(dist('AGENTS.md'), 'utf8');
+// The docs menu follows the runbook in AGENTS.md: one group per step, guides in the order agents use them.
+export const RUNBOOK = [
+  { title: 'Start', pages: [['Use your agent', '/docs/connect'], ['Runbook for agents', '/docs/runbook']] },
+  { title: '1 · Plan', slugs: ['architecture'] },
+  { title: '2 · Workspace', slugs: ['local-development', 'build-on-wpengine', 'hosted-sites'] },
+  { title: '3 · Build', slugs: ['classic-wordpress', 'custom-app'] },
+  { title: '4 · AI', slugs: ['wpe-ai-plugins', 'ai-features'] },
+  { title: '5 · Verify', slugs: ['wp-cli-for-agents', 'best-practices'] },
+  { title: '6 · Ship', slugs: ['wpe-deployment'] },
+];
+export const runbookGroups = () => RUNBOOK.map((g) => ({
+  title: g.title,
+  items: g.pages ? g.pages.map(([label, href]) => ({ label, href })) : g.slugs.map((slug) => blueprints().find((b) => b.slug === slug)).filter(Boolean).map((b) => ({ label: b.nav || b.title, href: `/docs/${b.slug}`, summary: b.summary })),
+}));
 export const connectMd = () => readFileSync(join(process.cwd(), 'src', 'content', 'connect.md'), 'utf8').replaceAll('{{BASE}}', BASE).replaceAll('{{MCP_URL}}', `${BASE}/mcp`);
 export const GROUP_ORDER = ['Data model', 'Data access', 'Users & access', 'Extension', 'Rendering', 'Interfaces', 'Services'];
 // Groups that are not model tools; shown below a separator. 'Sites' is displayed as 'Site connection'.
@@ -24,7 +39,7 @@ export function sidebar() {
     return Object.entries(tags).map(([title, items]) => ({ title, items })).sort((a, b) => ACCOUNT.indexOf(a.title) - ACCOUNT.indexOf(b.title));
   };
   return {
-    guides: [...['architecture', 'local-development', 'build-on-wpengine', 'hosted-sites', 'classic-wordpress', 'custom-app', 'best-practices', 'wpe-ai-plugins', 'ai-features'].map((slug) => blueprints().find((b) => b.slug === slug)).filter(Boolean).map((b) => ({ label: b.nav || b.title, href: `/docs/${b.slug}` })), { label: 'Use your agent', href: '/docs/connect' }],
+    guides: runbookGroups(),
     core: groups,
     cli: [{ title: 'Commands', items: cli().tops.map((t) => ({ label: `wp ${t.top}`, href: `/docs/cli/${t.top}` })) }],
     ai: byTag('ai').filter((g) => !ACCOUNT.includes(g.title)),

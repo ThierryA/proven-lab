@@ -1,10 +1,12 @@
 ---
-nav: "AI features"
-title: AI features with the Cloud AI API
+nav: "AI outside WordPress (API key)"
+title: "AI outside WordPress: Cloud AI API patterns and API keys"
 summary: Add chat, images, text to speech, transcription (speech to text), search and agents to a WordPress-backed app with the Cloud AI API, from PHP and from Node. Covers the gateway, the knowledge base, agents and sessions, and how a site connects.
 ---
 
-# AI features with the Cloud AI API
+# AI outside WordPress: Cloud AI API patterns and API keys
+
+> **Runbook step 4 · AI, advanced.** Use this only for code that runs outside WordPress and cannot call a WordPress route, or to understand the API in depth. On a WordPress site, `wpe-ai-plugins` comes first. **Next:** step 5, `wp-cli-for-agents`.
 
 Base URL: `https://api.ai.wpengine.com/v1`. Spec: `/openapi/cloud-ai-api.yaml` (a snapshot of the published OpenAPI spec, without the MCP endpoints). Look up any operation with the MCP tool `get_ai_operation`.
 

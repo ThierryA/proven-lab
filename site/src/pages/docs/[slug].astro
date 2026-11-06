@@ -1,12 +1,13 @@
 ---
 import Docs from '../../layouts/Docs.astro';
-import { blueprints, overviews, connectMd, domains, sidebar, GROUP_ORDER } from '../../lib/data.mjs';
+import { blueprints, overviews, connectMd, runbookMd, domains, sidebar, GROUP_ORDER } from '../../lib/data.mjs';
 import { render } from '../../lib/md.mjs';
 import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
 export function getStaticPaths() {
-  return [...blueprints().map((b) => ({ params: { slug: b.slug }, props: { kind: 'Blueprint', title: b.title, md: `# ${b.title}\n\n` + b.md.replace(/^\s*# .*\n/, '') } })),
+  return [...blueprints().map((b) => ({ params: { slug: b.slug }, props: { kind: 'Guide', title: b.title, md: `# ${b.title}\n\n` + b.md.replace(/^\s*# .*\n/, '') } })),
     ...overviews().map((o) => ({ params: { slug: o.slug }, props: { kind: 'Overview', slug: o.slug, title: o.title, md: o.md } })),
-    { params: { slug: 'connect' }, props: { kind: 'Guide', title: 'Use your agent', md: connectMd() } }];
+    { params: { slug: 'connect' }, props: { kind: 'Guide', title: 'Use your agent', md: connectMd() } },
+    { params: { slug: 'runbook' }, props: { kind: 'Runbook · the same text as /AGENTS.md', title: 'Runbook for agents', md: runbookMd() } }];
 }
 const { kind, slug, title, md } = Astro.props;
 const sb = sidebar();

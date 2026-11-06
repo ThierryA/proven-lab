@@ -1,10 +1,12 @@
 ---
-nav: "Hosted sites"
-title: "Hosted sites: work on WP Engine with the WP Engine MCP server"
+nav: "Existing site on WP Engine"
+title: "Existing site on WP Engine: the WP Engine MCP server"
 summary: "When the site is already hosted on WP Engine, connect the WP Engine MCP server: account and hosting tools, site Abilities, the knowledge base, and a sandbox with WP-CLI on the site's server. Content changes go through Abilities or WP-CLI; file changes need a backup, staging first and the user's approval."
 ---
 
-# Hosted sites: the WP Engine MCP server
+# Existing site on WP Engine: the WP Engine MCP server
+
+> **Runbook step 2 · Workspace,** when the site already runs on WP Engine: content changes, fixes, and checks on staging or production. **Next:** build in step 3, ship in step 6 (`wpe-deployment`).
 
 Work locally with Local (`local-development`). When the site already runs on WP Engine, when the user wants to change content on a hosted environment, or when they want to build with nothing installed (`build-on-wpengine`), use the **WP Engine MCP server**. It acts with the signed-in user's WP Engine permissions.
 

@@ -20,14 +20,15 @@ Use the `provenlab` MCP tools. If they are not connected, call the same tools ov
 | A Cloud AI API endpoint | `get_ai_operation` |
 | Anything else | `search_docs` |
 
-## Non-negotiables
+## The runbook (full text in `AGENTS.md`)
 
-1. Before writing code, ask the user which setup they want (Classic, Headless Frontend, Headless Admin, Headless Frontend + Admin), with a one-line recommendation, and where to build: in Local when it is installed (`get_blueprint local-development`), or directly on WP Engine with nothing to install, through the WP Engine MCP server (`get_blueprint build-on-wpengine`), the easiest path for someone without Local or who does not code. Developers: also ask whether to create a repository, use an existing one, or none (`get_blueprint wpe-deployment`). Deploy to staging first, production only after the user says yes. Wait for the answer; never pick the setup for them. Then follow `classic-wordpress` or `custom-app` (`get_blueprint architecture` explains the setups).
-2. Define the data model in a regular plugin (`wp-content/plugins/<app>/`, activated with WP-CLI), not a must-use plugin, on `init`; `show_in_rest => true` for anything a custom app uses; post meta also needs `custom-fields` support.
-3. Permissions are WordPress capabilities, enforced in `permission_callback` / `auth_callback`, never only in the UI.
-4. Custom actions are Abilities (`wp_register_ability`).
-5. Verify with WP-CLI and real requests before saying it works. Never run destructive commands on shared environments without approval.
-6. Keys and application passwords stay on the server.
-7. AI capabilities use the Cloud AI API through the WP Engine AI plugins by default, with no API key: install `wpe-hub` and `wpe-ai-connector` (plus the chatbot or Coworker when needed), ask the user to click Connect once, then `wp_ai_client_prompt()->using_provider( 'wpengine' )` on the server for text, images and speech, `wpe_auth_api_request()` for every other endpoint (transcription, alt text, summaries, knowledge base, agents; see `howToCall` in `get_ai_operation`), and browser session tokens so interactive features talk to the Cloud AI API directly from the browser (`get_blueprint wpe-ai-plugins`). Not the Web Speech API or another provider unless the user asks.
-9. Hosted sites: use the `wpengine` MCP server (`get_blueprint hosted-sites`). Content through Abilities or WP-CLI, drafts first; file changes only with approval, a backup and staging first.
-8. Follow `get_blueprint best-practices`: WordPress Coding Standards (PHPCS), PHPUnit tests with the WordPress test suite, PHPStan, Plugin Check. Its definition of done applies.
+Adapt to the user: developers get the developer path; someone who does not code gets plain words, few questions and nothing to install.
+
+1. **Ask, then plan** (`architecture`): ask the user the setup (Classic, Headless Frontend, Headless Admin, Headless Frontend + Admin) with a recommendation, where to build, and for developers which repository. Developers choose and you wait; for non-developers propose Classic and continue unless they object.
+2. **Workspace:** Local on their computer (`local-development`), nothing to install on WP Engine (`build-on-wpengine`), or an existing WP Engine site (`hosted-sites`).
+3. **Build** (`classic-wordpress` or `custom-app`): a regular plugin in `wp-content/plugins/<app>/`, not a must-use plugin. Data model on `init`, capabilities for permissions, Abilities for custom actions. Look up every function before using it.
+4. **AI** (`wpe-ai-plugins`): the Cloud AI API through the WP Engine AI plugins, no API key: `wp_ai_client_prompt()->using_provider( 'wpengine' )`, `wpe_auth_api_request()` for every other endpoint, browser session tokens for chat. Not the Web Speech API or another provider unless asked.
+5. **Verify** (`wp-cli-for-agents`): WP-CLI and real requests. Developers also run `best-practices`: WordPress Coding Standards, PHPUnit, PHPStan, Plugin Check.
+6. **Ship** (`wpe-deployment`): staging first, production only after the user says yes. On WP Engine use the `wpengine` MCP server; never set up SSH keys yourself.
+
+Keys and application passwords stay on the server. Never run destructive commands, publish, or change production without approval.

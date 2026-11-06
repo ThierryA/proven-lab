@@ -1,10 +1,12 @@
 ---
-nav: "WP-CLI for agents"
-title: "WP-CLI for agents: scaffold, verify and administer from the shell"
+nav: "Verify with WP-CLI"
+title: "Verify with WP-CLI"
 summary: WP-CLI (wp) is the official command-line tool for WordPress. Agents use it to install, seed, inspect and verify a site without a browser, in every setup, locally and on remote hosts.
 ---
 
-# WP-CLI for agents
+# Verify with WP-CLI
+
+> **Runbook step 5 · Verify,** for everyone. Prove every change with `wp`, locally or through the WP Engine MCP server's sandbox. **Next:** developers, `best-practices`; then step 6, `wpe-deployment`.
 
 Agents should not have to click through WP Admin, and they should not guess whether code worked. **`wp` gives them a deterministic, scriptable interface to the Core API.** Use it to set up environments, create test data, inspect state, and prove that the model you wrote actually registered. Look up any command with the MCP tools `list_cli_commands` and `get_cli_command`; the full tree is generated from the WP-CLI release, so flags are exact.
 

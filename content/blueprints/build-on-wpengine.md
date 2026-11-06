@@ -1,10 +1,12 @@
 ---
-nav: "No install: build on WP Engine"
-title: "No install: build directly on WP Engine"
+nav: "No install (on WP Engine)"
+title: "Workspace with nothing to install: build on WP Engine"
 summary: "The easiest path for people who do not code or have nothing installed: the agent creates the site on WP Engine, builds on a staging environment through the WP Engine MCP server's sandbox, shows the result, then puts it live. No Local, no Git, no terminal for the user."
 ---
 
-# No install: build directly on WP Engine
+# Workspace with nothing to install: build on WP Engine
+
+> **Runbook step 2 · Workspace,** for non-developers and anyone without Local. This guide also covers going live (section 5). **Next:** step 3, `classic-wordpress`, writing files in the sandbox as described below.
 
 For people who describe what they want and let the agent do the rest ("vibe coding"): no Local, no Git, no terminal. The agent works on a **staging** environment on WP Engine through the WP Engine MCP server (`hosted-sites`) and its sandbox, shows the user a link, and only puts it live when they say yes.
 
