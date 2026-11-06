@@ -36,7 +36,7 @@ test('kit files, manifest, setup guide and installer are served with real URLs',
   assert.ok((sh.headers.get('content-type') || '').startsWith('text/plain'));
   assert.ok((await sh.text()).startsWith('#!/bin/sh'));
   const connect = await (await fetch(`${base}/docs/connect`)).text();
-  assert.ok(connect.includes(`${home}/mcp`) && connect.includes('install.sh') && connect.includes('--marketplace ThierryA/proven'));
+  assert.ok(connect.includes(`${home}/mcp`) && connect.includes('install.sh') && connect.includes('--marketplace ThierryA/proven-lab'));
   assert.ok(!connect.includes('your-provenlab-host'));
 });
 

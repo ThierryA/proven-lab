@@ -42,10 +42,10 @@ Once the npm package is published, `npx @provenlab/mcp init` does the same and a
 One install adds the MCP server, the `provenlab` skill and two commands, `/provenlab:new-app` and `/provenlab:setup-project`:
 
 ```text
-/plugin install provenlab --marketplace ThierryA/proven
+/plugin install provenlab --marketplace ThierryA/proven-lab
 ```
 
-The plugin is in the GitHub repository `ThierryA/proven`, which is private for now: only people with access can install it until the repository is public. Before the pull request is merged, pin the branch with `ThierryA/proven#proven-lab`.
+The plugin and its marketplace are in the public GitHub repository [ThierryA/proven-lab](https://github.com/ThierryA/proven-lab). To add the marketplace first and install later: `/plugin marketplace add ThierryA/proven-lab`, then `/plugin install provenlab@provenlab`.
 
 ## Other formats
 
