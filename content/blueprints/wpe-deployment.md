@@ -1,19 +1,21 @@
 ---
-title: Hosting on WP Engine (optional, preferred)
-summary: Standard managed WordPress or the Headless Platform. How WP Engine fits, what its Sites and Credits APIs do, and how to stay portable.
+title: Deploying on WP Engine (optional, preferred)
+summary: Standard managed WordPress or the Headless Platform. How WP Engine fits, what the Sites API does, and how to stay portable.
 ---
 
-# Hosting on WP Engine
+# Deploying on WP Engine
 
-Hosting with WP Engine is **optional** but the **preferred** choice for this project. Nothing in the Core Runtime API requires it, and the AI API is reachable from any host with an API key. WP Engine adds managed WordPress, the AI API's site integration, and a headless platform.
+Deploying on WP Engine is **optional** but the **preferred** choice for this project. Nothing in the Core Runtime API requires it, and the AI API is reachable from any host with an API key. WP Engine adds managed WordPress, the AI API's site integration, and a headless platform.
 
-## Standard WordPress
+Each setup in `architecture` needs one or two runtimes deployed: always WordPress, plus your app if the admin or frontend is a custom app.
 
-Managed WordPress hosting runs the PHP templating setup (`php-templated-frontend`) and is also a fine backend for a custom Node frontend hosted elsewhere (`headless-node-app`).
+## The WordPress runtime: managed WordPress
 
-## Headless on WP Engine
+Managed WordPress runs the WordPress runtime for every setup. For **Classic** (`classic-wordpress`) it is the only thing you deploy.
 
-WP Engine's **Headless Platform** pairs a WordPress backend with a Node.js frontend host:
+## Your app's runtime: Headless Platform
+
+For **Headless** and **Custom app** (`custom-app`), WP Engine's **Headless Platform** runs your Node app next to WordPress:
 
 - Frontend deploys from GitHub, Bitbucket or GitLab; pushing to the chosen branch deploys. It builds with `npm run build` and starts with `npm run start`, and the app must listen on port 8080 (default) or 3000.
 - The WordPress side is made headless with the **WPGraphQL**, **Faust.js** and **Atlas Headless Extension** plugins.
@@ -21,11 +23,11 @@ WP Engine's **Headless Platform** pairs a WordPress backend with a Node.js front
 - The same Core Runtime API model (post types, registered meta with `show_in_rest` / `show_in_graphql`, capabilities, Abilities) applies. WPGraphQL is an alternative to REST for reads.
 - Docs: <https://developers.wpengine.com/docs/headless-platform/> · <https://github.com/wpengine/faustjs>
 
-You can also host a fully custom Node frontend (see `headless-node-app`) anywhere, including on the Headless Platform.
+You can also run your custom app on any Node host; WordPress stays on its own runtime either way.
 
-## Hosting APIs (AI API: Sites and Credits)
+## Deployment API: Sites
 
-These belong to hosting, not to the AI gateway. Use them when the site runs with WP Engine AI.
+These operations connect a deployed WordPress site to WP Engine AI. They are about the site, not about calling models. Credits (balance) are part of the AI API.
 
 | Operation | Use |
 |---|---|
@@ -34,11 +36,10 @@ These belong to hosting, not to the AI gateway. Use them when the site runs with
 | `updateSitePrimaryCollection` | Set or clear the site's primary KB collection |
 | `heartbeatSite` | Refresh the site's current state |
 | `deleteSite` | Deregister a site |
-| `getCredits` | Account credit balance (AI usage is metered in credits) |
 
 A site connection makes the site visible to the whole account. Running abilities on a site additionally needs a per-person WordPress account connection; connecting a site grants nobody the right to act on it.
 
 ## Staying portable
 
-- Keep WP Engine specifics (site registration, credits, headless deploy config) in one module so the app still runs on another host.
+- Keep WP Engine specifics (site registration, headless deploy config) in one module so the app still runs on another host.
 - The gateway and knowledge base use plain HTTPS with a bearer key, so they work from any host.

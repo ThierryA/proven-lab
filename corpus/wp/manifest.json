@@ -1,0 +1,17 @@
+{
+ "fetchedAt": "2026-11-03T09:19:53.241Z",
+ "counts": {
+  "function": 3694,
+  "class": 581,
+  "method": 5421,
+  "hook": 2703,
+  "apis-handbook": 45,
+  "plugin-handbook": 102,
+  "theme-handbook": 139,
+  "blocks-handbook": 578,
+  "rest-api-handbook": 62,
+  "adv-admin-handbook": 75,
+  "wpcs-handbook": 13,
+  "playground-handbook": 88
+ }
+}

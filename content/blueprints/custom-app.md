@@ -1,11 +1,15 @@
 ---
-title: Headless Node app on WordPress (admin + frontend)
-summary: Use WordPress purely as the application layer. A Node app owns both the admin UI and the public frontend and talks to WordPress over REST and the Abilities API. wp-admin is never used.
+title: "Custom app: your own admin, frontend, or both"
+summary: WordPress stays the PHP runtime and does the work. Your Node app runs separately and owns the admin, the frontend, or both, talking to WordPress over REST and Abilities. Custom frontend only (with WP Admin) is what people call headless.
 ---
 
-# Headless Node app on WordPress
+# Custom app on WordPress
+
+**Admin:** custom app (or WP Admin) · **Frontend:** custom app · **Runtimes:** WordPress + your app.
 
 **Prompt this blueprint answers:** "Create me a Node application that uses WordPress as the backend, with its own admin and frontend."
+
+**Headless** (WP Admin + custom frontend): follow the same steps and skip step 3, editors keep using WP Admin.
 
 ## Architecture
 
@@ -94,7 +98,7 @@ Build forms from the schema: `OPTIONS /wp/v2/projects` returns a JSON Schema for
 For anything beyond CRUD ("publish project and notify team", "generate summary"), register an ability. It is typed, permission-checked, discoverable by agents and callable from Node.
 
 ```php
-add_action( 'wp_abilities_api_categories_init', fn() => wp_register_ability_category( 'app', [ 'label' => 'App' ] ) );
+add_action( 'wp_abilities_api_categories_init', fn() => wp_register_ability_category( 'app', [ 'label' => 'App', 'description' => 'Application actions.' ] ) );
 add_action( 'wp_abilities_api_init', function () {
 	wp_register_ability( 'app/archive-project', [
 		'label'               => 'Archive project',

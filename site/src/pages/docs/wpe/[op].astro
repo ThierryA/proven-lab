@@ -9,7 +9,7 @@ const responses = Object.entries(o.responses || {}).map(([code, r]) => ({ code, 
 const group = (o.tags || []).find((x) => !x.startsWith('Product'));
 ---
 <Docs title={o.operationId} description={o.summary}>
-  <div class={'font-mono text-xs font-semibold uppercase tracking-wider ' + (o.section === 'hosting' ? 'text-amber-600 dark:text-amber-400' : 'text-indigo-600 dark:text-indigo-400')}>{o.section === 'hosting' ? 'Hosting · WP Engine (optional)' : 'AI API'} · {group}</div>
+  <div class={'font-mono text-xs font-semibold uppercase tracking-wider ' + (o.section === 'deployment' ? 'text-amber-600 dark:text-amber-400' : 'text-indigo-600 dark:text-indigo-400')}>{o.section === 'deployment' ? 'Deployment · WP Engine (optional)' : 'AI API'} · {group}</div>
   <article class="prose prose-slate max-w-none dark:prose-invert">
     <h1>{o.operationId}</h1>
     <p class="lead">{o.summary}</p>

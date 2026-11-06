@@ -2,10 +2,19 @@
 import Docs from '../../layouts/Docs.astro';
 import { marked } from 'marked';
 import { blueprints, connectMd } from '../../lib/data.mjs';
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
 export function getStaticPaths() {
-  return [...blueprints().map((b) => ({ params: { slug: b.slug }, props: { title: b.title, md: `# ${b.title}\n\n` + b.md.replace(/^# .*\n/, '') } })),
+  return [...blueprints().map((b) => ({ params: { slug: b.slug }, props: { title: b.title, md: `# ${b.title}\n\n` + b.md.replace(/^\s*# .*\n/, '') } })),
     { params: { slug: 'connect' }, props: { title: 'Connect your agent', md: connectMd() } }];
 }
 const { title, md } = Astro.props;
+// Pages can mark a text diagram (kept for agents) that the site replaces with the visual one.
+const [before, rest] = md.split('<!-- diagram:start -->');
+const after = rest?.split('<!-- diagram:end -->')[1];
+const prose = 'prose prose-slate max-w-none dark:prose-invert';
 ---
-<Docs title={title}><article class="prose prose-slate max-w-none dark:prose-invert" set:html={marked.parse(md)} /></Docs>
+<Docs title={title}>
+  {after === undefined ? <article class={prose} set:html={marked.parse(md)} /> : (
+    <article><div class={prose} set:html={marked.parse(before)} /><div class="my-8"><ArchitectureDiagram /></div><div class={prose} set:html={marked.parse(after)} /></article>
+  )}
+</Docs>

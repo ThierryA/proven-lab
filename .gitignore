@@ -4,8 +4,6 @@ site/dist
 site/.astro
 .DS_Store
 dist
-corpus/wp
-corpus/wpe
 site/public/domains
 site/public/blueprints
 site/public/openapi
@@ -14,3 +12,7 @@ site/public/*.txt
 site/public/*.json
 site/public/AGENTS.md
 packages/mcp-server/data
+corpus/wp/reference
+corpus/wp/extra
+.env
+.env.local

@@ -31,10 +31,15 @@ function dedupeHooks(hooks) {
     return { ...best, locations: g.map((h) => `${h.file}:${h.line}`) };
   });
 }
+function uniqueByName(rows) {
+  const m = new Map();
+  for (const r of rows) { const prev = m.get(r.name); if (!prev || (!prev.summary && r.summary)) m.set(r.name, r); }
+  return [...m.values()];
+}
 const since = (r) => r.tags.since?.[0]?.split(' ')[0] || '';
 const entities = {
   wpVersion: core.version,
-  functions: core.functions.map((r) => ({ ...r, domains: dom('functions', r.name), since: since(r), url: refUrl.function(r.name) })),
+  functions: uniqueByName(core.functions).map((r) => ({ ...r, domains: dom('functions', r.name), since: since(r), url: refUrl.function(r.name) })),
   classes: core.classes.map((r) => ({ ...r, domains: dom('classes', r.name), since: since(r), url: refUrl.class(r.name) })),
   methods: core.methods.map((r) => ({ ...r, since: since(r), url: `https://developer.wordpress.org/reference/classes/${r.class.toLowerCase()}/${r.name.toLowerCase()}/` })),
   hooks: dedupeHooks(core.hooks).map((r) => ({ ...r, domains: dom('hooks', r.name), since: since(r), url: refUrl.hook(r.name) })),
@@ -45,11 +50,12 @@ await w('entities.json', entities);
 const ops = [];
 for (const [path, item] of Object.entries(spec.paths)) for (const [method, op] of Object.entries(item)) {
   if (!op?.operationId) continue;
-  const hosting = (op.tags || []).some((t) => ['Sites', 'Credits'].includes(t));
-  ops.push({ section: hosting ? 'hosting' : 'ai', operationId: op.operationId, method: method.toUpperCase(), path, tags: op.tags, summary: op.summary, description: op.description, parameters: op.parameters, requestBody: op.requestBody, responses: op.responses, security: op.security });
+  if ((op.tags || []).includes('MCP')) continue; // WP Engine's MCP endpoints are intentionally not documented for now
+  const deployment = (op.tags || []).includes('Sites');
+  ops.push({ section: deployment ? 'deployment' : 'ai', operationId: op.operationId, method: method.toUpperCase(), path, tags: op.tags, summary: op.summary, description: op.description, parameters: op.parameters, requestBody: op.requestBody, responses: op.responses, security: op.security });
 }
 await w('wpe-operations.json', { servers: ['https://api.ai.wpengine.com'], version: spec.info.version, components: spec.components, operations: ops });
-await w('docs.json', [...wpeDocs, ...(await Promise.all((await readdir(join(CORPUS, 'wp/handbooks'))).map((f) => rj(`wp/handbooks/${f}`)))).flat()].map((d) => ({ id: d.id, source: d.source, handbook: d.handbook, name: d.name, url: d.url, markdown: d.markdown })));
+await w('docs.json', [...wpeDocs.filter((d) => !/:mcp/.test(d.id)), ...(await Promise.all((await readdir(join(CORPUS, 'wp/handbooks'))).map((f) => rj(`wp/handbooks/${f}`)))).flat()].map((d) => ({ id: d.id, source: d.source, handbook: d.handbook, name: d.name, url: d.url, markdown: d.markdown })));
 
 // markdown helpers
 const sig = (r) => `\`\`\`php\n${r.signature}\n\`\`\``;
@@ -73,6 +79,8 @@ for (const d of domains) {
 await w('domains.json', domains.map(({ slug, group, title, summary, functions, classes, hooks }) => ({ slug, group, title, summary, functions, classes, hooks })));
 
 // blueprints
+// Site-only markers (the site swaps the text diagram for the visual one); agents get plain markdown.
+const stripMarkers = (md) => md.replace(/^<!-- diagram:(start|end) -->\n/gm, '');
 const bpDir = join(ROOT, 'content/blueprints');
 const blueprints = [];
 for (const f of await readdir(bpDir)) {
@@ -81,7 +89,7 @@ for (const f of await readdir(bpDir)) {
   const meta = fm ? YAML.parse(fm[1]) : {};
   const slug = f.replace(/\.md$/, '');
   blueprints.push({ slug, ...meta, md: raw.replace(/^---[\s\S]*?---\n/, '') });
-  await w(`blueprints/${f}`, raw);
+  await w(`blueprints/${f}`, stripMarkers(raw));
 }
 await w('blueprints.json', blueprints);
 
@@ -127,16 +135,26 @@ const llms = [
   ...blueprints.map((b) => `- [${b.title}](${site}/blueprints/${b.slug}.md): ${b.summary}`), '',
   '## WordPress core API domains', ...domains.map((d) => `- [${d.group}: ${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',
   '## WP-CLI (`wp`): verify, scaffold and administer from the shell', ...cliPages.map((c) => `- [wp ${c.top}](${site}/cli/${c.top}.md): ${c.description}`), '',
-  '## AI API and Hosting (WP Engine)', `- [OpenAPI spec](${site}/openapi/wpe-ai.yaml)`, `- [Operations index](${site}/wpe-operations.json)`, ...ops.slice(0, 0), '',
+  '## AI API and Deployment (WP Engine)', `- [OpenAPI spec](${site}/openapi/wpe-ai.yaml)`, `- [Operations index](${site}/wpe-operations.json)`, ...ops.slice(0, 0), '',
   '## Machine interfaces', `- MCP server: \`npx @proven/mcp\` (stdio) or ${site}/mcp (streamable HTTP)`, `- Kit API OpenAPI: ${site}/openapi/kit-api.yaml`, `- OpenAI function tools: ${site}/tools/openai.json`, `- Anthropic tools: ${site}/tools/anthropic.json`, '',
 ].join('\n');
 await w('llms.txt', llms);
-const wpeOpsMd = '## AI API and Hosting operations (WP Engine)\n\n' + ops.map((o) => `- [${o.section}] \`${o.method} ${o.path}\` **${o.operationId}**: ${o.summary || ''}`).join('\n');
-await w('llms-full.txt', [llms, '\n---\n', agentsMd, ...blueprints.map((b) => `\n---\n\n# ${b.title}\n\n${b.md}`), '\n---\n', wpeOpsMd, ...domainPages.map((d) => `\n---\n\n${d.md}`), ...cliPages.map((c) => `\n---\n\n${c.md}`)].join('\n'));
+const wpeOpsMd = '## AI API and Deployment operations (WP Engine)\n\n' + ops.map((o) => `- [${o.section}] \`${o.method} ${o.path}\` **${o.operationId}**: ${o.summary || ''}`).join('\n');
+await w('llms-full.txt', [llms, '\n---\n', agentsMd, ...blueprints.map((b) => `\n---\n\n# ${b.title}\n\n${stripMarkers(b.md)}`), '\n---\n', wpeOpsMd, ...domainPages.map((d) => `\n---\n\n${d.md}`), ...cliPages.map((c) => `\n---\n\n${c.md}`)].join('\n'));
 
 // OpenAPI specs
 await mkdir(join(DIST, 'openapi'), { recursive: true });
-await cp(join(CORPUS, 'wpe/openapi.yaml'), join(DIST, 'openapi/wpe-ai.yaml'));
+{
+  // Published spec: the upstream spec minus the MCP endpoints.
+  const pub = structuredClone(spec);
+  for (const [path, item] of Object.entries(pub.paths)) if (Object.values(item).some((op) => op?.tags?.includes('MCP'))) delete pub.paths[path];
+  // Drop component schemas that are no longer reachable (the MCP/JSON-RPC ones).
+  const refs = new Set(); const seen = new Set();
+  const visit = (node) => { if (!node || typeof node !== 'object') return; for (const [k, v] of Object.entries(node)) { if (k === '$ref' && typeof v === 'string') { const m = v.match(/^#\/components\/(\w+)\/(.+)$/); if (m && !seen.has(v)) { seen.add(v); refs.add(v); visit(pub.components?.[m[1]]?.[m[2]]); } } else visit(v); } };
+  visit(pub.paths);
+  for (const kind of ['schemas', 'parameters', 'responses', 'requestBodies']) for (const name of Object.keys(pub.components?.[kind] || {})) if (!refs.has(`#/components/${kind}/${name}`)) delete pub.components[kind][name];
+  await writeFile(join(DIST, 'openapi/wpe-ai.yaml'), YAML.stringify(pub));
+}
 const kitApi = { openapi: '3.1.0', info: { title: 'Proven API', version: '0.1.0', description: 'Search and retrieve WordPress core API docs, blueprints and WP Engine AI API operations. Same capabilities as the MCP server.' }, servers: [{ url: site }], paths: {} };
 for (const t of TOOLS) {
   const props = t.inputSchema.properties || {};

@@ -1,17 +1,17 @@
 ---
 import Docs from '../../layouts/Docs.astro';
-import { domains, blueprints, wpe, cli, GROUP_ORDER } from '../../lib/data.mjs';
+import { domains, blueprints, wpe, cli, GROUP_ORDER, ACCOUNT } from '../../lib/data.mjs';
 const all = domains();
 const group = (section) => { const tags = {}; for (const o of wpe().operations.filter((x) => x.section === section)) { const t = (o.tags || []).find((x) => !x.startsWith('Product')) || 'Other'; (tags[t] ||= []).push(o); } return Object.entries(tags); };
-const aiOps = group('ai'), hostOps = group('hosting');
+const aiOps = group('ai'), hostOps = group('deployment');
 const card = 'block rounded-xl p-4 ring-1 ring-slate-900/10 hover:ring-sky-500/50 dark:ring-white/10 dark:hover:ring-sky-400/50';
 ---
 <Docs title="Docs">
   <h1 class="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">Documentation</h1>
-  <p class="mt-3 max-w-2xl text-lg">Two layers, documented separately: the <b class="text-sky-600 dark:text-sky-400">Core Runtime API</b> that runs inside WordPress, the cloud <b class="text-indigo-600 dark:text-indigo-400">AI API</b> from WP Engine, and optional <b class="text-amber-600 dark:text-amber-400">Hosting</b>. Standard templating and headless are both supported.</p>
+  <p class="mt-3 max-w-2xl text-lg">Two layers, documented separately: the <b class="text-sky-600 dark:text-sky-400">Core Runtime API</b> that runs inside WordPress, the cloud <b class="text-indigo-600 dark:text-indigo-400">AI API</b> from WP Engine, and optional <b class="text-amber-600 dark:text-amber-400">Deployment</b>. Standard templating and headless are both supported.</p>
 
   <h2 class="mt-12 text-sm font-semibold uppercase tracking-wider text-slate-500">Blueprints</h2>
-  <div class="mt-3 grid gap-3 sm:grid-cols-2">{blueprints().filter((b) => b.slug !== 'wpe-hosting').map((b) => <a class={card} href={`/docs/${b.slug}`}><b class="text-slate-900 dark:text-white">{b.title}</b><span class="mt-1 block text-sm">{b.summary}</span></a>)}</div>
+  <div class="mt-3 grid gap-3 sm:grid-cols-2">{blueprints().filter((b) => b.slug !== 'wpe-deployment').map((b) => <a class={card} href={`/docs/${b.slug}`}><b class="text-slate-900 dark:text-white">{b.title}</b><span class="mt-1 block text-sm">{b.summary}</span></a>)}</div>
 
   <div class="mt-14 flex items-center gap-3"><span class="grid size-8 place-items-center rounded-lg bg-sky-500/10 font-mono text-xs font-bold text-sky-600 dark:text-sky-400">PHP</span><h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Core Runtime API</h2></div>
   <p class="mt-1 text-sm">WordPress functions, classes and hooks, generated from source.</p>
@@ -22,13 +22,16 @@ const card = 'block rounded-xl p-4 ring-1 ring-slate-900/10 hover:ring-sky-500/5
   <div class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{cli().tops.map((t) => <a class={card} href={`/docs/cli/${t.top}`}><b class="font-mono text-sm text-slate-900 dark:text-white">wp {t.top}</b><span class="mt-1 block text-xs leading-snug">{t.description}</span></a>)}</div>
 
   <div class="mt-16 flex items-center gap-3"><span class="grid size-8 place-items-center rounded-lg bg-indigo-500/10 font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400">AI</span><h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">AI API</h2></div>
-  <p class="mt-1 text-sm">WP Engine AI API: {wpe().operations.filter((o) => o.section === 'ai').length} operations: OpenAI-compatible gateway, knowledge base, agents, sessions and MCP.</p>
-  <div class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{aiOps.map(([t, ops]) => <a class={card} href={`/docs/wpe/${ops[0].operationId}`}><b class="text-slate-900 dark:text-white">{t}</b><span class="mt-1 block text-sm">{ops.length} operation{ops.length > 1 ? 's' : ''}</span></a>)}</div>
+  <p class="mt-1 text-sm">WP Engine AI API: {wpe().operations.filter((o) => o.section === 'ai').length} operations: OpenAI-compatible gateway, knowledge base, agents, sessions and credits.</p>
+  <div class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{aiOps.filter(([t]) => !ACCOUNT.includes(t)).map(([t, ops]) => <a class={card} href={`/docs/wpe/${ops[0].operationId}`}><b class="text-slate-900 dark:text-white">{t}</b><span class="mt-1 block text-sm">{ops.length} operation{ops.length > 1 ? 's' : ''}</span></a>)}</div>
 
-  <div class="mt-16 flex items-center gap-3"><span class="grid size-8 place-items-center rounded-lg bg-amber-500/10 font-mono text-xs font-bold text-amber-600 dark:text-amber-400">WPE</span><h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Hosting</h2></div>
-  <p class="mt-1 text-sm">WP Engine hosting is optional and the preferred choice. It supports standard WordPress and headless (Headless Platform, Faust.js, WPGraphQL). Sites and Credits APIs live here.</p>
+  <div class="mt-6 border-t border-dashed border-slate-300 pt-4 dark:border-slate-700" role="separator">
+    <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{aiOps.filter(([t]) => ACCOUNT.includes(t)).map(([t, ops]) => <a class={card} href={`/docs/wpe/${ops[0].operationId}`}><b class="text-slate-900 dark:text-white">{t}</b><span class="mt-1 block text-sm">{ops.map((o) => o.summary).join(' · ')}</span></a>)}</div></div>
+
+  <div class="mt-16 flex items-center gap-3"><span class="grid size-8 place-items-center rounded-lg bg-amber-500/10 font-mono text-xs font-bold text-amber-600 dark:text-amber-400">WPE</span><h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Deployment</h2></div>
+  <p class="mt-1 text-sm">Deploying on WP Engine is optional and the preferred choice. It supports standard WordPress and headless (Headless Platform, Faust.js, WPGraphQL). The Sites API lives here.</p>
   <div class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-    <a class={card} href="/docs/wpe-hosting"><b class="text-slate-900 dark:text-white">Hosting on WP Engine</b><span class="mt-1 block text-sm">Standard vs headless, Headless Platform, portability.</span></a>
+    <a class={card} href="/docs/wpe-deployment"><b class="text-slate-900 dark:text-white">Deploying on WP Engine</b><span class="mt-1 block text-sm">Standard vs headless, Headless Platform, portability.</span></a>
     {hostOps.map(([t, ops]) => <a class={card} href={`/docs/wpe/${ops[0].operationId}`}><b class="text-slate-900 dark:text-white">{t}</b><span class="mt-1 block text-sm">{ops.length} operation{ops.length > 1 ? 's' : ''}</span></a>)}
   </div>
 </Docs>

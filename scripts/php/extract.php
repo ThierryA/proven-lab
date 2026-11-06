@@ -55,7 +55,7 @@ function collect_until(array $t, int $i, array $stop): array {
 $files = [];
 foreach ($dirs as $d) {
     $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator("$root/$d", FilesystemIterator::SKIP_DOTS));
-    foreach ($it as $f) if ($f->getExtension() === 'php' && !preg_match($skip, $f->getPathname())) $files[$f->getPathname()] = true;
+    foreach ($it as $f) if ($f->getExtension() === 'php' && !preg_match($skip, $f->getPathname()) && !in_array($f->getFilename(), ['noop.php', 'class-pclzip.php'], true)) $files[$f->getPathname()] = true;
 }
 foreach ($rootFiles as $rf) if (is_file("$root/$rf")) $files["$root/$rf"] = true;
 ksort($files);
@@ -88,6 +88,7 @@ foreach (array_keys($files) as $file) {
                     'summary' => $d['summary'], 'description' => $d['description'], 'tags' => $d['tags'], 'params' => parse_params($d['tags'])];
                 $private = false;
                 for ($b = $i - 1; $b >= 0 && $b > $i - 6; $b--) { if ($t[$b]->isIgnorable()) continue; if (in_array($t[$b]->id, [T_PUBLIC, T_PROTECTED, T_PRIVATE, T_STATIC, T_FINAL, T_ABSTRACT])) { if (in_array($t[$b]->id, [T_PRIVATE])) $private = true; } else break; }
+                if (isset($d['tags']['ignore'])) { $doc = null; continue; } // @ignore: stubs/internal copies, never the real API
                 if ($classStack) { $rec['class'] = end($classStack)[0]; if (!$private) $out['methods'][] = $rec; }
                 elseif (!preg_match('/^_+\\w{3,}/', $name)) $out['functions'][] = $rec;
                 $doc = null;

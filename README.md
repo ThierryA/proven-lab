@@ -27,6 +27,25 @@ cd site && npm run build   # developer site + one-pager
 
 Add the MCP server to Claude Code: `claude mcp add proven -- node /path/to/packages/mcp-server/src/index.mjs`
 
+## Run and deploy
+
+```bash
+npm install
+npm run build      # builds data artifacts + the site
+npm start          # serves site + /mcp + /api/<tool> on PORT (default 8080)
+```
+
+One Node process serves the website, the MCP endpoint (`/mcp`), the REST mirror of the tools (`/api/<tool>`) and `/healthz`. It listens on `PORT` (default 8080), has no runtime dependencies beyond the MCP SDK, and builds from the committed data snapshot in `corpus/`, so the build needs no network and no PHP. This matches WP Engine's Headless Platform (build `npm run build`, start `npm start`, port 8080 or 3000, Node per `.nvmrc`). Refresh the data with `npm run sync` and commit the result.
+
+## Tests
+
+```bash
+npm test                              # build + 19 tests: data integrity, blueprint code, server, MCP (HTTP + stdio), link crawl
+WP_REAL=1 node --test test/wordpress.test.mjs   # real WordPress 7.x via WordPress Playground: runs the blueprint code
+```
+
+The blueprint tests lint every PHP snippet, check every WordPress function and every WP-CLI command and flag against the generated data, and the real-WordPress test executes the headless blueprint (post types, registered meta over REST, user meta, capabilities, Abilities).
+
 ## Outputs (`dist/`)
 `llms.txt`, `llms-full.txt`, `AGENTS.md`, `domains/*.md`, `blueprints/*.md`, `entities.json`, `wpe-operations.json`, `openapi/{kit-api,wpe-ai}.yaml`, `tools/{openai,anthropic}.json`.
 

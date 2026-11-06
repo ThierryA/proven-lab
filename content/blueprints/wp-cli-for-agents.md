@@ -21,7 +21,7 @@ Use `wp core version`, `wp core check-update` and `wp config get` to inspect the
 
 ## 2. Verify the data model you registered
 
-After writing the must-use plugin (see `headless-node-app`), prove it:
+After writing the must-use plugin (see `custom-app`), prove it:
 
 ```bash
 wp post-type list --fields=name,public,show_in_rest
@@ -30,7 +30,7 @@ wp eval 'var_dump( get_registered_meta_keys( "post", "project" ) );'
 wp eval 'var_dump( get_registered_meta_keys( "user" ) );'
 wp post create --post_type=project --post_title="Smoke test" --meta_input='{"budget":1200}' --porcelain
 wp post meta get <id> budget
-wp rest-api-check 2>/dev/null || curl -s localhost:8080/wp-json/wp/v2/projects | head -c 300
+curl -s localhost:8080/wp-json/wp/v2/projects | head -c 300     # REST exposure check (needs the site served)
 ```
 
 `wp eval` and `wp eval-file` run PHP inside a fully loaded WordPress. They are the agent's REPL for any Core Runtime API (`get_function` tells you what to call).

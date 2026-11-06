@@ -4,8 +4,10 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-// Published package ships its data in ./data; in the repo it reads the built dist/.
-const DIST = process.env.PROVEN_DIST || (existsSync(join(here, '..', 'data', 'entities.json')) ? join(here, '..', 'data') : join(here, '..', '..', '..', 'dist'));
+// In the repo, read the freshly built dist/ (it wins over any stale bundled copy); a published package has no
+// sibling dist/ and reads the data bundled into ./data by prepack.
+const repoDist = join(here, '..', '..', '..', 'dist');
+const DIST = process.env.PROVEN_DIST || (existsSync(join(repoDist, 'entities.json')) ? repoDist : join(here, '..', 'data'));
 const rj = async (f) => JSON.parse(await readFile(join(DIST, f), 'utf8'));
 
 let state;
