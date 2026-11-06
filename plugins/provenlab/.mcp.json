@@ -2,7 +2,7 @@
   "mcpServers": {
     "provenlab": {
       "type": "http",
-      "url": "https://h01j8ie82uxpc31tlr1b9sqsz.js.wpenginepowered.com/mcp"
+      "url": "https://proven-lab.com/mcp"
     },
     "wpengine": {
       "type": "http",

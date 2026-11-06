@@ -18,5 +18,5 @@
     "prepack": "node ../../scripts/build/pack-data.mjs",
     "postpack": "node -e \"require('fs').rmSync('data',{recursive:true,force:true})\""
   },
-  "homepage": "https://h01j8ie82uxpc31tlr1b9sqsz.js.wpenginepowered.com"
+  "homepage": "https://proven-lab.com"
 }
