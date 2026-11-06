@@ -1,0 +1,44 @@
+---
+import Base from './Base.astro';
+import { sidebar } from '../lib/data.mjs';
+const { title, description } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '');
+const sb = sidebar();
+const on = (href) => path === href;
+const open = (items) => items.some((i) => on(i.href));
+const link = (active) => 'block border-l py-1.5 pl-4 -ml-px text-[13.5px] ' + (active ? 'border-sky-500 font-semibold text-sky-600 dark:border-sky-400 dark:text-sky-400' : 'border-transparent text-slate-600 hover:border-slate-400 hover:text-slate-900 dark:text-slate-400 dark:hover:border-slate-500 dark:hover:text-slate-200');
+---
+<Base title={`${title} · WP Agentic Kit`} description={description}>
+<div class="mx-auto flex max-w-[88rem] px-4 sm:px-6 lg:px-8">
+  <aside class="sticky top-16 hidden h-[calc(100vh-4rem)] w-72 shrink-0 overflow-y-auto py-8 pr-6 lg:block" aria-label="Documentation">
+    <h5 class="mb-3 text-sm font-semibold text-slate-900 dark:text-white">Guides</h5>
+    <ul class="space-y-px border-l border-slate-200 dark:border-slate-800">{sb.guides.map((i) => <li><a href={i.href} class={link(on(i.href))}>{i.label}</a></li>)}</ul>
+    <div class="mt-8 border-t border-slate-200 pt-6 dark:border-slate-800">
+      <div class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-md bg-sky-500/10 font-mono text-[11px] font-bold text-sky-600 dark:text-sky-400">PHP</span><h5 class="text-sm font-semibold text-slate-900 dark:text-white">Core Runtime API</h5></div>
+      <p class="mt-1 text-xs text-slate-500">WordPress: your application layer. Runs on your site.</p>
+    </div>
+    {sb.core.map((g) => <details class="group mt-3" open={open(g.items) || undefined}>
+      <summary class="flex cursor-pointer list-none items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-500 [&::-webkit-details-marker]:hidden"><span class="transition group-open:rotate-90">›</span>{g.title}</summary>
+      <ul class="mt-1 space-y-px border-l border-slate-200 dark:border-slate-800">{g.items.map((i) => <li><a href={i.href} class={link(on(i.href))}>{i.label}</a></li>)}</ul></details>)}
+    <div class="mt-10 border-t border-slate-200 pt-6 dark:border-slate-800">
+      <div class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-md bg-indigo-500/10 font-mono text-[11px] font-bold text-indigo-600 dark:text-indigo-400">AI</span><h5 class="text-sm font-semibold text-slate-900 dark:text-white">AI API</h5></div>
+      <p class="mt-1 text-xs text-slate-500">WP Engine: gateway, knowledge base, agents. Cloud HTTP API.</p>
+    </div>
+    {sb.wpe.map((g) => <details class="group mt-3" open={open(g.items) || undefined}>
+      <summary class="flex cursor-pointer list-none items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-500 [&::-webkit-details-marker]:hidden"><span class="transition group-open:rotate-90">›</span>{g.title}</summary>
+      <ul class="mt-1 space-y-px border-l border-slate-200 dark:border-slate-800">{g.items.map((i) => <li><a href={i.href} class={link(on(i.href))}><span class="mr-1.5 font-mono text-[10px] text-indigo-500">{i.method}</span>{i.label}</a></li>)}</ul></details>)}
+  </aside>
+  <main class="min-w-0 flex-1 py-10 lg:pl-10 xl:pr-8"><div class="mx-auto max-w-3xl"><slot /></div></main>
+  <nav id="toc" class="sticky top-16 hidden h-[calc(100vh-4rem)] w-56 shrink-0 overflow-y-auto py-10 pl-4 text-[13px] xl:block"><h5 class="mb-3 text-sm font-semibold text-slate-900 dark:text-white">On this page</h5><ul id="toc-list" class="space-y-1.5"></ul></nav>
+</div>
+<script is:inline>
+  const list = document.getElementById('toc-list');
+  document.querySelectorAll('article h2, article h3').forEach((h, i) => {
+    if (!h.id) h.id = 'h-' + i + '-' + h.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const li = document.createElement('li'); li.className = h.tagName === 'H3' ? 'pl-3' : '';
+    li.innerHTML = '<a class="block truncate text-slate-500 hover:text-slate-900 dark:hover:text-slate-200" href="#' + h.id + '"></a>';
+    li.firstChild.textContent = h.textContent.replace(/\(\)$/, ''); list.appendChild(li);
+  });
+  if (!list.children.length) document.getElementById('toc').remove();
+</script>
+</Base>

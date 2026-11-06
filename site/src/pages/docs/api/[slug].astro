@@ -1,0 +1,14 @@
+---
+import Docs from '../../../layouts/Docs.astro';
+import { marked } from 'marked';
+import { domains, domainMd } from '../../../lib/data.mjs';
+export function getStaticPaths() { return domains().map((d) => ({ params: { slug: d.slug }, props: { d } })); }
+const { d } = Astro.props;
+const html = marked.parse(domainMd(d.slug).replace(/^# .*\n+[^\n]*\n+/, '').replace(/^\*WordPress .*generated from source.*\n/m, ''));
+---
+<Docs title={d.title} description={d.summary}>
+  <div class="font-mono text-xs font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400">Core Runtime API · {d.group}</div>
+  <article class="prose prose-slate max-w-none dark:prose-invert"><h1>{d.title}</h1><p class="lead">{d.summary}</p>
+    <p class="text-sm">{d.functions.length} functions · {d.classes.length} {d.classes.length === 1 ? 'class' : 'classes'} · {d.hooks.length} hooks. Look up any of them with the <code>get_function</code>, <code>get_class</code> and <code>get_hook</code> MCP tools.</p>
+    <div set:html={html} /></article>
+</Docs>

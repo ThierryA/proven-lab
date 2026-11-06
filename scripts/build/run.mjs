@@ -69,7 +69,7 @@ for (const d of domains) {
   domainPages.push({ ...d, md: text });
   await w(`domains/${d.slug}.md`, text);
 }
-await w('domains.json', domains.map(({ slug, title, summary, functions, classes, hooks }) => ({ slug, title, summary, functions, classes, hooks })));
+await w('domains.json', domains.map(({ slug, group, title, summary, functions, classes, hooks }) => ({ slug, group, title, summary, functions, classes, hooks })));
 
 // blueprints
 const bpDir = join(ROOT, 'content/blueprints');
@@ -95,7 +95,7 @@ const llms = [
   '> Docs and tools for AI agents that build applications on WordPress core APIs (post types, meta, users, hooks, blocks, Abilities, AI Client) combined with the WP Engine AI API (gateway, knowledge base, agents, MCP). Generated from WordPress ' + core.version + ' source and the live WP Engine AI API spec.', '',
   '## Start here', `- [Agent playbook](${site}/AGENTS.md): rules and workflow for agents building WordPress sites`,
   ...blueprints.map((b) => `- [${b.title}](${site}/blueprints/${b.slug}.md): ${b.summary}`), '',
-  '## WordPress core API domains', ...domains.map((d) => `- [${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',
+  '## WordPress core API domains', ...domains.map((d) => `- [${d.group}: ${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',
   '## WP Engine AI API', `- [OpenAPI spec](${site}/openapi/wpe-ai.yaml)`, `- [Operations index](${site}/wpe-operations.json)`, ...ops.slice(0, 0), '',
   '## Machine interfaces', `- MCP server: \`npx wp-agentic-kit-mcp\` (stdio) or ${site}/mcp (streamable HTTP)`, `- Kit API OpenAPI: ${site}/openapi/kit-api.yaml`, `- OpenAI function tools: ${site}/tools/openai.json`, `- Anthropic tools: ${site}/tools/anthropic.json`, '',
 ].join('\n');

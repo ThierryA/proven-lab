@@ -1,0 +1,23 @@
+---
+import Docs from '../../../layouts/Docs.astro';
+import { wpe } from '../../../lib/data.mjs';
+export function getStaticPaths() { return wpe().operations.map((o) => ({ params: { op: o.operationId }, props: { o } })); }
+const { o } = Astro.props;
+const params = (o.parameters || []).map((p) => ({ name: p.name, in: p.in, required: p.required, type: p.schema?.type, description: p.description }));
+const body = o.requestBody?.content?.['application/json']?.schema;
+const responses = Object.entries(o.responses || {}).map(([code, r]) => ({ code, description: r.description }));
+const group = (o.tags || []).find((x) => !x.startsWith('Product'));
+---
+<Docs title={o.operationId} description={o.summary}>
+  <div class="font-mono text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">AI API · {group}</div>
+  <article class="prose prose-slate max-w-none dark:prose-invert">
+    <h1>{o.operationId}</h1>
+    <p class="lead">{o.summary}</p>
+    <pre><code>{o.method} https://api.ai.wpengine.com{o.path}</code></pre>
+    {o.description && <p style="white-space:pre-line">{o.description}</p>}
+    {params.length > 0 && <><h2>Parameters</h2><table><thead><tr><th>Name</th><th>In</th><th>Type</th><th>Description</th></tr></thead><tbody>{params.map((p) => <tr><td><code>{p.name}</code>{p.required ? ' *' : ''}</td><td>{p.in}</td><td>{p.type}</td><td>{p.description}</td></tr>)}</tbody></table></>}
+    {body && <><h2>Request body</h2><pre><code>{JSON.stringify(body, null, 2).slice(0, 6000)}</code></pre></>}
+    {responses.length > 0 && <><h2>Responses</h2><table><tbody>{responses.map((r) => <tr><td><code>{r.code}</code></td><td>{r.description}</td></tr>)}</tbody></table></>}
+    <p class="text-sm">Full schema: <code>get_wpe_operation {o.operationId}</code> · <a href={`https://developers.wpengine.com/docs/ai/api/reference/operations/${o.operationId.toLowerCase()}/`}>official docs</a></p>
+  </article>
+</Docs>

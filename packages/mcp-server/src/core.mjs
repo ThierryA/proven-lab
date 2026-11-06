@@ -25,7 +25,7 @@ const notFound = (kind, name, map) => ({ error: `${kind} not found: ${name}`, di
 const fmtParams = (r) => r.params.map((p) => ({ type: p.type, name: p.name, description: p.description }));
 
 const handlers = {
-  async list_domains() { const s = await load(); return s.domains.map(({ slug, title, summary }) => ({ slug, title, summary })); },
+  async list_domains() { const s = await load(); return s.domains.map(({ slug, group, title, summary }) => ({ slug, group, title, summary })); },
   async get_domain({ slug }) {
     const s = await load();
     const d = s.domains.find((x) => x.slug === slug);

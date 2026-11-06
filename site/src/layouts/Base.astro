@@ -1,40 +1,46 @@
 ---
+import '@fontsource-variable/inter';
+import '../styles/global.css';
 const { title = 'WP Agentic Kit', description = 'Build AI experiences on WordPress core APIs and the WP Engine AI API.' } = Astro.props;
+const links = [['Why', '/#why'], ['Stack', '/#stack'], ['For agents', '/#agents'], ['Docs', '/docs']];
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" class="antialiased">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{title}</title><meta name="description" content={description} />
   <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt" />
-  <style is:global>
-    :root{--bg:#07080c;--panel:#0d1017;--line:#1c2230;--text:#e8ebf2;--mute:#8b94a7;--accent:#5eead4;--accent2:#818cf8;--warm:#fbbf24;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}
-    body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
-    a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
-    code,pre{font-family:var(--mono)}
-    .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
-    nav.top{position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);background:rgba(7,8,12,.75);border-bottom:1px solid var(--line)}
-    nav.top .wrap{display:flex;align-items:center;gap:28px;height:60px}
-    nav.top .brand{font-weight:700;color:var(--text);letter-spacing:-.01em}
-    nav.top .brand span{color:var(--accent)}
-    nav.top a.l{color:var(--mute);font-size:14px}nav.top a.l:hover{color:var(--text);text-decoration:none}
-    .sp{flex:1}
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;font-weight:600;font-size:15px;border:1px solid var(--line);color:var(--text);background:var(--panel)}
-    .btn.primary{background:var(--accent);color:#04201c;border-color:var(--accent)}.btn:hover{text-decoration:none;filter:brightness(1.1)}
-    .md{max-width:820px}.md h1{font-size:2.2rem;letter-spacing:-.02em}.md h2{margin-top:2.4rem;border-top:1px solid var(--line);padding-top:1.4rem}
-    .md pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;overflow:auto;font-size:13px}
-    .md code{background:var(--panel);padding:2px 6px;border-radius:5px;font-size:.88em}.md pre code{background:none;padding:0}
-    .md table{border-collapse:collapse;width:100%;font-size:14px}.md th,.md td{border:1px solid var(--line);padding:8px 12px;text-align:left;vertical-align:top}.md th{background:var(--panel)}
-    footer{border-top:1px solid var(--line);color:var(--mute);font-size:14px;padding:40px 0;margin-top:80px}
-  </style>
+  <script is:inline>
+    (() => { const t = localStorage.theme; if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark'); })();
+  </script>
 </head>
-<body>
-<nav class="top"><div class="wrap">
-  <a class="brand" href="/">WP<span>·</span>Agentic Kit</a>
-  <a class="l" href="/#why">Why</a><a class="l" href="/#stack">Stack</a><a class="l" href="/#agents">For agents</a><a class="l" href="/docs">Docs</a>
-  <span class="sp"></span><a class="btn primary" href="/docs/connect">Connect your agent</a>
-</div></nav>
+<body class="bg-white font-sans text-slate-600 dark:bg-slate-950 dark:text-slate-400">
+<header class="sticky top-0 z-40 border-b border-slate-900/10 bg-white/80 backdrop-blur dark:border-slate-50/[0.06] dark:bg-slate-950/75">
+  <div class="mx-auto flex h-16 max-w-[88rem] items-center gap-8 px-4 sm:px-6 lg:px-8">
+    <a href="/" class="flex items-center gap-2 font-semibold tracking-tight text-slate-900 dark:text-white">
+      <span class="grid size-7 place-items-center rounded-lg bg-sky-500 font-mono text-sm text-white">W</span>WP Agentic Kit
+    </a>
+    <nav class="hidden items-center gap-6 text-sm font-semibold text-slate-700 sm:flex dark:text-slate-200">
+      {links.map(([l, h]) => <a href={h} class="hover:text-sky-500 dark:hover:text-sky-400">{l}</a>)}
+    </nav>
+    <div class="ml-auto flex items-center gap-3">
+      <a href="/llms.txt" class="hidden font-mono text-xs text-slate-500 hover:text-slate-900 md:block dark:hover:text-white">llms.txt</a>
+      <button id="theme" aria-label="Toggle theme" class="grid size-9 place-items-center rounded-full text-slate-500 ring-1 ring-slate-900/10 hover:text-slate-900 dark:ring-white/10 dark:hover:text-white">
+        <svg class="size-4 dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="hidden size-4 dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <a href="/docs/connect" class="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 dark:bg-sky-500 dark:hover:bg-sky-400">Connect agent</a>
+    </div>
+  </div>
+</header>
 <slot />
-<footer><div class="wrap">Docs generated from WordPress source and the live WP Engine AI API spec · <a href="/llms.txt">llms.txt</a> · <a href="/openapi/kit-api.yaml">OpenAPI</a> · <a href="/tools/openai.json">OpenAI tools</a></div></footer>
+<footer class="mt-32 border-t border-slate-900/10 py-10 text-sm dark:border-slate-50/[0.06]">
+  <div class="mx-auto flex max-w-[88rem] flex-wrap gap-x-6 gap-y-2 px-4 sm:px-6 lg:px-8">
+    <span>Generated from WordPress source and the live WP Engine AI API spec.</span>
+    <a class="hover:text-sky-500" href="/llms.txt">llms.txt</a><a class="hover:text-sky-500" href="/openapi/kit-api.yaml">OpenAPI</a><a class="hover:text-sky-500" href="/tools/openai.json">OpenAI tools</a><a class="hover:text-sky-500" href="/AGENTS.md">AGENTS.md</a>
+  </div>
+</footer>
+<script is:inline>
+  document.getElementById('theme').addEventListener('click', () => { const d = document.documentElement.classList.toggle('dark'); localStorage.theme = d ? 'dark' : 'light'; });
+</script>
 </body></html>
