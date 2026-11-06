@@ -8,7 +8,7 @@ import { stats } from '../lib/data.mjs';
 const { title = 'Proven Lab', description = 'Docs, an MCP server and tool schemas that let coding agents build on WordPress core, WP-CLI and the Cloud AI API.' } = Astro.props;
 const s = stats();
 const path = Astro.url.pathname;
-const links = [['Docs', '/docs'], ['Architecture', '/docs/architecture'], ['Use your agent', '/docs/connect']];
+const onDocs = path.startsWith('/docs') && !path.startsWith('/docs/connect');
 ---
 <!doctype html>
 <html lang="en" class="antialiased">
@@ -26,7 +26,8 @@ const links = [['Docs', '/docs'], ['Architecture', '/docs/architecture'], ['Use 
       <span class="text-[15px] font-medium tracking-tight">Proven <span class="font-mono font-normal italic tracking-normal text-signal">Lab</span></span>
     </a>
     <nav class="ml-auto flex items-center gap-6 text-[13px]">
-      {links.map(([l, h]) => <a href={h} class={`hover:text-fg ${path.startsWith(h) && h !== '/docs' || path === h ? 'text-fg' : ''}`}>{l}</a>)}
+      <a href="/docs" class={`hover:text-fg ${onDocs ? 'text-fg' : ''}`}>Docs</a>
+      <a href="/docs/connect" class="bg-signal px-3.5 py-1.5 font-medium text-ink transition-colors hover:bg-fg">Use your agent</a>
     </nav>
   </div>
 </header>
