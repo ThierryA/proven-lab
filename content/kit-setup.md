@@ -37,4 +37,4 @@ The file list is also at `{{BASE}}/kit/manifest.json`. A person can run `curl -f
 
 ## 4. Start building
 
-Read the playbook (`AGENTS.md`). Before writing code, ask the user which setup they want (Classic, Headless Frontend, Headless Admin, Headless Frontend + Admin) and where WordPress runs locally; then follow the matching blueprint.
+Read the playbook (`AGENTS.md`). Before writing code, ask the user which setup they want (Classic, Headless Frontend, Headless Admin, Headless Frontend + Admin), and check whether Local (localwp.com) is installed to run WordPress locally (`get_blueprint local-development`); then follow the matching blueprint.

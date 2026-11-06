@@ -112,7 +112,7 @@ async function exerciseMcp(client) {
   assert.equal(hook.data.params.length, 3);
   const bp = await call('get_blueprint', { slug: 'custom-app' });
   assert.ok(bp.data.markdown.includes('register_post_meta'));
-  assert.equal((await call('list_blueprints', {})).data.length, 6);
+  assert.equal((await call('list_blueprints', {})).data.length, 8);
   const op = await call('get_ai_operation', { operationId: 'searchCollection' });
   assert.equal(op.data.method, 'POST'); assert.equal(op.data.path, '/v1/kb/collections/{id}/search');
   assert.ok((await call('list_cli_commands', { filter: 'cron' })).data.length >= 5);

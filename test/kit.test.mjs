@@ -94,6 +94,20 @@ test('agent-facing files tell the agent to ask for the setup before building', a
   }
   const agents = await (await fetch(`${base}/AGENTS.md`)).text();
   assert.ok(!/"build me an app" → Headless/.test(agents), 'no default setup for "build me an app"');
-  assert.match(agents, /WordPress Playground|Local/);
+  assert.match(agents, /localwp\.com/);
+  assert.match(agents, /local-development/);
+  const local = await (await fetch(`${base}/blueprints/local-development.md`)).text();
+  for (const s of ['sites.json', 'local_create_site', 'https://localwp.com', 'app/public']) assert.ok(local.includes(s), `local-development mentions ${s}`);
   assert.match(readFileSync(join(ROOT, 'plugins/provenlab/commands/new-app.md'), 'utf8'), /Wait for the answer/);
+});
+
+test('agents are told to use the Cloud AI API for AI and to follow best practices', async () => {
+  const agents = await (await fetch(`${base}/AGENTS.md`)).text();
+  assert.match(agents, /createTranscription/); assert.match(agents, /Web Speech API/); assert.match(agents, /best-practices/);
+  const skill = await (await fetch(`${base}/kit/.claude/skills/provenlab/SKILL.md`)).text();
+  assert.match(skill, /Cloud AI API/); assert.match(skill, /PHPUnit/);
+  const ai = await (await fetch(`${base}/blueprints/ai-features.md`)).text();
+  for (const s of ['/v1/audio/transcriptions', 'MediaRecorder', 'base64', 'transcribe:write']) assert.ok(ai.includes(s), s);
+  const bp = await (await fetch(`${base}/blueprints/best-practices.md`)).text();
+  for (const s of ['wp-coding-standards/wpcs', 'phpcs.xml.dist', 'WP_UnitTestCase', 'install-wp-tests.sh', 'phpstan', 'Plugin Check', 'Definition of done']) assert.ok(bp.includes(s), s);
 });

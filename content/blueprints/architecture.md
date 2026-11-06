@@ -71,6 +71,6 @@ Before writing any code, ask the user which setup they want, unless they already
 - A themed site with a purpose-built admin instead of WP Admin → **Headless Admin**.
 - An application with its own UI → **Headless Frontend + Admin**.
 
-In the same message, ask where WordPress runs locally (an existing site, Local, WordPress Playground or Docker) if it is not obvious. Wait for the answer.
+In the same message, settle where WordPress runs locally: check whether Local is installed and offer to create the site there, or recommend installing it (`local-development`). Wait for the answer.
 
 Whatever the setup: define the model once in a must-use plugin, let WordPress capabilities decide who can do what, turn custom actions into Abilities, and verify with WP-CLI (locally, or on WP Engine through the sandboxed SSH session).
