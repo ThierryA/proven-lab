@@ -55,14 +55,9 @@ const section = 'mx-auto grid max-w-[80rem] gap-x-12 gap-y-6 border-t border-lin
   <p class="text-[17px] leading-relaxed">
     Let agents leverage the most widely used open-source website platform, with more than twenty years of collective intelligence. Proven Lab gives coding agents the exact framework to build new or update existing applications that are <em class="text-signal">reliable</em>, <em class="text-signal">secure</em> and <em class="text-signal">scalable</em>, more <em class="text-signal">efficiently</em> and at <em class="text-signal">lower cost</em>.
   </p>
-  <div class="mt-10" data-prompt>
-    <p class="label">Paste into your agent · nothing to install</p>
-    <p class="mt-3 flex gap-2 border border-line-2 bg-ink-2 px-4 py-3 font-mono text-[13px] leading-relaxed text-fg"><span class="text-signal">›</span> <span class="min-w-0 [overflow-wrap:anywhere]" data-prompt-text>Build a members directory with Proven Lab: <span class="block text-fg-2">{home}</span></span></p>
-    <p class="mt-3 text-[13px] leading-relaxed text-fg-3">For agents: read <a class="font-mono text-fg-2 underline decoration-line-2 underline-offset-4 hover:decoration-signal" href={`${home}/AGENTS.md`}>/AGENTS.md</a>, then call any tool at <a class="font-mono text-fg-2 underline decoration-line-2 underline-offset-4 hover:decoration-signal" href={`${home}/api/list_blueprints`}>/api/&lt;tool&gt;</a>. No install, account or API key.</p>
-    <div class="mt-6 flex flex-wrap items-center gap-6">
-      <button type="button" data-copy-prompt class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Use your agent</button>
-      <a href="/docs/connect" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">More ways to connect</a>
-    </div>
+  <div class="mt-10 flex flex-wrap items-center gap-6">
+    <a href="/docs/connect" class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Use your agent</a>
+    <a href="/docs/architecture" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">How it fits together</a>
   </div>
   </div>
   <div class="min-w-0"><HeroTerminal /></div>
@@ -166,23 +161,11 @@ const section = 'mx-auto grid max-w-[80rem] gap-x-12 gap-y-6 border-t border-lin
 <section class="mx-auto max-w-[80rem] px-5 py-20 sm:px-8">
   <h2 class="max-w-3xl text-[clamp(1.8rem,3.6vw,3rem)] font-medium leading-tight tracking-[-0.03em] text-fg">Build on a proven platform, not from scratch.</h2>
   <div class="mt-8 flex flex-wrap items-center gap-6">
-    <button type="button" data-copy-prompt class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Use your agent</button>
+    <a href="/docs/connect" class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Use your agent</a>
     <a href="/docs" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">Browse the docs</a>
   </div>
 </section>
 </div>
 
 
-<script>
-  // "Use your agent" copies the starter prompt; paste it into any coding agent.
-  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-copy-prompt]')) {
-    const label = btn.textContent;
-    btn.addEventListener('click', async () => {
-      const text = document.querySelector('[data-prompt-text]')?.textContent || '';
-      try { await navigator.clipboard.writeText(text); btn.textContent = 'Copied. Paste it into your agent'; }
-      catch { document.querySelector('[data-prompt]')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-      setTimeout(() => { btn.textContent = label; }, 2600);
-    });
-  }
-</script>
 </Base>

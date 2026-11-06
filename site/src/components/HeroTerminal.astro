@@ -4,7 +4,7 @@
 // (no-JS, reduced motion, crawlers); the script types the sessions at reading pace, in a loop.
 type Row = { kind: 'you' | 'agent' | 'out' | 'label'; text?: string; html?: string };
 const INDUSTRY: Row = { kind: 'label', html: '# current industry' };
-const FIX: Row = { kind: 'label', html: '# the fix: <span class="t-sig">Proven Lab</span>' };
+const FIX: Row = { kind: 'label', html: '# the fix: add <span class="t-sig">"with Proven Lab"</span> to the prompt' };
 const sessions: Row[][] = [
   [
     { kind: 'you', text: 'Build me an app with users, content and search.' },
