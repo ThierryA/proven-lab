@@ -62,12 +62,15 @@ The Cloud AI API runs on WP Engine's infrastructure, not inside WordPress. It pr
 
 The AI API plugs in the same way in every setup.
 
-## For agents: how to choose
+## For agents: ask, don't assume
 
-- "Build me a website" → **Classic**.
-- "Build me an app" → **Headless Frontend + Admin**.
-- Editors want WP Admin but the frontend is React/Next.js → **Headless Frontend**.
-- A themed site, but a purpose-built admin instead of WP Admin → **Headless Admin**.
-- Ask only if the request does not make it clear.
+Before writing any code, ask the user which setup they want, unless they already said. Offer the four setups above, each in one line, with a recommendation from the request:
+
+- A content site or blog → **Classic**.
+- Editors keep WP Admin, the frontend is a React/Next.js app → **Headless Frontend**.
+- A themed site with a purpose-built admin instead of WP Admin → **Headless Admin**.
+- An application with its own UI → **Headless Frontend + Admin**.
+
+In the same message, ask where WordPress runs locally (an existing site, Local, WordPress Playground or Docker) if it is not obvious. Wait for the answer.
 
 Whatever the setup: define the model once in a must-use plugin, let WordPress capabilities decide who can do what, turn custom actions into Abilities, and verify with WP-CLI (locally, or on WP Engine through the sandboxed SSH session).

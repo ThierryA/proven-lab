@@ -85,3 +85,15 @@ test('Claude Code plugin matches the site and the kit', () => {
   if (cli.error) return; // Claude Code CLI not installed (CI): structure checks above still ran
   assert.match(cli.stdout + cli.stderr, /Validation passed/);
 });
+
+test('agent-facing files tell the agent to ask for the setup before building', async () => {
+  for (const path of ['/AGENTS.md', '/kit/.claude/skills/provenlab/SKILL.md', '/kit/SETUP.md', '/blueprints/architecture.md']) {
+    const body = await (await fetch(`${base}${path}`)).text();
+    assert.match(body, /ask the user/i, `${path} must tell the agent to ask`);
+    for (const setup of ['Classic', 'Headless Frontend', 'Headless Admin', 'Headless Frontend + Admin']) assert.ok(body.includes(setup), `${path} lists ${setup}`);
+  }
+  const agents = await (await fetch(`${base}/AGENTS.md`)).text();
+  assert.ok(!/"build me an app" → Headless/.test(agents), 'no default setup for "build me an app"');
+  assert.match(agents, /WordPress Playground|Local/);
+  assert.match(readFileSync(join(ROOT, 'plugins/provenlab/commands/new-app.md'), 'utf8'), /Wait for the answer/);
+});

@@ -22,7 +22,7 @@ Use the `provenlab` MCP tools. If they are not connected, call the same tools ov
 
 ## Non-negotiables
 
-1. Choose the setup first (`get_blueprint architecture`); then follow `classic-wordpress` or `custom-app`.
+1. Before writing code, ask the user which setup they want (Classic, Headless Frontend, Headless Admin, Headless Frontend + Admin), with a one-line recommendation, and where WordPress runs locally (existing site, Local, WordPress Playground, Docker). Wait for the answer; never pick the setup for them. Then follow `classic-wordpress` or `custom-app` (`get_blueprint architecture` explains the setups).
 2. Define the data model in a must-use plugin on `init`; `show_in_rest => true` for anything a custom app uses; post meta also needs `custom-fields` support.
 3. Permissions are WordPress capabilities, enforced in `permission_callback` / `auth_callback`, never only in the UI.
 4. Custom actions are Abilities (`wp_register_ability`).

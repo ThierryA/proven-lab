@@ -2,6 +2,8 @@
 
 You are building an application where **WordPress is the application layer**: data model, users and permissions, validation, hooks, media, cron. The admin is WP Admin or a custom app; the frontend is WordPress templating or a custom app.
 
+**First, before any code: ask the user which setup they want and where WordPress runs locally (Workflow, step 1). Never choose the setup for them.**
+
 ## Connect
 
 - MCP server (streamable HTTP): `{{MCP_URL}}`. Claude Code: `claude mcp add --transport http provenlab {{MCP_URL}}`
@@ -17,7 +19,11 @@ You are building an application where **WordPress is the application layer**: da
 - `list_ai_operations`, `get_ai_operation`: the Cloud AI API. Gateway, knowledge base, agents and sessions; site connection, analytics and credits.
 
 ## Workflow
-1. Identify the setup (see `get_blueprint architecture`). WordPress always runs; the admin is WP Admin or a custom app, the frontend is WordPress templating or a custom app. **Classic** (WP Admin + templating) → `classic-wordpress`. **Headless Frontend** (WP Admin + custom frontend) or **Headless Frontend + Admin** → `custom-app`. **Headless Admin** (custom admin + WordPress templating) → `custom-app` + `classic-wordpress`. Default: "build me a website" → Classic, "build me an app" → Headless Frontend + Admin. Ask only if unclear.
+1. **Ask the user before writing any code**, in one message, unless they already said:
+   - **Which setup?** Classic (WP Admin + WordPress templating, one deployment) · Headless Frontend (WP Admin + your own frontend app) · Headless Admin (your own admin app + WordPress templating) · Headless Frontend + Admin (your own admin and frontend app). Add a one-line recommendation from the request: a content site → Classic; an app with its own UI → Headless Frontend + Admin.
+   - **Where does WordPress run locally?** An existing site, Local (localwp.com), WordPress Playground (`npx @wp-playground/cli@latest start`, no database to install) or Docker. Use what is already installed; ask only if it is not obvious.
+   - Wait for the answer. Do not pick a setup on the user's behalf.
+   Then follow the matching blueprint (see `get_blueprint architecture`): **Classic** → `classic-wordpress`. **Headless Frontend** or **Headless Frontend + Admin** → `custom-app`. **Headless Admin** → `custom-app` + `classic-wordpress`.
 2. Model first. Register post types, taxonomies and **registered meta** (post, term, user) in a must-use plugin on `init`. Set `show_in_rest => true` on anything a custom app reads or writes; post meta also needs the post type to support `custom-fields`.
 3. Permissions come from WordPress capabilities. Never reimplement authorization in the UI only; enforce it in `permission_callback` / `auth_callback` / `current_user_can`.
 4. Custom operations beyond CRUD become **Abilities** (`wp_register_ability`) so they are typed, permissioned and agent-discoverable.
