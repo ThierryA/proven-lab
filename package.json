@@ -33,5 +33,10 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "homepage": "https://h01j8ie82uxpc31tlr1b9sqsz.js.wpenginepowered.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ThierryA/proven"
   }
 }

@@ -11,6 +11,8 @@ site/public/tools
 site/public/*.txt
 site/public/*.json
 site/public/AGENTS.md
+site/public/kit
+site/public/install.sh
 packages/mcp-server/data
 corpus/wp/reference
 corpus/wp/extra

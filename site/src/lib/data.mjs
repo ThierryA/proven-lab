@@ -9,7 +9,9 @@ export const wpe = () => rj('wpe-operations.json');
 export const cli = () => JSON.parse(readFileSync(dist('cli-commands.json'), 'utf8'));
 export const stats = () => rj('stats.json');
 export const domainMd = (slug) => readFileSync(dist('domains', `${slug}.md`), 'utf8');
-export const connectMd = () => readFileSync(join(process.cwd(), 'src', 'content', 'connect.md'), 'utf8');
+const pkgRoot = JSON.parse(readFileSync(join(process.cwd(), '..', 'package.json'), 'utf8'));
+export const BASE = (process.env.SITE_URL || pkgRoot.homepage || '').replace(/\/$/, '');
+export const connectMd = () => readFileSync(join(process.cwd(), 'src', 'content', 'connect.md'), 'utf8').replaceAll('{{BASE}}', BASE).replaceAll('{{MCP_URL}}', `${BASE}/mcp`);
 export const GROUP_ORDER = ['Data model', 'Data access', 'Users & access', 'Extension', 'Rendering', 'Interfaces', 'Services'];
 // Groups that are not model tools; shown below a separator. 'Sites' is displayed as 'Site connection'.
 export const ACCOUNT = ['Site connection', 'Analytics', 'Credits'];

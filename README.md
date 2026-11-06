@@ -16,6 +16,15 @@ sources ──► ingest ──► corpus/ ──► build ──► dist/ ─�
 | Cloud AI API | published `openapi.yaml` + docs crawled via sitemap |
 | Blueprints and domain map | hand-written in `content/` (names validated against the corpus) |
 
+## For developers and agents
+
+- **MCP server:** `claude mcp add --transport http provenlab <homepage>/mcp` (Cursor, VS Code and others: see `/docs/connect`).
+- **Project kit:** ask an agent to follow `<homepage>/kit/SETUP.md`, or run `curl -fsSL <homepage>/install.sh | sh`. Adds `AGENTS.md`, `CLAUDE.md`, MCP configs for Claude Code, Cursor and VS Code, and a Claude Code skill. Templates: `content/kit/`.
+- **Claude Code plugin:** `/plugin install provenlab --marketplace ThierryA/proven`. Generated into `plugins/provenlab/` and `.claude-plugin/marketplace.json` by the build; do not edit those by hand.
+- **npm (not published yet):** `npx @provenlab/mcp` (stdio server), `npx @provenlab/mcp init` (kit, merging existing MCP configs).
+
+`<homepage>` is `homepage` in `package.json`; `SITE_URL` overrides it at build time.
+
 ## Commands
 
 ```bash

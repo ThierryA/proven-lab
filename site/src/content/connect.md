@@ -1,46 +1,65 @@
 # Connect your agent
 
-Proven Lab runs as one Node server. It serves this site, an MCP endpoint at `/mcp`, and a REST mirror of the same tools at `/api/<tool>`.
+Proven Lab runs at `{{BASE}}`. Everything below uses that server: the MCP endpoint `{{MCP_URL}}`, the same tools over HTTP at `/api/<tool>`, and the kit files at `/kit/`. No account or API key is needed.
 
-## Claude Code (MCP over HTTP)
+## 1. Connect the MCP server
 
-```bash
-claude mcp add --transport http provenlab https://<your-provenlab-host>/mcp
-```
-
-## Claude Code (MCP over stdio, from a local checkout)
+The fastest way: one command or one config entry, no files in your project.
 
 ```bash
-claude mcp add provenlab -- node /path/to/provenlab/packages/mcp-server/src/index.mjs
+claude mcp add --transport http provenlab {{MCP_URL}}
 ```
 
-The npm package `@provenlab/mcp` is not published yet. Once it is: `claude mcp add provenlab -- npx @provenlab/mcp`.
+That is for Claude Code; add `--scope project` to share it with your team through `.mcp.json`. Other clients:
 
-## Other MCP clients
+| Client | Configuration |
+|---|---|
+| Cursor | `.cursor/mcp.json`: `{"mcpServers": {"provenlab": {"url": "{{MCP_URL}}"}}}` |
+| VS Code | `.vscode/mcp.json`: `{"servers": {"provenlab": {"type": "http", "url": "{{MCP_URL}}"}}}` |
+| Any client with streamable HTTP | Server name `provenlab`, URL `{{MCP_URL}}` |
+| No MCP support | Call the tools over HTTP: `curl "{{BASE}}/api/get_function?name=register_meta"` |
 
-Point any client that supports streamable HTTP at `https://<your-provenlab-host>/mcp`. For stdio-only clients (such as Claude Desktop), add the stdio command above to the client's MCP configuration.
+## 2. Add the kit to a project
 
-## OpenAI and Anthropic function calling
+The kit makes every agent that opens the project follow the same playbook: `AGENTS.md` (read by most coding agents), `CLAUDE.md` (imports `AGENTS.md` for Claude Code), MCP configs for Claude Code, Cursor and VS Code, and a Claude Code skill.
 
-Load `/tools/openai.json` or `/tools/anthropic.json` as the tool list and send each call to `GET` or `POST /api/<tool>` (see `/openapi/provenlab-api.yaml`).
+Ask your agent:
 
-## OpenAPI (for example, GPT Actions)
+```text
+Set up Proven Lab in this project by following {{BASE}}/kit/SETUP.md
+```
 
-Import `/openapi/provenlab-api.yaml`. The Cloud AI API spec is at `/openapi/cloud-ai-api.yaml`.
+Or run the installer in the project root. It adds missing files and leaves existing ones alone:
 
-## Plain text for context windows
+```bash
+curl -fsSL {{BASE}}/install.sh | sh
+```
 
-- `/llms.txt`: index
-- `/llms-full.txt`: all guides and API pages in one file
-- `/AGENTS.md`: playbook; copy it into your project root
+Once the npm package is published, `npx @provenlab/mcp init` does the same and also merges existing MCP configs.
+
+## 3. Claude Code plugin
+
+One install adds the MCP server, the `provenlab` skill and two commands, `/provenlab:new-app` and `/provenlab:setup-project`:
+
+```text
+/plugin install provenlab --marketplace ThierryA/proven
+```
+
+The plugin is in the GitHub repository `ThierryA/proven`, which is private for now: only people with access can install it until the repository is public. Before the pull request is merged, pin the branch with `ThierryA/proven#proven-lab`.
+
+## Other formats
+
+- **OpenAI and Anthropic function calling:** load `{{BASE}}/tools/openai.json` or `{{BASE}}/tools/anthropic.json` and send each call to `GET` or `POST {{BASE}}/api/<tool>`.
+- **OpenAPI** (for example, GPT Actions): `{{BASE}}/openapi/provenlab-api.yaml`. The Cloud AI API spec is at `{{BASE}}/openapi/cloud-ai-api.yaml`.
+- **Plain text for context windows:** `{{BASE}}/llms.txt` (index), `{{BASE}}/llms-full.txt` (everything), `{{BASE}}/AGENTS.md` (playbook).
 
 ## Tools
 
 | Tool | Use |
 |---|---|
-| `list_domains` / `get_domain` | Core APIs grouped by task area |
-| `search_docs` | Keyword search across functions, classes, hooks, handbooks, WP-CLI and WP Engine docs |
+| `list_domains` / `get_domain` | Core API grouped by task area |
+| `search_docs` | Keyword search across functions, classes, hooks, handbooks, WP-CLI and Cloud AI API docs |
 | `get_function` / `get_class` / `get_hook` | Exact signatures, parameters and source location |
 | `list_cli_commands` / `get_cli_command` | WP-CLI commands with synopsis and options |
 | `list_blueprints` / `get_blueprint` | End-to-end guides |
-| `list_ai_operations` / `get_ai_operation` | Cloud AI API and Sites API operations |
+| `list_ai_operations` / `get_ai_operation` | Cloud AI API operations |

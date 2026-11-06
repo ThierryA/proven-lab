@@ -44,12 +44,10 @@ const sub = 'mt-0.5 text-[12px] text-fg-3';
     <div data-in="classic admin" class={`${option} col-start-4 row-start-3`}><p class={name}>WordPress templating</p><p class={sub}>themes render the pages</p></div>
 
     <div class={`${rowLabel} col-start-1 row-start-4`}>Data &amp;<br/>logic</div>
-    <div data-in={APP} class="relative z-10 col-start-2 row-start-4 m-2 mb-4 flex items-center justify-end px-3 py-3 font-mono text-[12px] text-fg-2 transition-[opacity,filter] duration-300">REST API · Abilities API</div>
     <div data-in={APP} class={`${conn} col-start-3 row-start-4 text-sm transition-[opacity,filter] duration-300`}>→</div>
     <a href="/docs/api/content-types" class={`${tile} col-start-4 row-start-4 mb-4 border-fg-3 bg-ink-2 hover:border-fg`}>
-      <p class={name}>Core API</p>
-      <p class={sub}>content types · fields · users · capabilities · hooks · Abilities API · REST API</p>
-      <p class="mt-1.5 font-mono text-[11px] text-fg-2">&gt;_ driven by WP-CLI<span class="text-signal">*</span></p></a>
+      <p class={name}>Application layer</p>
+      <p class={sub}><span class="text-fg-2">Core API:</span> content types · fields · users · capabilities · hooks · Abilities API · REST API</p></a>
 
     <div data-in={APP} class={`${conn} col-start-2 row-start-5 h-10 transition-[opacity,filter] duration-300`}>│ server-side calls</div>
     <div class={`${conn} col-start-4 row-start-5 h-10`}>│ content sync · site connection · Abilities</div>
@@ -69,7 +67,7 @@ const sub = 'mt-0.5 text-[12px] text-fg-3';
   <div class="space-y-px border border-line bg-line lg:hidden">
     <div class="bg-ink p-4"><p class="label">Admin</p><div class="mt-2 grid grid-cols-2 gap-2"><div data-in="classic front" class={option + ' m-0'}><p class={name}>WP Admin</p><p class={sub}>inside WordPress</p></div><div data-in="admin both" class={option + ' m-0 border-dashed border-line-2'}><p class={name}>Your admin UI</p><p class={sub}>custom app</p></div></div></div>
     <div class="bg-ink p-4"><p class="label">Frontend</p><div class="mt-2 grid grid-cols-2 gap-2"><div data-in="classic admin" class={option + ' m-0'}><p class={name}>WordPress templating</p><p class={sub}>inside WordPress</p></div><div data-in="front both" class={option + ' m-0 border-dashed border-line-2'}><p class={name}>Your frontend</p><p class={sub}>custom app</p></div></div></div>
-    <div class="bg-ink p-4"><p class="label">Data &amp; logic</p><p class={name + ' mt-2'}>Application layer · Core API</p><p class={sub}>content types, fields, users, capabilities, hooks, Abilities API, REST API. Driven by WP-CLI.</p></div>
+    <div class="bg-ink p-4"><p class="label">Data &amp; logic</p><p class={name + ' mt-2'}>Application layer</p><p class={sub}>Core API: content types, fields, users, capabilities, hooks, Abilities API, REST API.</p></div>
     <div class="bg-ink p-4"><p class="label">AI</p><p class={name + ' mt-2'}>Cloud AI API</p><p class={sub}>gateway, knowledge base, agents and sessions</p></div>
   </div>
 
@@ -85,7 +83,7 @@ const sub = 'mt-0.5 text-[12px] text-fg-3';
   </div>
   <figcaption class="mt-4 font-mono text-[11px] leading-relaxed text-fg-3">
     Fig. 1. Select a setup, above or in the table, to highlight the pieces it uses. The Cloud AI API plugs in the same way in every setup.<br/>
-    <span class="text-signal">*</span> On WP Engine, a coding agent with your SSH key can also run WP-CLI in a sandboxed SSH session next to the site.
+    On WP Engine, a coding agent with your SSH key can also run WP-CLI in a sandboxed SSH session next to the site.
   </figcaption>
 </figure>
 

@@ -5,6 +5,7 @@ import GridBackground from '../components/GridBackground.astro';
 import { stats as getStats, wpe } from '../lib/data.mjs';
 import { TOOLS } from '../../../packages/mcp-server/src/tools.mjs';
 const s = getStats();
+const mcpUrl = new URL('/mcp', Astro.site).href;
 const fmt = (n) => n.toLocaleString('en-US');
 const aiOps = wpe().operations.length;
 
@@ -22,7 +23,9 @@ const compare = [
   ['Review', 'Starts at zero on every project', 'Open source, used and reviewed on millions of sites'],
 ];
 const formats = [
-  ['MCP', `${TOOLS.length} tools over streamable HTTP (/mcp) or stdio`, '/docs/connect'],
+  ['MCP', `${TOOLS.length} tools over streamable HTTP at /mcp, no API key`, '/docs/connect'],
+  ['Project kit', 'AGENTS.md, CLAUDE.md, MCP configs and a skill: ask your agent to follow /kit/SETUP.md, or run install.sh', '/kit/SETUP.md'],
+  ['Claude Code plugin', 'MCP server, skill and commands in one install', '/docs/connect'],
   ['OpenAPI', 'provenlab-api.yaml: the same tools as REST, for OpenAPI clients such as GPT Actions', '/openapi/provenlab-api.yaml'],
   ['Tool schemas', 'OpenAI and Anthropic function-calling definitions; calls go to /api/<tool>', '/tools/openai.json'],
   ['llms.txt', 'Plain-text index, a full dump and an AGENTS.md playbook', '/llms.txt'],
@@ -130,7 +133,7 @@ const section = 'mx-auto grid max-w-[90rem] gap-x-12 gap-y-6 border-t border-lin
       </ol>
       <pre class="min-w-0 self-start overflow-x-auto border border-line bg-ink-2 p-5 font-mono text-[12.5px] leading-7 text-fg-2"><span class="text-fg-3"># add Proven Lab to Claude Code</span>
 <span class="text-signal">$</span> claude mcp add --transport http provenlab \
-    <span data-origin>https://&lt;your-host&gt;</span>/mcp
+    {mcpUrl}
 
 <span class="text-fg-3">user ›</span> Build a Node app with its own admin.
 <span class="text-fg">agent</span> get_blueprint("architecture")
@@ -155,7 +158,5 @@ const section = 'mx-auto grid max-w-[90rem] gap-x-12 gap-y-6 border-t border-lin
 </section>
 </div>
 
-<script is:inline>
-  document.querySelectorAll('[data-origin]').forEach((el) => { if (location.protocol.startsWith('http')) el.textContent = location.origin; });
-</script>
+
 </Base>

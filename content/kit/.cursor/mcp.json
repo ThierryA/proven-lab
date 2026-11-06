@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "provenlab": {
+      "url": "{{MCP_URL}}"
+    }
+  }
+}

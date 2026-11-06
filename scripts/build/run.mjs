@@ -10,6 +10,10 @@ const rj = async (p) => JSON.parse(await readFile(join(CORPUS, p), 'utf8'));
 const w = async (rel, data) => { const p = join(DIST, rel); await mkdir(join(p, '..'), { recursive: true }); await writeFile(p, typeof data === 'string' ? data : JSON.stringify(data)); };
 
 await rm(DIST, { recursive: true, force: true });
+// Public base URL: SITE_URL, else package.json homepage. Used for links in llms.txt, OpenAPI and the kit.
+const pkg = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8'));
+const site = (process.env.SITE_URL || pkg.homepage || '').replace(/\/$/, '');
+
 const core = await rj('wp/source/core.json');
 const domains = JSON.parse(await readFile(join(ROOT, 'content/domains.json'), 'utf8'));
 const wpeDocs = await rj('wpe/docs.json');
@@ -133,17 +137,39 @@ for (const top of cliTop) {
 }
 await w('cli-commands.json', { version: cliData.version, commands: cliData.commands, tops: cliPages.map(({ top, description, count }) => ({ top, description, count })) });
 
+// URLs filled into the kit and the playbook
+const mcpUrl = `${site}/mcp`;
+const fill = (text) => text.replaceAll('{{BASE}}', site).replaceAll('{{MCP_URL}}', mcpUrl);
+
 // AGENTS.md (drop into any project, or use as a system prompt)
-const agentsMd = await readFile(join(ROOT, 'content/AGENTS.md'), 'utf8');
+const agentsMd = fill(await readFile(join(ROOT, 'content/AGENTS.md'), 'utf8'));
 await w('AGENTS.md', agentsMd);
 
+// Project kit: files an agent or a person drops into a project, plus SETUP.md and install.sh
+const kitDir = join(ROOT, 'content/kit');
+const kitFiles = ['AGENTS.md', 'CLAUDE.md', '.mcp.json', '.cursor/mcp.json', '.vscode/mcp.json', '.claude/skills/provenlab/SKILL.md'];
+for (const f of kitFiles) await w(`kit/${f}`, f === 'AGENTS.md' ? agentsMd : fill(await readFile(join(kitDir, f), 'utf8')));
+await w('kit/manifest.json', { base: site, mcp: mcpUrl, files: kitFiles.map((path) => ({ path, url: `${site}/kit/${path}` })) });
+await w('kit/SETUP.md', fill(await readFile(join(ROOT, 'content/kit-setup.md'), 'utf8')));
+await w('install.sh', fill(await readFile(join(ROOT, 'scripts/kit/install.sh'), 'utf8')).replace('__FILES__', kitFiles.join(' ')));
+
+// Claude Code plugin + marketplace, committed in the repo (generated so URLs and the skill match the kit)
+{
+  const P = (...p) => join(ROOT, ...p);
+  const put = async (path, data) => { await mkdir(join(path, '..'), { recursive: true }); await writeFile(path, typeof data === 'string' ? data : JSON.stringify(data, null, 2) + '\n'); };
+  const desc = 'Build on WordPress as the application layer with exact Core API, WP-CLI and Cloud AI API references, blueprints and a playbook for coding agents.';
+  await put(P('.claude-plugin/marketplace.json'), { name: 'provenlab', description: 'Proven Lab plugins for Claude Code', owner: { name: 'Proven Lab' }, plugins: [{ name: 'provenlab', source: './plugins/provenlab', description: desc }] });
+  await put(P('plugins/provenlab/.claude-plugin/plugin.json'), { name: 'provenlab', description: desc, version: pkg.version, author: { name: 'Proven Lab' }, homepage: site });
+  await put(P('plugins/provenlab/.mcp.json'), fill(await readFile(join(kitDir, '.mcp.json'), 'utf8')));
+  await put(P('plugins/provenlab/skills/provenlab/SKILL.md'), fill(await readFile(join(kitDir, '.claude/skills/provenlab/SKILL.md'), 'utf8')));
+  for (const f of await readdir(P('content/plugin-commands'))) await put(P('plugins/provenlab/commands', f), fill(await readFile(P('content/plugin-commands', f), 'utf8')));
+}
+
 // llms.txt + llms-full.txt
-// Absolute links only when SITE_URL is set; otherwise relative, so the files work on any host.
-const site = (process.env.SITE_URL || '').replace(/\/$/, '');
 const llms = [
   '# Proven Lab', '',
   '> Docs, an MCP server and tool schemas that let coding agents build on the WordPress Core API (post types, meta, users, hooks, blocks, Abilities API, AI Client), WP-CLI and the Cloud AI API (gateway, knowledge base, agents and sessions). Generated from WordPress ' + core.version + ' source, WP-CLI ' + cliData.version + ' and a snapshot of the Cloud AI API OpenAPI spec.', '',
-  '## Start here', `- [Agent playbook](${site}/AGENTS.md): rules and workflow for agents building WordPress sites`,
+  '## Start here', `- [Set up a project](${site}/kit/SETUP.md): connect the MCP server and add the kit files (for agents)`, `- [Agent playbook](${site}/AGENTS.md): rules and workflow for agents building on WordPress`,
   ...overviews.map((o) => `- [${o.title}](${site}/overviews/${o.slug}.md): ${o.summary}`),
   ...blueprints.map((b) => `- [${b.title}](${site}/blueprints/${b.slug}.md): ${b.summary}`), '',
   '## Core API domains', ...domains.map((d) => `- [${d.group}: ${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',

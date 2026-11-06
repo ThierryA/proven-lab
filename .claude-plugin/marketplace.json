@@ -1,0 +1,14 @@
+{
+  "name": "provenlab",
+  "description": "Proven Lab plugins for Claude Code",
+  "owner": {
+    "name": "Proven Lab"
+  },
+  "plugins": [
+    {
+      "name": "provenlab",
+      "source": "./plugins/provenlab",
+      "description": "Build on WordPress as the application layer with exact Core API, WP-CLI and Cloud AI API references, blueprints and a playbook for coding agents."
+    }
+  ]
+}

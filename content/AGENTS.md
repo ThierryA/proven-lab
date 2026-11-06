@@ -1,6 +1,12 @@
-# Building WordPress applications (agent playbook)
+# Building on WordPress with Proven Lab (agent playbook)
 
 You are building an application where **WordPress is the application layer**: data model, users and permissions, validation, hooks, media, cron. The admin is WP Admin or a custom app; the frontend is WordPress templating or a custom app.
+
+## Connect
+
+- MCP server (streamable HTTP): `{{MCP_URL}}`. Claude Code: `claude mcp add --transport http provenlab {{MCP_URL}}`
+- No MCP? Every tool is also a plain HTTP call: `GET {{BASE}}/api/<tool>?<args>`, for example `curl "{{BASE}}/api/get_function?name=register_meta"` or `curl "{{BASE}}/api/search_docs?query=register+user+meta"`.
+- Plain-text docs: `{{BASE}}/llms.txt` (index) and `{{BASE}}/llms-full.txt` (everything).
 
 ## Tools you have (MCP server `provenlab`)
 - `list_domains`, `get_domain`: start here to find the right Core API functions, classes and hooks for a task.
