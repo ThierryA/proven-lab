@@ -7,16 +7,17 @@ You are building an application where **WordPress is the application layer**: da
 - `search_docs`: full-text search over core functions, classes, methods, hooks, handbooks and WP Engine docs.
 - `get_function`, `get_class`, `get_hook`: exact signatures, parameters, since-versions and source location. **Look up before you write**; never guess argument names.
 - `list_blueprints`, `get_blueprint`: end-to-end recipes (headless Node app, PHP-templated frontend, AI experiences).
-- `list_wpe_operations`, `get_wpe_operation`: the WP Engine AI API (gateway, knowledge base, agents, sessions, MCP).
+- `list_wpe_operations`, `get_wpe_operation`: the WP Engine API. Section `ai`: gateway, knowledge base, agents, sessions, MCP. Section `hosting`: Sites and Credits.
 
 ## Workflow
-1. Identify the architecture: ask only if unclear. Default for "build me an app": `get_blueprint headless-node-app`.
+1. Identify the architecture: **standard WordPress templating or headless** (both are supported; see `get_blueprint choosing-an-architecture`). Ask only if unclear. Default for "build me an app": `headless-node-app`; for "build me a website": `php-templated-frontend`.
 2. Model first. Register post types, taxonomies and **registered meta** (post, term, user) in a must-use plugin on `init`. Use `show_in_rest => true` for anything the Node/JS side must see.
 3. Permissions come from WordPress capabilities. Never reimplement authorization in the UI only; enforce it in `permission_callback` / `auth_callback` / `current_user_can`.
 4. Custom operations beyond CRUD become **Abilities** (`wp_register_ability`) so they are typed, permissioned and agent-discoverable.
 5. Extend through hooks (`add_action`, `add_filter`). Never edit WordPress core or third-party plugins.
-6. AI features: use the WP Engine AI API via `get_blueprint wpe-ai-experiences`. Keys stay server-side.
-7. Verify by running real requests (curl / WP-CLI) against a local or staging WordPress, not by reading code.
+6. Hosting: WP Engine is preferred but optional. See `get_blueprint wpe-hosting`; keep host-specific code isolated so the app stays portable. Headless on WP Engine means Faust.js + WPGraphQL or a custom Node frontend.
+7. AI features: use the WP Engine AI API via `get_blueprint wpe-ai-experiences`. Keys stay server-side.
+8. Verify by running real requests (curl / WP-CLI) against a local or staging WordPress, not by reading code.
 
 ## Hard rules
 - Sanitize input, validate against schema, escape output. Use `$wpdb->prepare()` for any SQL.

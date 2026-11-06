@@ -45,7 +45,8 @@ await w('entities.json', entities);
 const ops = [];
 for (const [path, item] of Object.entries(spec.paths)) for (const [method, op] of Object.entries(item)) {
   if (!op?.operationId) continue;
-  ops.push({ operationId: op.operationId, method: method.toUpperCase(), path, tags: op.tags, summary: op.summary, description: op.description, parameters: op.parameters, requestBody: op.requestBody, responses: op.responses, security: op.security });
+  const hosting = (op.tags || []).some((t) => ['Sites', 'Credits'].includes(t));
+  ops.push({ section: hosting ? 'hosting' : 'ai', operationId: op.operationId, method: method.toUpperCase(), path, tags: op.tags, summary: op.summary, description: op.description, parameters: op.parameters, requestBody: op.requestBody, responses: op.responses, security: op.security });
 }
 await w('wpe-operations.json', { servers: ['https://api.ai.wpengine.com'], version: spec.info.version, components: spec.components, operations: ops });
 await w('docs.json', [...wpeDocs, ...(await Promise.all((await readdir(join(CORPUS, 'wp/handbooks'))).map((f) => rj(`wp/handbooks/${f}`)))).flat()].map((d) => ({ id: d.id, source: d.source, handbook: d.handbook, name: d.name, url: d.url, markdown: d.markdown })));
@@ -96,11 +97,11 @@ const llms = [
   '## Start here', `- [Agent playbook](${site}/AGENTS.md): rules and workflow for agents building WordPress sites`,
   ...blueprints.map((b) => `- [${b.title}](${site}/blueprints/${b.slug}.md): ${b.summary}`), '',
   '## WordPress core API domains', ...domains.map((d) => `- [${d.group}: ${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',
-  '## WP Engine AI API', `- [OpenAPI spec](${site}/openapi/wpe-ai.yaml)`, `- [Operations index](${site}/wpe-operations.json)`, ...ops.slice(0, 0), '',
+  '## AI API and Hosting (WP Engine)', `- [OpenAPI spec](${site}/openapi/wpe-ai.yaml)`, `- [Operations index](${site}/wpe-operations.json)`, ...ops.slice(0, 0), '',
   '## Machine interfaces', `- MCP server: \`npx wp-agentic-kit-mcp\` (stdio) or ${site}/mcp (streamable HTTP)`, `- Kit API OpenAPI: ${site}/openapi/kit-api.yaml`, `- OpenAI function tools: ${site}/tools/openai.json`, `- Anthropic tools: ${site}/tools/anthropic.json`, '',
 ].join('\n');
 await w('llms.txt', llms);
-const wpeOpsMd = '## WP Engine AI API operations\n\n' + ops.map((o) => `- \`${o.method} ${o.path}\` **${o.operationId}**: ${o.summary || ''}`).join('\n');
+const wpeOpsMd = '## AI API and Hosting operations (WP Engine)\n\n' + ops.map((o) => `- [${o.section}] \`${o.method} ${o.path}\` **${o.operationId}**: ${o.summary || ''}`).join('\n');
 await w('llms-full.txt', [llms, '\n---\n', agentsMd, ...blueprints.map((b) => `\n---\n\n# ${b.title}\n\n${b.md}`), '\n---\n', wpeOpsMd, ...domainPages.map((d) => `\n---\n\n${d.md}`)].join('\n'));
 
 // OpenAPI specs

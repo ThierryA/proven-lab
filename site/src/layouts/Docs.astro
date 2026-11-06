@@ -24,9 +24,16 @@ const link = (active) => 'block border-l py-1.5 pl-4 -ml-px text-[13.5px] ' + (a
       <div class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-md bg-indigo-500/10 font-mono text-[11px] font-bold text-indigo-600 dark:text-indigo-400">AI</span><h5 class="text-sm font-semibold text-slate-900 dark:text-white">AI API</h5></div>
       <p class="mt-1 text-xs text-slate-500">WP Engine: gateway, knowledge base, agents. Cloud HTTP API.</p>
     </div>
-    {sb.wpe.map((g) => <details class="group mt-3" open={open(g.items) || undefined}>
+    {sb.ai.map((g) => <details class="group mt-3" open={open(g.items) || undefined}>
       <summary class="flex cursor-pointer list-none items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-500 [&::-webkit-details-marker]:hidden"><span class="transition group-open:rotate-90">›</span>{g.title}</summary>
       <ul class="mt-1 space-y-px border-l border-slate-200 dark:border-slate-800">{g.items.map((i) => <li><a href={i.href} class={link(on(i.href))}><span class="mr-1.5 font-mono text-[10px] text-indigo-500">{i.method}</span>{i.label}</a></li>)}</ul></details>)}
+    <div class="mt-10 border-t border-slate-200 pt-6 dark:border-slate-800">
+      <div class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-md bg-amber-500/10 font-mono text-[11px] font-bold text-amber-600 dark:text-amber-400">WPE</span><h5 class="text-sm font-semibold text-slate-900 dark:text-white">Hosting</h5></div>
+      <p class="mt-1 text-xs text-slate-500">WP Engine: optional, preferred. Standard and headless.</p>
+    </div>
+    {sb.hosting.map((g) => <details class="group mt-3" open={open(g.items) || undefined}>
+      <summary class="flex cursor-pointer list-none items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-500 [&::-webkit-details-marker]:hidden"><span class="transition group-open:rotate-90">›</span>{g.title}</summary>
+      <ul class="mt-1 space-y-px border-l border-slate-200 dark:border-slate-800">{g.items.map((i) => <li><a href={i.href} class={link(on(i.href))}>{i.method && <span class="mr-1.5 font-mono text-[10px] text-amber-500">{i.method}</span>}{i.label}</a></li>)}</ul></details>)}
   </aside>
   <main class="min-w-0 flex-1 py-10 lg:pl-10 xl:pr-8"><div class="mx-auto max-w-3xl"><slot /></div></main>
   <nav id="toc" class="sticky top-16 hidden h-[calc(100vh-4rem)] w-56 shrink-0 overflow-y-auto py-10 pl-4 text-[13px] xl:block"><h5 class="mb-3 text-sm font-semibold text-slate-900 dark:text-white">On this page</h5><ul id="toc-list" class="space-y-1.5"></ul></nav>

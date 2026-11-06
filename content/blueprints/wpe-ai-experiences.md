@@ -1,6 +1,6 @@
 ---
 title: AI experiences with the WP Engine AI API
-summary: Wire the WP Engine AI API (gateway, knowledge base, agents, sessions, site connector, MCP) into a WordPress-backed app, from PHP and from Node.
+summary: Wire the WP Engine AI API (gateway, knowledge base, agents, sessions, MCP) into a WordPress-backed app, from PHP and from Node.
 ---
 
 # AI experiences: WordPress + WP Engine AI API
@@ -14,9 +14,9 @@ Base URL `https://api.ai.wpengine.com/v1`. OpenAI-compatible chat completions; a
 | **AI Gateway** | `createChatCompletion`, `createMessage`, `createImageGeneration`, `createImageAltText`, `summarizeContent`, `suggestTaxonomy`, `createSpeech`, `createTranscription`, `listModels` | `wp_ai_client_prompt()` (WP 7.0+ AI Client) via the connector, or direct HTTP |
 | **Knowledge Base** | `createCollection`, `indexDocument`, `bulkIndexDocuments`, `searchCollection`, `deleteDocument` | sync content from `save_post`, `transition_post_status`, `delete_post` |
 | **Agents / Sessions** | `createAgent`, `createSession`, `sendSessionEvents`, `listSessionEvents`, `createResponseFeedback` | chat UI in Node or a block |
-| **Site connector** | `registerSite`, `heartbeatSite`, `updateSitePrimaryCollection` | registers the WordPress site, sets its primary KB collection |
 | **MCP server** | `POST/GET/DELETE /v1/mcp` (streamable HTTP, OAuth) | lets Claude Code / Desktop use the site's knowledge |
-| **Usage** | `getCredits`, `getAnalytics` | admin dashboard in Node |
+| **Usage** | `getAnalytics` | admin dashboard in Node |
+| **Hosting** (separate section) | `registerSite`, `getSite`, `updateSitePrimaryCollection`, `heartbeatSite`, `deleteSite`, `getCredits` | see the `wpe-hosting` blueprint |
 
 ## Auth
 
@@ -47,7 +47,7 @@ The builder (`WP_AI_Client_Prompt_Builder`) forwards fluent calls to the underly
 
 ## Pattern 3: RAG over site content
 
-1. Create a collection (`createCollection`) and register the site with it (`registerSite`, `updateSitePrimaryCollection`).
+1. Create a collection (`createCollection`) and register the site with it (Hosting operations `registerSite`, `updateSitePrimaryCollection`; see `wpe-hosting`).
 2. Initial load with `bulkIndexDocuments`, mapping WP posts to documents (id = post ID, text = `wp_strip_all_tags( $post->post_content )`, metadata = permalink, type, terms).
 3. Keep in sync:
 

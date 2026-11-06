@@ -74,7 +74,7 @@ const handlers = {
   },
   async list_wpe_operations({ filter } = {}) {
     const s = await load(); const f = filter?.toLowerCase();
-    return s.wpe.operations.filter((o) => !f || [o.operationId, o.path, o.summary, ...(o.tags || [])].join(' ').toLowerCase().includes(f)).map((o) => ({ operationId: o.operationId, method: o.method, path: o.path, tags: o.tags, summary: o.summary }));
+    return s.wpe.operations.filter((o) => !f || [o.section, o.operationId, o.path, o.summary, ...(o.tags || [])].join(' ').toLowerCase().includes(f)).map((o) => ({ section: o.section, operationId: o.operationId, method: o.method, path: o.path, tags: o.tags, summary: o.summary }));
   },
   async get_wpe_operation({ operationId }) {
     const s = await load(); const o = s.op.get(operationId);
