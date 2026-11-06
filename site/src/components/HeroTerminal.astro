@@ -1,0 +1,83 @@
+---
+// Hero panel: the message as a short agent session in a terminal. Rendered complete on the
+// server (no-JS, reduced motion, crawlers); the script replays it once, at reading pace.
+type Row = { kind: 'you' | 'agent' | 'out'; text?: string; html?: string };
+const rows: Row[] = [
+  { kind: 'you', text: 'Build me an app with users, content and search.' },
+  { kind: 'agent', text: 'Rebuild auth, roles, admin, REST API and search from scratch?' },
+  { kind: 'out', html: '<span class="t-x">✗</span> slow   <span class="t-x">✗</span> costly   <span class="t-x">✗</span> unreviewed' },
+  { kind: 'agent', text: 'Building on the platform instead.' },
+  { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">Core API    </span> content, users, permissions, hooks, REST' },
+  { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">WP-CLI      </span> every step verified from the shell' },
+  { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">Cloud AI API</span> models, search and agents, no API key' },
+  { kind: 'agent', text: 'Done. Only the code specific to your app was written.' },
+  { kind: 'out', html: '<span class="t-sig">reliable · secure · scalable · efficient · lower cost</span>' },
+];
+---
+<figure class="hero-term not-prose" aria-label="A coding agent building on the platform instead of rebuilding it" data-hero-term>
+  <div class="border border-line-2 bg-ink-2/95 backdrop-blur-sm">
+    <div class="flex items-center gap-1.5 border-b border-line px-4 py-2.5">
+      <span class="size-2 rounded-full bg-line-2"></span><span class="size-2 rounded-full bg-line-2"></span><span class="size-2 rounded-full bg-line-2"></span>
+      <span class="ml-3 font-mono text-[11px] text-fg-3">agent session</span>
+    </div>
+    <div class="space-y-1.5 px-5 py-5 font-mono text-[12px] leading-[1.7] sm:text-[13px]">
+      {rows.map((r) => (
+        <div class={`t-row t-${r.kind}`} data-kind={r.kind} data-text={r.text}>
+          {r.kind === 'you' && <span class="t-prompt">you ›</span>}
+          {r.kind === 'agent' && <span class="t-prompt">agent ›</span>}
+          {r.kind === 'out' ? <span class="t-body" set:html={r.html} /> : <span class="t-body">{r.text}</span>}
+        </div>
+      ))}
+    </div>
+  </div>
+</figure>
+
+<style is:global>
+  .hero-term .t-row { display: flex; gap: 0.75ch; white-space: pre-wrap; }
+  .hero-term .t-out { padding-left: 8ch; color: var(--color-fg-2); }
+  .hero-term .t-you .t-body { color: var(--color-fg); }
+  .hero-term .t-agent .t-body { color: var(--color-fg-2); }
+  .hero-term .t-prompt { flex: none; width: 7ch; color: var(--color-fg-3); }
+  .hero-term .t-you .t-prompt { color: var(--color-signal); }
+  .hero-term .t-ok { color: var(--color-fg-3); }
+  .hero-term .t-x { color: var(--color-signal); }
+  .hero-term .t-key { color: var(--color-fg); white-space: pre; }
+  .hero-term .t-sig { color: var(--color-signal); }
+  .hero-term.is-playing .t-row { visibility: hidden; }
+  .hero-term.is-playing .t-row.is-shown { visibility: visible; animation: term-in 0.5s ease-out both; }
+  .hero-term .t-caret::after { content: '▍'; color: var(--color-signal); animation: term-blink 1s steps(1) infinite; }
+  @keyframes term-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes term-blink { 50% { opacity: 0; } }
+  @media (max-width: 640px) { .hero-term .t-out { padding-left: 2ch; } .hero-term .t-prompt { width: auto; } }
+</style>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  for (const root of document.querySelectorAll<HTMLElement>('[data-hero-term]')) {
+    if (reduce) continue;
+    const rows = [...root.querySelectorAll<HTMLElement>('.t-row')];
+    root.classList.add('is-playing');
+    (async () => {
+      await sleep(600);
+      for (const row of rows) {
+        const body = row.querySelector<HTMLElement>('.t-body')!;
+        const kind = row.dataset.kind;
+        if (kind === 'you' || kind === 'agent') {
+          const text = row.dataset.text || '';
+          body.textContent = '';
+          body.classList.add('t-caret');
+          row.classList.add('is-shown');
+          const speed = kind === 'you' ? 38 : 22; // characters typed per step, reading pace
+          for (let i = 1; i <= text.length; i++) { body.textContent = text.slice(0, i); await sleep(speed); }
+          body.classList.remove('t-caret');
+          await sleep(kind === 'you' ? 900 : 650);
+        } else {
+          row.classList.add('is-shown');
+          await sleep(750);
+        }
+      }
+      root.classList.remove('is-playing');
+    })();
+  }
+</script>
