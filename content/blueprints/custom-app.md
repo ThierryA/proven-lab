@@ -22,18 +22,25 @@ Browser ──► Node app (Hono / Express / Next.js / Astro SSR)
               └─ /*         public frontend (SSR / ISR)     ──┤  server-side only
                                                               ▼
                                    WordPress (REST API + Abilities API + Core API)
-                                   └─ must-use plugin "app-model" defines the schema
+                                   └─ plugin "app" defines the schema
 ```
 
 WordPress provides the data model, users, roles and capabilities, request validation against schemas, hooks, media handling and cron. Node provides the UI, routing and rendering. Credentials for WordPress live **only on the Node server**.
 
-## 1. Define the data model in PHP (must-use plugin)
+## 1. Define the data model in PHP (a plugin)
 
-Put this in `wp-content/mu-plugins/app-model.php`. Everything the Node app needs must be exposed to REST here, because REST exposure is opt-in.
+Put this in a regular plugin, `wp-content/plugins/app/app.php`, and activate it with `wp plugin activate app`. Not a must-use plugin: a plugin can be deactivated, has activation hooks and passes Plugin Check. Everything the Node app needs must be exposed to REST here, because REST exposure is opt-in.
 
 Core APIs used (see `get_function` in the MCP server for full signatures): `register_post_type`, `register_post_status`, `register_taxonomy`, `register_post_meta`, `register_meta` (object type `user` for user meta), `register_setting`.
 
 ```php
+/**
+ * Plugin Name: App
+ * Description: Data model, Abilities and routes for the app.
+ * Requires at least: 6.9
+ * Requires PHP: 8.1
+ */
+
 add_action( 'init', function () {
 	register_post_type( 'project', [
 		'label'        => 'Projects',
@@ -73,7 +80,7 @@ Rules that trip agents up:
 - `show_in_rest => true` is **required** on post types, taxonomies and meta, or they are not in the REST API.
 - Post meta only appears in a post type's REST responses if the post type supports `custom-fields`.
 - A meta key must be registered with `show_in_rest` before the REST API reads or writes it.
-- Register on `init`. Flush rewrite rules once after adding or changing a post type (`wp rewrite flush`), never on every request; must-use plugins have no activation hook.
+- Register on `init`. Flush rewrite rules once after adding or changing a post type (`wp rewrite flush`), never on every request: `wp rewrite flush`, or `register_activation_hook( __FILE__, 'flush_rewrite_rules' )` after registering the post type in the same callback.
 - `add_role()` and `WP_Role::add_cap()` write to the database. Run them once (`wp role create`, `wp cap add`, or a regular plugin's activation hook), not on every `init`.
 
 ## 2. Authentication from Node
@@ -139,8 +146,8 @@ add_action( 'wp_abilities_api_init', function () {
 ```
 app/
   wordpress/                 # docker-compose or WP Engine install + wp-content/
-    mu-plugins/app-model.php
-    mu-plugins/app-abilities.php
+    plugins/app/app.php        # plugin header, data model
+    plugins/app/includes/abilities.php
   server/                    # Node: Hono/Express/Next
     wp-client.ts             # fetch wrapper above, typed from OPTIONS schemas
     routes/admin/*  routes/site/*

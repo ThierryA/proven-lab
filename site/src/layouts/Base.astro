@@ -27,7 +27,6 @@ const links = [['Docs', '/docs'], ['Architecture', '/docs/architecture'], ['Use 
     </a>
     <nav class="ml-auto flex items-center gap-6 text-[13px]">
       {links.map(([l, h]) => <a href={h} class={`hover:text-fg ${path.startsWith(h) && h !== '/docs' || path === h ? 'text-fg' : ''}`}>{l}</a>)}
-      <a href="/llms.txt" class="hidden font-mono text-[12px] text-fg-3 hover:text-fg sm:block">llms.txt</a>
     </nav>
   </div>
 </header>

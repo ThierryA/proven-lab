@@ -1,12 +1,12 @@
 ---
 nav: "Hosted sites"
 title: "Hosted sites: work on WP Engine with the WP Engine MCP server"
-summary: "When the site is already hosted on WP Engine, connect the WP Engine MCP server: account and hosting tools, site Abilities, the knowledge base, and an SSH sandbox with WP-CLI on the site's server. Content changes go through Abilities or WP-CLI; file changes need a backup, staging first and the user's approval."
+summary: "When the site is already hosted on WP Engine, connect the WP Engine MCP server: account and hosting tools, site Abilities, the knowledge base, and a sandbox with WP-CLI on the site's server. Content changes go through Abilities or WP-CLI; file changes need a backup, staging first and the user's approval."
 ---
 
 # Hosted sites: the WP Engine MCP server
 
-Work locally with Local (`local-development`). When the site already runs on WP Engine, or the user wants to change content on a hosted environment, use the **WP Engine MCP server**. It acts with the signed-in user's WP Engine permissions.
+Work locally with Local (`local-development`). When the site already runs on WP Engine, when the user wants to change content on a hosted environment, or when they want to build with nothing installed (`build-on-wpengine`), use the **WP Engine MCP server**. It acts with the signed-in user's WP Engine permissions.
 
 ## 1. Connect it
 
@@ -29,7 +29,7 @@ The server is in closed beta: read its current tool list rather than assuming na
 | Sites and knowledge base | `list_account_sites`, `get_site_knowledge_base`, `search_knowledge_base`, `fetch_knowledge_base_document` | Find a site; search its content |
 | Abilities | `search_abilities`, `list_site_abilities`, `run_site_ability` | Act inside WordPress as the connected user, e.g. `wp-engine-ai/create-posts`, `update-posts`, `manage-terms`, `upload-image-from-url` |
 | Hosting | `wpe_list_accounts`, `wpe_list_sites`, `wpe_list_installs`, `wpe_create_backup`, `wpe_get_backup_status`, `wpe_purge_cache`, domains, SSL, users | Environments, backups, caches, domains |
-| SSH sandbox | `sandbox_bash`, `sandbox_read`, `sandbox_edit`, `sandbox_write` | WP-CLI and files on the site's server, in `/sites/<install name>` |
+| sandbox | `sandbox_bash`, `sandbox_read`, `sandbox_edit`, `sandbox_write` | WP-CLI and files on the site's server, in `/sites/<install name>` |
 
 Three different IDs, never interchangeable: the **WordPress site ID** (`site_…`, from `list_account_sites`) for Abilities and the knowledge base; the **hosting site ID** (UUID, from `wpe_list_sites`) for hosting site tools; the **install ID** (UUID, from `wpe_list_installs`) for one environment (production, staging, development), used by backups, caches and the sandbox. Never guess an ID; look it up.
 
@@ -52,7 +52,7 @@ Rules: create and update as **drafts** unless the user asks to publish; show the
 
 A file changed on a live server bypasses Git, review and deployment, and can take the site down. So:
 
-1. **Ship code through the normal path:** commit to the repository and deploy (Git push, CI, or push a Local site to a staging environment). Do not develop in the sandbox.
+1. **Ship code through the normal path:** commit to the repository and deploy to staging, then production (`wpe-deployment`: WP Engine's GitHub Action, or a Local push to staging). Do not develop on production in the sandbox. The one exception is the no-install path (`build-on-wpengine`): new code is written on a **staging** environment, never production, and promoted after the user checks it.
 2. **If a file must change on the server** (an urgent fix, a config the user asks for):
    - Get the user's explicit approval for that file and that environment.
    - Work on **staging or development** first, production only after the user confirms.
@@ -66,6 +66,6 @@ A file changed on a live server bypasses Git, review and deployment, and can tak
 ## 5. Local and hosted together
 
 - **Build locally** in Local, with tests and WP-CLI.
-- **Deploy code** through Git, or push the Local site to a **staging** environment (`local_wpe_push` in Local's MCP server). A push replaces the environment's files and database: never push to production without the user's explicit approval, because it overwrites live content.
+- **Deploy code** through Git (`wpe-deployment`: staging on push, production after approval), or push the Local site to a **staging** environment (`local_wpe_push` in Local's MCP server). A push replaces the environment's files and database: never push to production without the user's explicit approval, because it overwrites live content.
 - **Change content on the hosted site** with Abilities or WP-CLI as above, rather than pushing a local database over live content.
 - **Pull** the hosted site into Local (`local_wpe_pull`) to reproduce an issue.

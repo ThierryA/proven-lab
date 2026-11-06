@@ -21,7 +21,7 @@ WordPress is the application layer; a custom app is optional. Two choices: the a
   AI            │ AI API · its own AI infrastructure · powers the agents          │
                 │ Gateway · Knowledge base · Agents & sessions                    │
                 └─────────────────────────────────────────────────────────────────┘
-  On WP Engine, agents also run WP-CLI in a sandboxed SSH session next to the site.
+  On WP Engine, agents also run WP-CLI in a sandboxed session next to the site (WP Engine MCP server).
 ```
 <!-- diagram:end -->
 
@@ -49,7 +49,7 @@ Running the admin or the frontend as a separate app is what *headless* means her
 
 The Cloud AI API runs on WP Engine's infrastructure, not inside WordPress. It provides the gateway to models (chat, images, text to speech and transcription), the knowledge base for search, and agents with sessions for the AI features you build. It works with WordPress where needed: your code indexes content into the knowledge base, and the WP Engine AI plugin connects the site so WP Engine AI can use its Abilities.
 
-**On WP Engine, coding agents can also use WP-CLI on the deployed site.** They run commands in a sandboxed SSH session next to the site (WP Engine SSH Gateway): inspect, seed, update and verify without a browser. See `wpe-deployment`.
+**On WP Engine, coding agents can also use WP-CLI on the deployed site.** They run commands in a sandboxed session next to the site through the WP Engine MCP server (`sandbox_bash`), with no SSH setup: inspect, seed, update and verify without a browser. See `hosted-sites`.
 
 ## The four setups
 
@@ -73,4 +73,4 @@ Before writing any code, ask the user which setup they want, unless they already
 
 In the same message, settle where WordPress runs locally: check whether Local is installed and offer to create the site there, or recommend installing it (`local-development`). Wait for the answer.
 
-Whatever the setup: define the model once in a must-use plugin, let WordPress capabilities decide who can do what, turn custom actions into Abilities, and verify with WP-CLI (locally, or on WP Engine through the sandboxed SSH session).
+Whatever the setup: define the model once in a plugin, let WordPress capabilities decide who can do what, turn custom actions into Abilities, and verify with WP-CLI (locally, or on WP Engine through the sandboxed SSH session).

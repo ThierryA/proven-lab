@@ -31,8 +31,8 @@ test('pages render with the right content', async () => {
     ['/docs/ai-api/registerSite', 'text/html', ['Cloud AI API', 'Site connection']],
     ['/docs/custom-app', 'text/html', ['register_post_meta']],
     ['/docs/classic-wordpress', 'text/html', ['single-project.php', 'WP Admin']],
-    ['/docs/architecture', 'text/html', ['data-arch', 'Application layer', 'AI API', 'Classic', 'Headless Frontend', 'Headless Admin', 'Headless Frontend + Admin', 'Data &amp;', 'sandboxed SSH session']],
-    ['/docs/wpe-deployment', 'text/html', ['Headless Platform', 'optional', 'sandboxed SSH session', '.ssh.wpengine.net']],
+    ['/docs/architecture', 'text/html', ['data-arch', 'Application layer', 'AI API', 'Classic', 'Headless Frontend', 'Headless Admin', 'Headless Frontend + Admin', 'Data &amp;', 'sandboxed session']],
+    ['/docs/wpe-deployment', 'text/html', ['Headless Platform', 'optional', 'staging', 'github-action-wpe-site-deploy', 'WP Engine MCP server']],
     ['/docs/connect', 'text/html', ['@provenlab/mcp']],
     ['/docs/core-api', 'text/html', ['Core API', 'Data model', '/docs/api/content-types']],
     ['/docs/cloud-ai-api', 'text/html', ['Cloud AI API', 'https://api.ai.wpengine.com/v1', 'Rate limits', '/docs/ai-api/createChatCompletion']],
@@ -112,7 +112,7 @@ async function exerciseMcp(client) {
   assert.equal(hook.data.params.length, 3);
   const bp = await call('get_blueprint', { slug: 'custom-app' });
   assert.ok(bp.data.markdown.includes('register_post_meta'));
-  assert.equal((await call('list_blueprints', {})).data.length, 10);
+  assert.equal((await call('list_blueprints', {})).data.length, 11);
   const op = await call('get_ai_operation', { operationId: 'searchCollection' });
   assert.equal(op.data.method, 'POST'); assert.equal(op.data.path, '/v1/kb/collections/{id}/search');
   assert.ok((await call('list_cli_commands', { filter: 'cron' })).data.length >= 5);

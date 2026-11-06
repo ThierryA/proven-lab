@@ -12,7 +12,7 @@ Pick this for "build me a website": content-led, server-rendered pages, fewest m
 
 ## 1. Define the model
 
-Same as every setup: a must-use plugin in `wp-content/mu-plugins/` that registers post types, taxonomies and fields on `init` (`register_post_type`, `register_taxonomy`, `register_post_meta`, `register_meta`). WP Admin lists the post type automatically (`show_ui` defaults to the value of `public`). Set `show_in_rest => true` on post types and taxonomies so the block editor can edit them; without it the post type falls back to the classic editor. Registered meta has no editing UI by default: add one with `add_meta_box()`, a block editor sidebar panel, or block bindings.
+Same as every setup: a plugin in `wp-content/plugins/<app>/` (activated with `wp plugin activate <app>`) that registers post types, taxonomies and fields on `init` (`register_post_type`, `register_taxonomy`, `register_post_meta`, `register_meta`). WP Admin lists the post type automatically (`show_ui` defaults to the value of `public`). Set `show_in_rest => true` on post types and taxonomies so the block editor can edit them; without it the post type falls back to the classic editor. Registered meta has no editing UI by default: add one with `add_meta_box()`, a block editor sidebar panel, or block bindings.
 
 ## 2. Render with the template hierarchy
 

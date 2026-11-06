@@ -10,7 +10,7 @@ Apply these on every project, whatever the setup. Add the tooling at the start, 
 
 ## 1. Project layout
 
-Put the application's PHP in a plugin (or a must-use plugin that loads one), never in a theme or in WordPress core:
+Put the application's PHP in a regular plugin, never in a theme, in WordPress core or in a must-use plugin (must-use plugins cannot be deactivated, have no activation or uninstall hooks, and are skipped by Plugin Check). Use a must-use plugin only for small site-wide code the user explicitly wants always on.
 
 ```
 wp-content/plugins/my-app/

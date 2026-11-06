@@ -22,7 +22,7 @@ Use `wp core version`, `wp core check-update` and `wp config list` to inspect th
 
 ## 2. Verify the data model you registered
 
-After writing the must-use plugin (see `custom-app`), prove it:
+After writing and activating the plugin (`wp plugin activate <app>`, see `custom-app`), prove it:
 
 ```bash
 wp post-type list --fields=name,public,show_in_rest
@@ -91,21 +91,23 @@ Prefer structured output so you can parse results:
 - `wp --ssh=user@host/path <cmd>` runs against a remote install over SSH on hosts where WP-CLI's SSH transport works.
 - Docker setups: `--ssh=docker:<container>` or `docker compose exec wordpress wp ...`.
 
-## 9. On WP Engine: sandboxed SSH session
+## 9. On WP Engine: the WP Engine MCP sandbox
 
-When the site is deployed on WP Engine, coding agents run WP-CLI directly in a **sandboxed SSH session** (WP Engine's SSH Gateway). Each session is a separate container next to the site with WP-CLI, `mysql`, bash and Composer; copy files in and out with `scp -O` (OpenSSH 9+) or `rsync`. Connect as `<environment>@<environment>.ssh.wpengine.net` and run `wp` from the site root:
+When the site is on WP Engine, agents run WP-CLI through the **WP Engine MCP server** (`hosted-sites`): `sandbox_bash` runs a command in a sandboxed session next to the site, in `/sites/<install name>`, and `sandbox_read`, `sandbox_edit` and `sandbox_write` handle files. The MCP server opens the session with the user's WP Engine sign-in. **Do not generate SSH keys, add keys to the account or configure the SSH Gateway for yourself**: connect the WP Engine MCP server and let it handle access.
 
 ```bash
-ssh myenv@myenv.ssh.wpengine.net "cd /sites/myenv && wp core version"
-ssh myenv@myenv.ssh.wpengine.net "cd /sites/myenv && wp post-type list --format=json"
-ssh myenv@myenv.ssh.wpengine.net "cd /sites/myenv && wp search-replace 'old.test' 'new.test' --dry-run"
+wp core version
+wp post-type list --format=json
+wp search-replace 'old.test' 'new.test' --dry-run
 ```
+
+Each session is a container with WP-CLI, `mysql`, bash and Composer. Plain `ssh <env>@<env>.ssh.wpengine.net` works too, but only for a person who already set up their own key; never set it up on the user's behalf.
 
 What the sandbox means for an agent:
 - **Isolated:** a new container per session, separate per site. No root or sudo, and server processes and logs are not visible.
 - **Short-lived:** the session times out after 10 minutes. Long-running processes die with it, so batch big jobs.
 - **Only the site persists:** files outside `/sites/<environment>/` (home, `/tmp`) are discarded. Keep scripts in `_wpeprivate/`, which is not web-accessible.
-- **Limits:** 5 connections per user ([WP Engine SSH Gateway docs](https://wpengine.com/support/ssh-gateway/)). Use an `ssh-ed25519` key added in the User Portal, with `IdentitiesOnly yes`.
+- **Limits:** 5 sessions per user at a time ([WP Engine SSH Gateway docs](https://wpengine.com/support/ssh-gateway/)).
 - Take a backup before changing a live environment.
 
 ## Rules for agents

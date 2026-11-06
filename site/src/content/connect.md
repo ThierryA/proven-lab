@@ -54,6 +54,24 @@ already on the site.
 Use Proven Lab: {{BASE}}
 ```
 
+**Not a developer? Nothing to install**
+
+```text
+I'm not technical and I don't have WordPress. Make me a website for my
+dog-walking business where clients book walks and pay a deposit. Host it
+on WP Engine and send me a link to check before it goes live.
+Use Proven Lab: {{BASE}}
+```
+
+**Developers: start from a repository**
+
+```text
+Create a GitHub repo for a WordPress plugin that adds a job board to my
+site, set up tests and coding standards, and deploy to my WP Engine
+staging on every push, with production after I approve.
+Use Proven Lab: {{BASE}}
+```
+
 **Work on a site hosted on WP Engine**
 
 ```text
