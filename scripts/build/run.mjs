@@ -168,7 +168,7 @@ await w('install.sh', fill(await readFile(join(ROOT, 'scripts/kit/install.sh'), 
 // llms.txt + llms-full.txt
 const llms = [
   '# Proven Lab', '',
-  '> Docs, an MCP server and tool schemas that let coding agents build on the WordPress Core API (post types, meta, users, hooks, blocks, Abilities API, AI Client), WP-CLI and the Cloud AI API (gateway, knowledge base, agents and sessions). Generated from WordPress ' + core.version + ' source, WP-CLI ' + cliData.version + ' and a snapshot of the Cloud AI API OpenAPI spec.', '',
+  '> Docs, an MCP server and tool schemas that let coding agents build on the WordPress Core API (post types, meta, users, hooks, blocks, Abilities API, AI Client), WP-CLI and the Cloud AI API (chat, images, text to speech, transcription, knowledge base search, agents and sessions). Generated from WordPress ' + core.version + ' source, WP-CLI ' + cliData.version + ' and a snapshot of the Cloud AI API OpenAPI spec.', '',
   `Agents: nothing to install. If a user asked you to build or update an app "with Proven Lab", read ${site}/AGENTS.md first, then call any tool over HTTP: GET ${site}/api/<tool>?<args> (for example ${site}/api/get_blueprint?slug=architecture). Connecting the MCP server at ${site}/mcp is optional.`, '',
   '## Start here', `- [Agent playbook](${site}/AGENTS.md): read first. Rules and workflow for agents building on WordPress`, `- [Set up a project](${site}/kit/SETUP.md): optional. Connect the MCP server and add the kit files`,
   ...overviews.map((o) => `- [${o.title}](${site}/overviews/${o.slug}.md): ${o.summary}`),

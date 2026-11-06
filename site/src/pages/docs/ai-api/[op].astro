@@ -2,6 +2,7 @@
 import Docs from '../../../layouts/Docs.astro';
 import { wpe } from '../../../lib/data.mjs';
 import { md } from '../../../lib/md.mjs';
+import { howToCall } from '../../../../../packages/mcp-server/src/ai-call.mjs';
 const inline = (t) => md.parseInline(t || '');
 export function getStaticPaths() { return wpe().operations.map((o) => ({ params: { op: o.operationId }, props: { o } })); }
 const { o } = Astro.props;
@@ -20,6 +21,7 @@ const fields = body?.properties ? Object.entries(body.properties).map(([name, p]
 const responses = Object.entries(o.responses || {}).map(([code, r]) => ({ code, description: deref(r)?.description || '' }));
 const raw = (o.tags || []).find((x) => !x.startsWith('Product'));
 const group = raw === 'Sites' ? 'Site connection' : raw;
+const call = howToCall(o, components);
 ---
 <Docs title={o.operationId} description={o.summary}>
   <p class="label mb-4">Cloud AI API · {group}</p>
@@ -27,7 +29,10 @@ const group = raw === 'Sites' ? 'Site connection' : raw;
     <h1>{o.operationId}</h1>
     <p class="lead">{o.summary}</p>
     <div class="code-block not-prose" data-lang="http"><pre class="shiki"><code><span style="color:#facc48">{o.method}</span> <span style="color:#ecebe6">https://api.ai.wpengine.com{o.path}</span></code></pre></div>
-    {raw === 'Sites' && <p>Site connection operations are called by the WP Engine AI plugin with the site's own OAuth credentials, not with an API key. See <a href="/docs/ai-features">AI features</a>.</p>}
+    <h2>How to call it</h2>
+    <p set:html={inline(call.summary)} />
+    {call.php && <div set:html={md.parse('```php\n' + call.php + '\n```')} />}
+    {call.auth === 'site-connection' && <p>See <a href="/docs/wpe-ai-plugins">AI without an API key</a> for setup, and <a href="/docs/ai-features">AI features</a> for the API-key path outside WordPress.</p>}
     {o.description && <div set:html={md.parse(o.description)} />}
     {params.length > 0 && <><h2>Parameters</h2><table><thead><tr><th>Name</th><th>In</th><th>Type</th><th>Description</th></tr></thead><tbody>{params.map((p) => <tr><td><code>{p.name}</code>{p.required ? ' (required)' : ''}</td><td>{p.in}</td><td>{p.type}</td><td set:html={inline(p.description)} /></tr>)}</tbody></table></>}
     {fields.length > 0 && <><h2>Request body</h2><table><thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead><tbody>{fields.map((f) => <tr><td><code>{f.name}</code>{f.required ? ' (required)' : ''}</td><td>{f.type}</td><td set:html={inline(f.description)} /></tr>)}</tbody></table></>}

@@ -1,7 +1,7 @@
 ---
 nav: "Architecture"
 title: "Architecture: one application layer, your choice of admin and frontend"
-summary: "WordPress is the application layer: it always runs, and its Core API does the work. The admin and the frontend each run inside WordPress or as a separate custom app. The Cloud AI API runs on its own infrastructure and provides models, search and agents."
+summary: "WordPress is the application layer: it always runs, and its Core API does the work. The admin and the frontend each run inside WordPress or as a separate custom app. The Cloud AI API runs on its own infrastructure and provides models (chat, images, speech, transcription), search and agents."
 ---
 
 # Architecture
@@ -47,7 +47,7 @@ Running the admin or the frontend as a separate app is what *headless* means her
 
 ## 4. The AI API provides models, search and agents
 
-The Cloud AI API runs on WP Engine's infrastructure, not inside WordPress. It provides the gateway to models, the knowledge base for search, and agents with sessions for the AI features you build. It works with WordPress where needed: your code indexes content into the knowledge base, and the WP Engine AI plugin connects the site so WP Engine AI can use its Abilities.
+The Cloud AI API runs on WP Engine's infrastructure, not inside WordPress. It provides the gateway to models (chat, images, text to speech and transcription), the knowledge base for search, and agents with sessions for the AI features you build. It works with WordPress where needed: your code indexes content into the knowledge base, and the WP Engine AI plugin connects the site so WP Engine AI can use its Abilities.
 
 **On WP Engine, coding agents can also use WP-CLI on the deployed site.** They run commands in a sandboxed SSH session next to the site (WP Engine SSH Gateway): inspect, seed, update and verify without a browser. See `wpe-deployment`.
 

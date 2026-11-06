@@ -1,7 +1,7 @@
 ---
 nav: "AI features"
 title: AI features with the Cloud AI API
-summary: Add models, search and agents to a WordPress-backed app with the Cloud AI API, from PHP and from Node. Covers the gateway, the knowledge base, agents and sessions, and how a site connects.
+summary: Add chat, images, text to speech, transcription (speech to text), search and agents to a WordPress-backed app with the Cloud AI API, from PHP and from Node. Covers the gateway, the knowledge base, agents and sessions, and how a site connects.
 ---
 
 # AI features with the Cloud AI API
@@ -10,7 +10,7 @@ Base URL: `https://api.ai.wpengine.com/v1`. Spec: `/openapi/cloud-ai-api.yaml` (
 
 ## Default: no API key
 
-On a WordPress site, use the **WP Engine AI plugins** first (`wpe-ai-plugins`): the site connects once and PHP code, the chatbot and agents use that connection, with no API key. The API-key patterns below are for code outside WordPress and for endpoints the site connection does not cover.
+On a WordPress site, use the **WP Engine AI plugins** first (`wpe-ai-plugins`): the site connects once, then `wp_ai_client_prompt()` (text, images, speech) and `wpe_auth_api_request()` (**any other endpoint**: transcription, alt text, summaries, knowledge base, agents) use that connection, with no API key. A custom app calls a WordPress route that does this. The API-key code below is only for code that runs outside WordPress and cannot call a WordPress route.
 
 ## Use the Cloud AI API for every AI capability
 
@@ -129,7 +129,7 @@ Register Abilities (`wp_register_ability`, core since WordPress 6.9) and expose 
 
 ## Pattern 6: speech to text (voice notes, dictation)
 
-The browser records audio and sends it to your server; the server calls `createTranscription` with the key. The API takes JSON with the audio as base64 (`audio`, plus `mime_type`, optional `language`), accepts WAV, MP3, OGG, WebM and FLAC up to 25 MiB, needs the `transcribe:write` scope, and returns `{"text": "..."}`.
+The browser records audio and sends it to your server; the server calls `createTranscription`. **On a WordPress site, use the site connection and no key:** the route in `wpe-ai-plugins` section 6 (`wpe_auth_api_request()`), and have a custom app forward the audio to it. The key-based code below is only for a server with no WordPress site to call. The API takes JSON with the audio as base64 (`audio`, plus `mime_type`, optional `language`), accepts WAV, MP3, OGG, WebM and FLAC up to 25 MiB, needs the `transcribe:write` scope, and returns `{"text": "..."}`.
 
 Browser (record with `MediaRecorder`, which produces WebM in most browsers):
 
@@ -147,7 +147,7 @@ recorder.onstop = async () => {
 recorder.start();                              // call recorder.stop() when the user is done
 ```
 
-Custom app server (Node, Express):
+Custom app server (Node, Express), with no WordPress site to call (otherwise forward the audio to the WordPress route instead):
 
 ```js
 app.post('/api/transcribe', express.raw({ type: 'audio/*', limit: '25mb' }), async (req, res) => {
@@ -160,7 +160,7 @@ app.post('/api/transcribe', express.raw({ type: 'audio/*', limit: '25mb' }), asy
 });
 ```
 
-In WordPress instead (Classic or Headless Admin), a REST route does the same, and only logged-in users who can edit posts may use it:
+In WordPress without the WP Engine AI plugin (prefer the site-connection route in `wpe-ai-plugins` section 6), the same route with a key:
 
 ```php
 add_action( 'rest_api_init', function () {

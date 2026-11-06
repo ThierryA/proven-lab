@@ -8,7 +8,7 @@ Start a new application on WordPress as the application layer, following the Pro
 2. Call `get_blueprint` for the matching guide (`classic-wordpress` or `custom-app`) and follow it step by step.
 3. Before writing any WordPress call, check it with `get_function`, `get_class` or `get_hook`. Before running any WP-CLI command, check it with `get_cli_command`.
 4. Put the data model in a must-use plugin (`wp-content/mu-plugins/`), registered on `init`. Set up PHPCS (WordPress Coding Standards) and PHPUnit from `get_blueprint best-practices` at the start.
-5. Any AI capability (speech to text, summaries, chat, images, search) uses the Cloud AI API from the server (`get_blueprint ai-features`).
+5. Any AI capability (speech to text, summaries, chat, images, search) uses the Cloud AI API with the site connection, no API key: install and connect the WP Engine AI plugins, then `wp_ai_client_prompt()` or `wpe_auth_api_request()` from a WordPress route (`get_blueprint wpe-ai-plugins`; `get_ai_operation` gives the exact call).
 6. Verify with WP-CLI, real HTTP requests, `vendor/bin/phpcs` and `vendor/bin/phpunit`, and report what you checked.
 
 If the `provenlab` tools are not available, use `curl "{{BASE}}/api/<tool>?<args>"` instead, and see {{BASE}}/AGENTS.md.

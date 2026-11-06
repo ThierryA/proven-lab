@@ -1,7 +1,7 @@
 ---
 nav: "Overview"
 title: "Cloud AI API: overview"
-summary: An HTTP API for models, search over your content, and agents. What it includes, how to authenticate, and how to call it from WordPress or a custom app.
+summary: An HTTP API for chat, images, text to speech, transcription, search over your content, and agents. What it includes, how to authenticate, and how to call it from WordPress or a custom app.
 ---
 
 # Cloud AI API

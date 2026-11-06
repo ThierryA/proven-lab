@@ -49,7 +49,7 @@ The connection is tied to the site URL: a copied or migrated site has to connect
 | AI from a custom app (Node) | The token never leaves WordPress: give the app a WordPress REST route that calls the connector, and call it with an application password |
 | Search over the site's content | Turn on knowledge base sync (below); ground agents in it, as the chatbot and Coworker do |
 | Agents that act on the site | WP Engine AI Coworker in WP Admin, or the hub's `wp-engine-ai/*` Abilities through the WP Engine MCP server |
-| Speech to text | Not provided by the plugins; see section 5 |
+| Speech to text, alt text, summaries, taxonomy suggestions, knowledge base, agents: any other Cloud AI API endpoint | `wpe_auth_api_request()` from a WordPress route, with the site connection (sections 5 and 6) |
 
 ### Text from PHP
 
@@ -164,25 +164,60 @@ Rate-limit the session route per visitor (the chatbot allows 10 mints a minute) 
 | One-shot generation tied to WordPress data, or writes to WordPress | Server: the connector (`wp_ai_client_prompt()`) |
 | Speech to text, images, anything a browser token cannot call | Server |
 
-## 5. Lower-level access from PHP
+## 5. Call any Cloud AI API endpoint from PHP, no API key
 
-The hub exposes `wpe_auth_api_request( $url, $args )`: it adds the site's bearer token and project to a request to the Cloud AI API and returns `array( 'status' => …, 'body' => … )` or a `WP_Error`. Use it for endpoints the connector does not cover. Other helpers: `wpe_auth_is_connected()`, `wpe_auth_get_project_id()`.
-
-## 6. Speech to text
-
-None of the plugins provide transcription. Try the site connection first, from a logged-in, nonce-checked route:
+The connector covers text, images and text to speech through the AI Client. **Everything else in the Cloud AI API is one function away:** the WP Engine AI plugin exposes `wpe_auth_api_request( $url, $args )`. It takes the same arguments as `wp_remote_request()`, adds the site's bearer token, retries once with a fresh token on `401` or `403`, and returns `array( 'status' => int, 'body' => array )` (the JSON already decoded) or a `WP_Error`.
 
 ```php
-$response = wpe_auth_api_request( 'https://api.ai.wpengine.com/v1/audio/transcriptions', array(
+if ( ! function_exists( 'wpe_auth_api_request' ) || ! wpe_auth_is_connected() ) {
+	return new WP_Error( 'ai_not_connected', 'Connect the site in WP Admin → WP Engine AI.', array( 'status' => 503 ) );
+}
+$response = wpe_auth_api_request( 'https://api.ai.wpengine.com/v1/content/summarize', array(
 	'method'  => 'POST',
 	'headers' => array( 'Content-Type' => 'application/json' ),
-	'body'    => wp_json_encode( array( 'audio' => base64_encode( $audio_bytes ), 'mime_type' => 'audio/webm' ) ),
+	'body'    => wp_json_encode( array( 'content' => $post->post_content ) ),
 	'timeout' => 60,
 ) );
 ```
 
-If that returns `403` (the site connection may not carry the `transcribe` scope), fall back to an account API key with `transcribe:write`, kept in `wp-config.php` or the app server's environment (`ai-features`, Pattern 6). Do not fall back to the browser's Web Speech API unless the user asks for it.
+Every gateway operation (`createChatCompletion`, `createImageGeneration`, `createSpeech`, `createTranscription`, `createImageAltText`, `summarizeContent`, `suggestTaxonomy`), the knowledge base and agents and sessions work this way. Look up the request body with `get_ai_operation <operationId>`: its `howToCall` field gives the ready PHP call. Not callable with the site connection: analytics and credits (account login only) and the site connection operations (the plugin calls them itself).
+
+Rules: call it only from a capability- or nonce-checked REST route, Ability, cron job or WP-CLI command; never expose it as an open proxy; rate-limit anything visitors can trigger, because requests spend the site's credits. A custom app (Node) calls your WordPress route with an application password, so the token never leaves WordPress. Other helpers: `wpe_auth_is_connected()`, `wpe_auth_get_project_id()`.
+
+## 6. Speech to text (dictation, voice notes)
+
+Transcription works with the site connection, no API key. The browser records audio (`MediaRecorder`, see `ai-features` Pattern 6) and posts the raw bytes to a WordPress route; the route sends them to `createTranscription` (base64 `audio`, `mime_type`, optional `language`; WAV, MP3, OGG, WebM or FLAC up to 25 MiB) and returns `{"text": "..."}`:
+
+```php
+add_action( 'rest_api_init', function () {
+	register_rest_route( 'my-app/v1', '/transcribe', array(
+		'methods'             => 'POST',
+		'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+		'callback'            => function ( WP_REST_Request $request ) {
+			$audio = $request->get_body();
+			if ( '' === $audio || strlen( $audio ) > 25 * MB_IN_BYTES ) {
+				return new WP_Error( 'invalid_audio', 'Send 1 byte to 25 MiB of audio.', array( 'status' => 400 ) );
+			}
+			$response = wpe_auth_api_request( 'https://api.ai.wpengine.com/v1/audio/transcriptions', array(
+				'method'  => 'POST',
+				'headers' => array( 'Content-Type' => 'application/json' ),
+				'body'    => wp_json_encode( array(
+					'audio'     => base64_encode( $audio ),
+					'mime_type' => strtok( (string) $request->get_header( 'content-type' ), ';' ),
+				) ),
+				'timeout' => 60,
+			) );
+			if ( is_wp_error( $response ) ) {
+				return $response; // Not connected, or the request failed.
+			}
+			return new WP_REST_Response( $response['body'], $response['status'] ); // { text, model }
+		},
+	) );
+} );
+```
+
+A custom app's server forwards the recording to this route with an application password. Do not use the browser's Web Speech API unless the user asks for it.
 
 ## When an API key is still needed
 
-Only for code outside WordPress that cannot call a WordPress route, for endpoints the site connection does not allow, and for analytics and credits (account login). Then follow `ai-features`.
+Only for code outside WordPress that cannot call a WordPress route. Analytics and credits need an account login. Then follow `ai-features`.

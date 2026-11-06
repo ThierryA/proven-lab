@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises';
+import { howToCall } from './ai-call.mjs';
 import { existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -93,7 +94,7 @@ const handlers = {
   },
   async get_ai_operation({ operationId }) {
     const s = await load(); const o = s.op.get(operationId);
-    return o ? { baseUrl: s.wpe.servers[0], ...o, securitySchemes: Object.keys(s.wpe.components.securitySchemes || {}) } : notFound('operation', operationId, s.op);
+    return o ? { baseUrl: s.wpe.servers[0], howToCall: howToCall(o, s.wpe.components), ...o, securitySchemes: Object.keys(s.wpe.components.securitySchemes || {}) } : notFound('operation', operationId, s.op);
   },
 };
 
