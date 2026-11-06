@@ -8,7 +8,7 @@ const on = (href) => path === href;
 const open = (items) => items.some((i) => on(i.href));
 const link = (active) => `-ml-px block border-l py-1 pl-3 text-[13px] ${active ? 'border-signal text-fg' : 'border-transparent text-fg-2 hover:border-line-2 hover:text-fg'}`;
 const sections = [
-  { tag: 'PHP', title: 'Core Runtime API', blurb: 'WordPress core PHP APIs, by task area.', overview: '/docs/core-runtime-api', groups: sb.core },
+  { tag: 'PHP', title: 'Core API', blurb: 'WordPress core PHP APIs, by task area.', overview: '/docs/core-api', groups: sb.core },
   { tag: 'CLI', title: 'WP-CLI', blurb: 'The wp command. How coding agents verify and administer.', overview: '/docs/wp-cli-for-agents', groups: sb.cli },
   { tag: 'AI', title: 'Cloud AI API', blurb: 'Gateway, knowledge base, agents and sessions.', overview: '/docs/cloud-ai-api', groups: sb.ai, after: sb.account },
   { tag: 'WPE', title: 'Deployment', blurb: 'WP Engine. Optional, recommended.', overview: '/docs/wpe-deployment', groups: [] },

@@ -6,7 +6,7 @@ summary: WP-CLI (wp) is the official command-line tool for WordPress. Agents use
 
 # WP-CLI for agents
 
-Agents should not have to click through WP Admin, and they should not guess whether code worked. **`wp` gives them a deterministic, scriptable interface to the Core Runtime API.** Use it to set up environments, create test data, inspect state, and prove that the model you wrote actually registered. Look up any command with the MCP tools `list_cli_commands` and `get_cli_command`; the full tree is generated from the WP-CLI release, so flags are exact.
+Agents should not have to click through WP Admin, and they should not guess whether code worked. **`wp` gives them a deterministic, scriptable interface to the Core API.** Use it to set up environments, create test data, inspect state, and prove that the model you wrote actually registered. Look up any command with the MCP tools `list_cli_commands` and `get_cli_command`; the full tree is generated from the WP-CLI release, so flags are exact.
 
 ## 1. Stand up a local site
 
@@ -34,7 +34,7 @@ wp post meta get <id> budget
 curl -s localhost:8080/wp-json/wp/v2/projects | head -c 300     # REST exposure check (needs the site served)
 ```
 
-`wp eval` and `wp eval-file` run PHP inside a fully loaded WordPress. They are the agent's REPL for any Core Runtime API (`get_function` tells you what to call).
+`wp eval` and `wp eval-file` run PHP inside a fully loaded WordPress. They are the agent's REPL for any Core API (`get_function` tells you what to call).
 
 ## 3. Users, roles, capabilities and application passwords
 
@@ -113,4 +113,4 @@ What the sandbox means for an agent:
 2. Never run `wp db reset`, `wp site empty`, `wp post delete --force` or `wp search-replace` (without `--dry-run`) against a shared or production environment without explicit user approval.
 3. Use `--porcelain` / `--format=json` and check exit codes; do not scrape human text.
 4. Keep credentials (application passwords) out of the repo; create them via `wp user application-password create` and store in `.env`.
-5. Works the same for standard and headless architectures: the CLI talks to the Core Runtime API, not to the frontend.
+5. Works the same for standard and headless architectures: the CLI talks to the Core API, not to the frontend.

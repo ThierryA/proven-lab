@@ -142,11 +142,11 @@ await w('AGENTS.md', agentsMd);
 const site = (process.env.SITE_URL || '').replace(/\/$/, '');
 const llms = [
   '# Proven Lab', '',
-  '> Docs, an MCP server and tool schemas that let coding agents build on the WordPress Core Runtime API (post types, meta, users, hooks, blocks, Abilities API, AI Client), WP-CLI and the Cloud AI API (gateway, knowledge base, agents and sessions). Generated from WordPress ' + core.version + ' source, WP-CLI ' + cliData.version + ' and a snapshot of the Cloud AI API OpenAPI spec.', '',
+  '> Docs, an MCP server and tool schemas that let coding agents build on the WordPress Core API (post types, meta, users, hooks, blocks, Abilities API, AI Client), WP-CLI and the Cloud AI API (gateway, knowledge base, agents and sessions). Generated from WordPress ' + core.version + ' source, WP-CLI ' + cliData.version + ' and a snapshot of the Cloud AI API OpenAPI spec.', '',
   '## Start here', `- [Agent playbook](${site}/AGENTS.md): rules and workflow for agents building WordPress sites`,
   ...overviews.map((o) => `- [${o.title}](${site}/overviews/${o.slug}.md): ${o.summary}`),
   ...blueprints.map((b) => `- [${b.title}](${site}/blueprints/${b.slug}.md): ${b.summary}`), '',
-  '## Core Runtime API domains', ...domains.map((d) => `- [${d.group}: ${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',
+  '## Core API domains', ...domains.map((d) => `- [${d.group}: ${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',
   '## WP-CLI (`wp`): verify, scaffold and administer from the shell', ...cliPages.map((c) => `- [wp ${c.top}](${site}/cli/${c.top}.md): ${c.description}`), '',
   '## Cloud AI API', `- [OpenAPI spec](${site}/openapi/cloud-ai-api.yaml)`, `- [Operations index, incl. the Sites API](${site}/wpe-operations.json)`, '',
   '## Machine interfaces', `- MCP server: ${site}/mcp (streamable HTTP), or stdio via packages/mcp-server/src/index.mjs`, `- Proven Lab API (OpenAPI): ${site}/openapi/provenlab-api.yaml`, `- OpenAI function tools: ${site}/tools/openai.json`, `- Anthropic tools: ${site}/tools/anthropic.json`, '',
@@ -168,7 +168,7 @@ await mkdir(join(DIST, 'openapi'), { recursive: true });
   for (const kind of ['schemas', 'parameters', 'responses', 'requestBodies']) for (const name of Object.keys(pub.components?.[kind] || {})) if (!refs.has(`#/components/${kind}/${name}`)) delete pub.components[kind][name];
   await writeFile(join(DIST, 'openapi/cloud-ai-api.yaml'), YAML.stringify(pub));
 }
-const kitApi = { openapi: '3.1.0', info: { title: 'Proven Lab API', version: '0.1.0', description: 'Search and retrieve WordPress Core Runtime API docs, WP-CLI commands, blueprints and Cloud AI API operations. The same 12 tools as the MCP server.' }, servers: [{ url: site || '/' }], paths: {} };
+const kitApi = { openapi: '3.1.0', info: { title: 'Proven Lab API', version: '0.1.0', description: 'Search and retrieve WordPress Core API docs, WP-CLI commands, blueprints and Cloud AI API operations. The same 12 tools as the MCP server.' }, servers: [{ url: site || '/' }], paths: {} };
 for (const t of TOOLS) {
   const props = t.inputSchema.properties || {};
   kitApi.paths[`/api/${t.name}`] = { get: { operationId: t.name, summary: t.description.split('\n')[0], description: t.description,

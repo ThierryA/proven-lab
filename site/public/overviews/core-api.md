@@ -1,12 +1,12 @@
 ---
 nav: "Overview"
-title: "Core Runtime API: overview"
+title: "Core API: overview"
 summary: The WordPress core PHP APIs an application is built on, extracted from WordPress source and grouped by task area.
 ---
 
-# Core Runtime API
+# Core API
 
-**Core Runtime API** is Proven Lab's name for the WordPress core PHP APIs: the functions, classes and hooks that ship with WordPress. It is not an official WordPress term. Everything here is extracted from the WordPress source release, so signatures, parameters and `@since` versions match the code.
+**Core API** is Proven Lab's name for the WordPress core PHP APIs: the functions, classes and hooks that ship with WordPress, the application layer of every setup. It is not an official WordPress term. Everything here is extracted from the WordPress source release, so signatures, parameters and `@since` versions match the code.
 
 ## What it covers
 

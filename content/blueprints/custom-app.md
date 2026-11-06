@@ -6,7 +6,7 @@ summary: WordPress keeps running and does the work. Your custom app (for example
 
 # Custom app on WordPress
 
-**Admin:** custom app or WP Admin · **Frontend:** custom app or WordPress templating · **Runtimes:** WordPress + your app.
+**Admin:** custom app or WP Admin · **Frontend:** custom app or WordPress templating · **Deploy:** WordPress + your app.
 
 **Prompt this blueprint answers:** "Create me a Node application that uses WordPress as the backend, with its own admin and frontend."
 
@@ -21,7 +21,7 @@ Browser ──► Node app (Hono / Express / Next.js / Astro SSR)
               ├─ /admin/*   custom admin UI (auth'd users)  ──┐
               └─ /*         public frontend (SSR / ISR)     ──┤  server-side only
                                                               ▼
-                                   WordPress (REST API + Abilities API + Core Runtime API)
+                                   WordPress (REST API + Abilities API + Core API)
                                    └─ must-use plugin "app-model" defines the schema
 ```
 

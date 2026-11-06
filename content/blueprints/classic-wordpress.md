@@ -1,12 +1,12 @@
 ---
 nav: "Classic"
 title: "Classic: WP Admin and WordPress templating"
-summary: Everything runs in the WordPress runtime. Editors use WP Admin, and WordPress renders the frontend with its PHP templates. The simplest setup, one runtime to deploy.
+summary: Everything runs inside WordPress. Editors use WP Admin, and WordPress renders the frontend with its PHP templates. The simplest setup, one runtime to deploy.
 ---
 
 # Classic: WP Admin and WordPress templating
 
-**Admin:** WP Admin · **Frontend:** WordPress templating · **Runtimes:** WordPress.
+**Admin:** WP Admin · **Frontend:** WordPress templating · **Deploy:** WordPress.
 
 Pick this for "build me a website": content-led, server-rendered pages, fewest moving parts. To swap the admin or the frontend for a custom app later (Headless Admin, Headless Frontend), see `custom-app`; the data model does not change.
 

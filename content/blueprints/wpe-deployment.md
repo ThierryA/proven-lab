@@ -1,18 +1,18 @@
 ---
 nav: "Deploying on WP Engine"
 title: Deploying on WP Engine (optional, preferred)
-summary: Managed WordPress for the WordPress runtime, the Headless Platform for a custom app, SSH with WP-CLI for coding agents, and how to stay portable.
+summary: Managed WordPress for the application layer, the Headless Platform for a custom app, SSH with WP-CLI for coding agents, and how to stay portable.
 ---
 
 # Deploying on WP Engine
 
-Deploying on WP Engine is **optional**; Proven Lab recommends it. Nothing in the Core Runtime API requires it, and the Cloud AI API works from any host. WP Engine adds managed WordPress, the Headless Platform for custom apps, and SSH access with WP-CLI for coding agents.
+Deploying on WP Engine is **optional**; Proven Lab recommends it. Nothing in the Core API requires it, and the Cloud AI API works from any host. WP Engine adds managed WordPress, the Headless Platform for custom apps, and SSH access with WP-CLI for coding agents.
 
-Each setup in `architecture` needs one or two runtimes deployed: always WordPress, plus your app if the admin or frontend is a custom app.
+Each setup in `architecture` needs one or two deployments: always WordPress, plus your app if the admin or frontend is a custom app.
 
-## The WordPress runtime: managed WordPress
+## WordPress: managed WordPress
 
-Managed WordPress runs the WordPress runtime for every setup. For **Classic** (`classic-wordpress`) it is the only thing you deploy.
+Managed WordPress runs WordPress for every setup. For **Classic** (`classic-wordpress`) it is the only thing you deploy.
 
 ## Your app's runtime: Headless Platform
 
@@ -21,10 +21,10 @@ For **Headless Frontend**, **Headless Admin** and **Headless Frontend + Admin** 
 - Your app deploys from GitHub, Bitbucket or GitLab; pushing to the chosen branch deploys. It builds with `npm run build` and starts with `npm run start`, and the app must listen on port 8080 (default) or 3000.
 - The platform runs any Node framework (Next.js, Astro, Nuxt, SvelteKit, Remix and others). It can install the **WPGraphQL**, **Faust.js** and **WP Engine Atlas Headless Extension** plugins on the WordPress side; a custom app that uses only the REST API needs none of them.
 - **Faust.js** is WP Engine's open-source toolkit for Next.js (Pages Router; requires the WPGraphQL and Faust.js plugins): previews and authentication against WordPress. Check the Faust.js docs for supported versions.
-- The same Core Runtime API model (post types, registered meta, capabilities, Abilities) applies. With WPGraphQL, post types and taxonomies opt in with `show_in_graphql`; meta needs `register_graphql_field()`.
+- The same Core API model (post types, registered meta, capabilities, Abilities) applies. With WPGraphQL, post types and taxonomies opt in with `show_in_graphql`; meta needs `register_graphql_field()`.
 - Docs: <https://developers.wpengine.com/docs/headless-platform/> · <https://github.com/wpengine/faustjs>
 
-You can also run your custom app on any Node host; WordPress stays on its own runtime either way.
+You can also run your custom app on any Node host; WordPress stays on its own hosting either way.
 
 ## Agents on WP Engine: sandboxed SSH and WP-CLI
 

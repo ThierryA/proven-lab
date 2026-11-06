@@ -3,7 +3,7 @@
 You are building an application where **WordPress is the application layer**: data model, users and permissions, validation, hooks, media, cron. The admin is WP Admin or a custom app; the frontend is WordPress templating or a custom app.
 
 ## Tools you have (MCP server `provenlab`)
-- `list_domains`, `get_domain`: start here to find the right Core Runtime API functions, classes and hooks for a task.
+- `list_domains`, `get_domain`: start here to find the right Core API functions, classes and hooks for a task.
 - `search_docs`: keyword search over core functions, classes, methods, hooks, handbooks, WP-CLI commands and WP Engine docs.
 - `get_function`, `get_class`, `get_hook`: exact signatures, parameters, since-versions and source location. **Look up before you write**; never guess argument names.
 - `list_blueprints`, `get_blueprint`: end-to-end guides (architecture, Classic, custom app, WP-CLI, AI API, deployment).
@@ -26,4 +26,4 @@ You are building an application where **WordPress is the application layer**: da
 - Register on the right hook (`init` for types and meta, `rest_api_init` for routes, `wp_abilities_api_init` for abilities).
 - Flush rewrite rules once after changing post types or rewrite rules (`wp rewrite flush`), never on every request. Must-use plugins have no activation hook.
 - Secrets (application passwords, `wpe_` keys) never go to browser code or version control.
-- Prefer the Core Runtime API over custom tables or custom auth.
+- Prefer the Core API over custom tables or custom auth.

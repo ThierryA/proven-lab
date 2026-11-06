@@ -21,8 +21,8 @@ test('healthz', async () => { const r = await get('/healthz'); assert.equal(r.st
 
 test('pages render with the right content', async () => {
   const cases = [
-    ['/', 'text/html', ['Why pay agents to rebuild a battle-tested platform', 'One runtime', 'data-setup="classic"', 'WP Admin', 'WordPress templating', 'Core Runtime API', 'WP-CLI', 'Deployment', 'optional']],
-    ['/docs', 'text/html', ['Documentation', 'Core Runtime API', 'AI API', 'Deployment', 'WP-CLI']],
+    ['/', 'text/html', ['Why pay agents to rebuild a battle-tested platform', 'One application layer', 'data-setup="classic"', 'WP Admin', 'WordPress templating', 'Core API', 'WP-CLI', 'Deployment', 'optional']],
+    ['/docs', 'text/html', ['Documentation', 'Core API', 'AI API', 'Deployment', 'WP-CLI']],
     ['/docs/api/fields', 'text/html', ['register_meta', 'Fields (Meta)']],
     ['/docs/api/abilities', 'text/html', ['wp_register_ability']],
     ['/docs/cli/post', 'text/html', ['wp post create']],
@@ -31,10 +31,10 @@ test('pages render with the right content', async () => {
     ['/docs/ai-api/registerSite', 'text/html', ['Cloud AI API', 'Site connection']],
     ['/docs/custom-app', 'text/html', ['register_post_meta']],
     ['/docs/classic-wordpress', 'text/html', ['single-project.php', 'WP Admin']],
-    ['/docs/architecture', 'text/html', ['data-arch', 'WordPress runtime', 'AI API', 'Classic', 'Headless Frontend', 'Headless Admin', 'Headless Frontend + Admin', 'Data &amp;', 'sandboxed SSH session']],
+    ['/docs/architecture', 'text/html', ['data-arch', 'Application layer', 'AI API', 'Classic', 'Headless Frontend', 'Headless Admin', 'Headless Frontend + Admin', 'Data &amp;', 'sandboxed SSH session']],
     ['/docs/wpe-deployment', 'text/html', ['Headless Platform', 'optional', 'sandboxed SSH session', '.ssh.wpengine.net']],
     ['/docs/connect', 'text/html', ['@provenlab/mcp']],
-    ['/docs/core-runtime-api', 'text/html', ['Core Runtime API', 'Data model', '/docs/api/content-types']],
+    ['/docs/core-api', 'text/html', ['Core API', 'Data model', '/docs/api/content-types']],
     ['/docs/cloud-ai-api', 'text/html', ['Cloud AI API', 'https://api.ai.wpengine.com/v1', 'Rate limits', '/docs/ai-api/createChatCompletion']],
     ['/llms.txt', 'text/plain', ['# Proven Lab']],
     ['/llms-full.txt', 'text/plain', ['register_post_type']],
@@ -52,10 +52,10 @@ test('pages render with the right content', async () => {
   }
 });
 
-test('sidebar separates Core Runtime API, WP-CLI, Cloud AI API and Deployment; no Platform; non-tool groups set apart', async () => {
+test('sidebar separates Core API, WP-CLI, Cloud AI API and Deployment; no Platform; non-tool groups set apart', async () => {
   const page = await (await get('/docs/api/fields')).text();
   const html = page.slice(page.indexOf('<aside'), page.indexOf('</aside>'));
-  const order = ['Guides', 'Core Runtime API', 'WP-CLI', 'Cloud AI API', 'Deployment'].map((t) => html.indexOf(t));
+  const order = ['Guides', 'Core API', 'WP-CLI', 'Cloud AI API', 'Deployment'].map((t) => html.indexOf(t));
   assert.ok(order.every((i, k) => i > -1 && (k === 0 || i > order[k - 1])), `section order ${order}`);
   assert.ok(!/>\s*Platform\s*</.test(html) && !html.includes('WP Engine AI API'));
   const ai = html.slice(html.indexOf('Cloud AI API'), html.lastIndexOf('Deployment'));

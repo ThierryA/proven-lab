@@ -9,13 +9,13 @@ const row = 'grid grid-cols-[minmax(0,14rem)_1fr] gap-6 border-b border-line py-
 <Docs title="Docs">
   <p class="label">Documentation</p>
   <h1 class="mt-4 text-4xl font-medium tracking-tight text-fg">Build on WordPress with a coding agent.</h1>
-  <p class="mt-4 max-w-2xl">Four references (the Core Runtime API, WP-CLI, the Cloud AI API and deployment on WP Engine) and the blueprints that tie them together. Every setup is covered: Classic and the three headless setups.</p>
+  <p class="mt-4 max-w-2xl">Four references (the Core API, WP-CLI, the Cloud AI API and deployment on WP Engine) and the blueprints that tie them together. Every setup is covered: Classic and the three headless setups.</p>
 
   <h2 class="label mt-14">Blueprints</h2>
   <div class="mt-3 border-t border-line">{['architecture', 'classic-wordpress', 'custom-app', 'wp-cli-for-agents', 'ai-features', 'wpe-deployment'].map(bp).filter(Boolean).map((b) => <a class={row} href={`/docs/${b.slug}`}><span class="text-fg">{b.nav || b.title}</span><span>{b.summary}</span></a>)}</div>
 
-  <h2 class="mt-16 flex items-baseline gap-3 text-2xl font-medium tracking-tight text-fg"><span class="font-mono text-[11px] text-fg-3">PHP</span>Core Runtime API</h2>
-  <p class="mt-2 text-[14px]">Proven Lab's name for the WordPress core PHP APIs: functions, classes and hooks, extracted from WordPress source and grouped by task area. <a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/core-runtime-api">Overview</a></p>
+  <h2 class="mt-16 flex items-baseline gap-3 text-2xl font-medium tracking-tight text-fg"><span class="font-mono text-[11px] text-fg-3">PHP</span>Core API</h2>
+  <p class="mt-2 text-[14px]">Proven Lab's name for the WordPress core PHP APIs: functions, classes and hooks, extracted from WordPress source and grouped by task area. <a class="text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/docs/core-api">Overview</a></p>
   {GROUP_ORDER.map((g) => <><h3 class="label mt-8">{g}</h3><div class="mt-2 border-t border-line">{all.filter((d) => d.group === g).map((d) => <a class={row} href={`/docs/api/${d.slug}`}><span class="text-fg">{d.title}</span><span>{d.summary}</span></a>)}</div></>)}
 
   <h2 class="mt-16 flex items-baseline gap-3 text-2xl font-medium tracking-tight text-fg"><span class="font-mono text-[11px] text-fg-3">CLI</span>WP-CLI</h2>

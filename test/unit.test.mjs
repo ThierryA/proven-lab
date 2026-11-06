@@ -93,7 +93,7 @@ test('blueprints have front matter and the expected set', () => {
 
 test('llms.txt covers every section', () => {
   const t = readFileSync(join(ROOT, 'dist', 'llms.txt'), 'utf8');
-  for (const s of ['# Proven Lab', 'Core Runtime API domains', 'WP-CLI', '## Cloud AI API', 'Machine interfaces', 'provenlab-api.yaml']) assert.ok(t.includes(s), s);
+  for (const s of ['# Proven Lab', 'Core API domains', 'WP-CLI', '## Cloud AI API', 'Machine interfaces', 'provenlab-api.yaml']) assert.ok(t.includes(s), s);
 });
 
 test('tool definitions are consistent across formats', () => {

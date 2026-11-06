@@ -1,5 +1,5 @@
 // Real WordPress run (opt-in: WP_REAL=1). Boots WordPress in WordPress Playground, installs the headless blueprint's
-// must-use plugins verbatim, and verifies the Core Runtime API behaves as the docs claim.
+// must-use plugins verbatim, and verifies the Core API behaves as the docs claim.
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';

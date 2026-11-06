@@ -1,0 +1,73 @@
+---
+// Subtle animated background: a dot grid with short signals travelling along the grid lines.
+// One canvas per instance; pauses off-screen and in hidden tabs; static for prefers-reduced-motion.
+const { intensity = 1, focus = '72% 35%' } = Astro.props;
+---
+<canvas
+  data-gridbg
+  data-intensity={intensity}
+  aria-hidden="true"
+  class="pointer-events-none absolute inset-0 -z-10 h-full w-full"
+  style={`mask-image: radial-gradient(ellipse 60% 70% at ${focus}, #000 20%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse 60% 70% at ${focus}, #000 20%, transparent 75%);`}
+></canvas>
+
+<script>
+  const GAP = 28;                                  // grid spacing in CSS px
+  const SIGNAL = [250, 204, 72];                    // --color-signal
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  for (const canvas of document.querySelectorAll<HTMLCanvasElement>('canvas[data-gridbg]')) {
+    const ctx = canvas.getContext('2d')!;
+    const k = Number(canvas.dataset.intensity) || 1;
+    const dots = document.createElement('canvas');
+    let w = 0, h = 0, dpr = 1, rows = 0, cols = 0, raf = 0, last = 0, visible = true;
+    type Pulse = { horiz: boolean; line: number; pos: number; dir: number; speed: number; len: number };
+    let pulses: Pulse[] = [];
+
+    const resize = () => {
+      const r = canvas.getBoundingClientRect();
+      dpr = Math.min(devicePixelRatio || 1, 2); w = r.width; h = r.height;
+      for (const c of [canvas, dots]) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cols = Math.ceil(w / GAP) + 1; rows = Math.ceil(h / GAP) + 1;
+      const d = dots.getContext('2d')!; d.setTransform(dpr, 0, 0, dpr, 0, 0); d.clearRect(0, 0, w, h);
+      d.fillStyle = `rgba(236,235,230,${0.26 * k})`;
+      for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) d.fillRect(x * GAP, y * GAP, 1.25, 1.25);
+      if (reduce) frame(0);
+    };
+
+    const spawn = () => {
+      const horiz = Math.random() < 0.6, dir = Math.random() < 0.5 ? 1 : -1, extent = horiz ? w : h;
+      pulses.push({ horiz, dir, line: Math.floor(Math.random() * (horiz ? rows : cols)), pos: dir > 0 ? -160 : extent + 160, speed: 50 + Math.random() * 70, len: 70 + Math.random() * 110 });
+    };
+
+    const frame = (t: number) => {
+      const dt = Math.min((t - last) / 1000, 0.05); last = t;
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(dots, 0, 0, w, h);
+      if (reduce) return;
+      if (pulses.length < Math.max(3, Math.round((w * h) / 90000)) && Math.random() < 0.04) spawn();
+      ctx.lineWidth = 1;
+      pulses = pulses.filter((p) => {
+        p.pos += p.dir * p.speed * dt;
+        const line = p.line * GAP + 0.5, tail = p.pos - p.dir * p.len;
+        const g = p.horiz ? ctx.createLinearGradient(tail, 0, p.pos, 0) : ctx.createLinearGradient(0, tail, 0, p.pos);
+        g.addColorStop(0, `rgba(${SIGNAL},0)`); g.addColorStop(1, `rgba(${SIGNAL},${0.7 * k})`);
+        ctx.strokeStyle = g; ctx.beginPath();
+        if (p.horiz) { ctx.moveTo(tail, line); ctx.lineTo(p.pos, line); } else { ctx.moveTo(line, tail); ctx.lineTo(line, p.pos); }
+        ctx.stroke();
+        ctx.fillStyle = `rgba(${SIGNAL},${0.8 * k})`;
+        if (p.horiz) ctx.fillRect(p.pos - 1, line - 1, 2, 2); else ctx.fillRect(line - 1, p.pos - 1, 2, 2);
+        const extent = p.horiz ? w : h;
+        return p.dir > 0 ? tail < extent : tail > 0;
+      });
+      if (visible) raf = requestAnimationFrame(frame);
+    };
+
+    const start = () => { if (!reduce && visible && !document.hidden) { cancelAnimationFrame(raf); last = performance.now(); raf = requestAnimationFrame(frame); } };
+    new ResizeObserver(resize).observe(canvas);
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; visible ? start() : cancelAnimationFrame(raf); }).observe(canvas);
+    document.addEventListener('visibilitychange', () => (document.hidden ? cancelAnimationFrame(raf) : start()));
+    resize(); start();
+  }
+</script>

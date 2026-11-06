@@ -1,20 +1,20 @@
 ---
 nav: "Architecture"
-title: "Architecture: one WordPress runtime, your choice of admin and frontend"
-summary: WordPress always runs, and its Core Runtime API does the work. The admin and the frontend each run inside WordPress or as a separate custom app. The Cloud AI API runs on its own infrastructure and provides models, search and agents.
+title: "Architecture: one application layer, your choice of admin and frontend"
+summary: "WordPress is the application layer: it always runs, and its Core API does the work. The admin and the frontend each run inside WordPress or as a separate custom app. The Cloud AI API runs on its own infrastructure and provides models, search and agents."
 ---
 
 # Architecture
 
-Two runtimes, two choices.
+WordPress is the application layer; a custom app is optional. Two choices: the admin and the frontend.
 
 <!-- diagram:start -->
 ```
-                  YOUR APP (optional)        WORDPRESS RUNTIME · PHP (always)
+                  YOUR APP (optional)        APPLICATION LAYER · WORDPRESS (always)
                 ┌────────────────────┐     ┌───────────────────────────────────┐
   ADMIN         │ Custom app         │ or  │ WP Admin                          │
   FRONTEND      │ Custom app         │ or  │ WordPress templating              │
-  DATA & LOGIC  │ REST · Abilities ──┼────►│ Core Runtime API · WP-CLI         │
+  DATA & LOGIC  │ REST · Abilities ──┼────►│ Core API · WP-CLI         │
                 └─────────┬──────────┘     └─────────────────┬─────────────────┘
                           ▼                                  ▼ content sync · site connection · Abilities
                 ┌─────────────────────────────────────────────────────────────────┐
@@ -25,22 +25,22 @@ Two runtimes, two choices.
 ```
 <!-- diagram:end -->
 
-## 1. WordPress always runs
+## 1. WordPress is the application layer
 
-WordPress runs on PHP in every setup. Its **Core Runtime API** (Proven Lab's name for the WordPress core PHP APIs) handles the data model, users, permissions and hooks (actions and filters), whichever admin and frontend you choose. Coding agents drive it with **WP-CLI**.
+WordPress runs on PHP in every setup and holds the data, users, permissions and logic. Its **Core API** (Proven Lab's name for the WordPress core PHP APIs) handles the data model, users, permissions and hooks (actions and filters), whichever admin and frontend you choose. Coding agents drive it with **WP-CLI**.
 
 ## 2. Admin: inside WordPress or a separate app
 
 | Choice | Runs | Talks to WordPress |
 |---|---|---|
-| **WP Admin** | inside the WordPress runtime | directly |
+| **WP Admin** | inside WordPress | directly |
 | **Custom app** (Node, React…) | separately | REST API and Abilities |
 
 ## 3. Frontend: inside WordPress or a separate app
 
 | Choice | Runs | Talks to WordPress |
 |---|---|---|
-| **WordPress templating** (classic) | inside the WordPress runtime | directly |
+| **WordPress templating** (classic) | inside WordPress | directly |
 | **Custom app** (Node, Next.js…) | separately | REST API (or WPGraphQL) |
 
 Running the admin or the frontend as a separate app is what *headless* means here: **Headless Frontend**, **Headless Admin**, or both.
@@ -53,7 +53,7 @@ The Cloud AI API runs on WP Engine's infrastructure, not inside WordPress. It pr
 
 ## The four setups
 
-| Setup | Admin | Frontend | Runtimes | Blueprint |
+| Setup | Admin | Frontend | Deploy | Blueprint |
 |---|---|---|---|---|
 | **Classic** | WP Admin | WordPress templating | WordPress | `classic-wordpress` |
 | **Headless Frontend** | WP Admin | Custom app | WordPress + your app | `custom-app` |

@@ -1,6 +1,6 @@
 # Proven Lab
 
-Docs, an MCP server and tool schemas that let coding agents build on the WordPress **Core Runtime API** (Proven Lab's name for the WordPress core PHP APIs), **WP-CLI** and the **Cloud AI API**. When a user asks an agent to "create a Node app on WordPress", the agent looks up exact signatures, hooks and commands instead of guessing, and reuses WordPress instead of rebuilding it.
+Docs, an MCP server and tool schemas that let coding agents build on the WordPress **Core API** (Proven Lab's name for the WordPress core PHP APIs), **WP-CLI** and the **Cloud AI API**. When a user asks an agent to "create a Node app on WordPress", the agent looks up exact signatures, hooks and commands instead of guessing, and reuses WordPress instead of rebuilding it.
 
 ## How it works
 
