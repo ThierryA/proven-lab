@@ -27,12 +27,16 @@ Never ask a non-developer to run commands or edit files. When a person must act 
 
 ## The runbook
 
-### 1. Ask, then plan
+### 1. New or existing project?
 
-Ask in one message, only what the user has not said yet:
+Find out first, from the request or with one question: is this a **new project**, or a change to an **existing** site, plugin or app?
+
+**Existing project:** guide `existing-project`. Find where it lives (a folder or repository, a Local site, a WP Engine site, or a URL), inspect it, and work out its setup from what is there instead of asking. Ask only what you cannot find.
+
+**New project:** ask in one message, only what the user has not said yet:
 
 - **Which setup?** Classic (WP Admin and WordPress templating) · Headless Frontend (WP Admin and your own frontend app) · Headless Admin (your own admin app and WordPress templating) · Headless Frontend + Admin (your own admin and frontend app). Recommend one in a line: a content site → Classic; an app with its own interface → Headless Frontend + Admin. Guide: `architecture`.
-- **Where to build?** Check whether Local (localwp.com) is installed, then offer: on your computer with Local (recommended when installed), or in the cloud on WP Engine with nothing to install (needs a WP Engine account). A site already on WP Engine is always worked on in the cloud.
+- **Where to build?** Check whether Local (localwp.com) is installed, then offer: on your computer with Local (recommended when installed), or in the cloud on WP Engine with nothing to install (needs a WP Engine account).
 - **Developers: which repository?** Create a new one, use an existing one, or none for now.
 
 Developers: wait for the answers and never pick the setup for them. Non-developers: follow the table above.
@@ -41,11 +45,13 @@ Developers: wait for the answers and never pick the setup for them. Non-develope
 
 - **On the user's computer:** `local-development` (Local, with Local's MCP server when available; otherwise Playground or Docker).
 - **In the cloud, nothing to install, and every site already on WP Engine:** `wpengine-cloud` (the WP Engine MCP server finds or creates the site and its staging environment; you build in its sandbox).
-- Developers with a repository: create or connect it now (`wpe-deployment`, section 1).
+- **Existing project:** work where it already lives (`existing-project`).
+- Developers who want a new repository: `git init`, a WordPress `.gitignore`, and `gh repo create <name> --private --source=. --push` when the GitHub CLI is signed in.
 
 ### 3. Build the app as a plugin
 
 - **Classic:** `classic-wordpress`. **Any headless setup:** `custom-app` (Headless Admin also uses `classic-wordpress` for the frontend).
+- **Existing project:** add to the project's own plugin, or a new plugin if there is none, and follow its conventions (`existing-project`).
 - The app is **a regular plugin** in `wp-content/plugins/<app>/`, activated with `wp plugin activate <app>`. Not a must-use plugin, never a theme's `functions.php`, never WordPress core.
 - Model first: post types, taxonomies and registered meta on `init`, with `show_in_rest => true` for anything a custom app uses.
 - Permissions are WordPress capabilities, enforced in `permission_callback`, `auth_callback` and `current_user_can()`, never only in the interface.

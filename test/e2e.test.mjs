@@ -55,7 +55,7 @@ test('pages render with the right content', async () => {
 test('sidebar follows the runbook steps, then Core API, WP-CLI and Cloud AI API; no Platform; non-tool groups set apart', async () => {
   const page = await (await get('/docs/api/fields')).text();
   const html = page.slice(page.indexOf('<aside'), page.indexOf('</aside>'));
-  let from = 0; const order = ['How it works', '1 · Plan', '2 · Workspace', '3 · Build', '4 · AI', '5 · Verify', '6 · Ship', 'Core API', 'WP-CLI', 'Cloud AI API'].map((t) => (from = html.indexOf(t, from)));
+  let from = 0; const order = ['How it works', '1 · New or existing', '2 · Workspace', '3 · Build', '4 · AI', '5 · Verify', '6 · Ship', 'Core API', 'WP-CLI', 'Cloud AI API'].map((t) => (from = html.indexOf(t, from)));
   assert.ok(order.every((i, k) => i > -1 && (k === 0 || i > order[k - 1])), `section order ${order}`);
   assert.ok(!/>\s*Platform\s*</.test(html) && !html.includes('WP Engine AI API'));
   const ai = html.slice(html.lastIndexOf('Cloud AI API'));
@@ -112,7 +112,7 @@ async function exerciseMcp(client) {
   assert.equal(hook.data.params.length, 3);
   const bp = await call('get_blueprint', { slug: 'custom-app' });
   assert.ok(bp.data.markdown.includes('register_post_meta'));
-  assert.equal((await call('list_blueprints', {})).data.length, 10);
+  assert.equal((await call('list_blueprints', {})).data.length, 11);
   const op = await call('get_ai_operation', { operationId: 'searchCollection' });
   assert.equal(op.data.method, 'POST'); assert.equal(op.data.path, '/v1/kb/collections/{id}/search');
   assert.ok((await call('list_cli_commands', { filter: 'cron' })).data.length >= 5);

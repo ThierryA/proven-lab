@@ -12,7 +12,7 @@ Any coding agent that can read web pages works:
 
 ## 2. Describe what you want, and add the Proven Lab link
 
-Write your request in your own words and end it with the link:
+A new app or a change to a site you already have: write your request in your own words and end it with the link:
 
 ```text
 Build a members directory.
@@ -21,7 +21,7 @@ Use Proven Lab: {{BASE}}
 
 ## 3. Answer a few questions
 
-Your agent reads the Proven Lab instructions, asks what it needs (the kind of site, where to build it), builds it, and shows you the result. You sign in where needed and approve before anything goes live.
+Your agent reads the Proven Lab instructions and first asks whether this is a new project or a change to something you already have. Then it asks only what it needs (the kind of site, where to build it, or where your existing project lives), does the work, and shows you the result. You sign in where needed and approve before anything goes live.
 
 ## Example requests
 

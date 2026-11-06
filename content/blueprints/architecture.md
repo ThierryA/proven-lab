@@ -1,9 +1,10 @@
 ---
-nav: "Choose a setup"
+nav: "New project: choose a setup"
 title: "Choose a setup: Classic or headless"
 summary: "WordPress is the application layer: it always runs, and its Core API does the work. The admin and the frontend each run inside WordPress or as a separate custom app. The Cloud AI API runs on its own infrastructure and provides models (chat, images, speech, transcription), search and agents."
 agent_does:
-  - "Explains the four setups and recommends one for your request."
+  - "Asks whether this is a new or an existing project."
+  - "For a new one, explains the four setups and recommends one."
   - "Asks you to choose (or, if you don't code, proposes a regular WordPress site)."
 you_do:
   - "Pick a setup, or accept the recommendation."
@@ -11,7 +12,7 @@ you_do:
 
 # Choose a setup: Classic or headless
 
-> **Runbook step 1 · Plan.** Read this to explain the four setups and recommend one. **Next:** step 2, set up the workspace (`local-development` or `wpengine-cloud`).
+> **Runbook step 1 · New project.** Read this to explain the four setups and recommend one. Changing something that exists: `existing-project`. **Next:** step 2, set up the workspace (`local-development` or `wpengine-cloud`).
 
 WordPress is the application layer; a custom app is optional. Two choices: the admin and the frontend.
 
