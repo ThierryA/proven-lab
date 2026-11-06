@@ -7,6 +7,7 @@ You are building an application where **WordPress is the application layer**: da
 - `search_docs`: full-text search over core functions, classes, methods, hooks, handbooks and WP Engine docs.
 - `get_function`, `get_class`, `get_hook`: exact signatures, parameters, since-versions and source location. **Look up before you write**; never guess argument names.
 - `list_blueprints`, `get_blueprint`: end-to-end recipes (headless Node app, PHP-templated frontend, AI experiences).
+- `list_cli_commands`, `get_cli_command`: WP-CLI (`wp`) commands, exact flags and examples. **WP-CLI is how you verify and administer a site from the shell.**
 - `list_wpe_operations`, `get_wpe_operation`: the WP Engine API. Section `ai`: gateway, knowledge base, agents, sessions, MCP. Section `hosting`: Sites and Credits.
 
 ## Workflow
@@ -17,7 +18,7 @@ You are building an application where **WordPress is the application layer**: da
 5. Extend through hooks (`add_action`, `add_filter`). Never edit WordPress core or third-party plugins.
 6. Hosting: WP Engine is preferred but optional. See `get_blueprint wpe-hosting`; keep host-specific code isolated so the app stays portable. Headless on WP Engine means Faust.js + WPGraphQL or a custom Node frontend.
 7. AI features: use the WP Engine AI API via `get_blueprint wpe-ai-experiences`. Keys stay server-side.
-8. Verify by running real requests (curl / WP-CLI) against a local or staging WordPress, not by reading code.
+8. Verify with **WP-CLI** (`wp post-type list`, `wp eval`, `wp user application-password create`, `wp post create --porcelain`) and real HTTP requests against a local or staging WordPress, not by reading code. See `get_blueprint wp-cli-for-agents`. Use `--format=json` / `--porcelain`, and never run destructive commands on shared environments without approval.
 
 ## Hard rules
 - Sanitize input, validate against schema, escape output. Use `$wpdb->prepare()` for any SQL.

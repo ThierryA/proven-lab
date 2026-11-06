@@ -85,6 +85,35 @@ for (const f of await readdir(bpDir)) {
 }
 await w('blueprints.json', blueprints);
 
+// WP-CLI
+const cliData = await rj('wp/cli/commands.json');
+const cliTop = [...new Set(cliData.commands.map((c) => c.top))];
+function cliBody(long) {
+  // WP-CLI longdesc is markdown-ish: "## OPTIONS", "[--x=<x>]\n: text" definition pairs, indented example blocks.
+  const out = [];
+  let code = [];
+  const flush = () => { if (code.length) { out.push('```bash\n' + code.join('\n') + '\n```'); code = []; } };
+  for (const block of long.split(/\n{2,}/)) {
+    const lines = block.split('\n');
+    if (lines.every((l) => /^ {4}/.test(l) || !l.trim())) { code.push(...lines.map((l) => l.slice(4))); continue; }
+    flush();
+    if (lines.length > 1 && /^: /.test(lines[1])) out.push(`- \`${lines[0].trim()}\`: ${lines.slice(1).join(' ').replace(/^: /, '')}`);
+    else out.push(block.replace(/^## (.*)$/gm, '#### $1'));
+  }
+  flush();
+  return out.join('\n\n').replace(/(\n- [^\n]*)\n\n(?=- )/g, '$1\n');
+}
+const cliMd = (c) => `${'#'.repeat(Math.min(c.depth + 1, 4))} \`${c.path}\`\n\n${c.description}\n\n${c.synopsis ? '```\n' + c.path + ' ' + c.synopsis.trim() + '\n```\n\n' : ''}${cliBody(c.longdesc)}\n`;
+const cliPages = [];
+for (const top of cliTop) {
+  const group = cliData.commands.filter((c) => c.top === top);
+  const head = group[0];
+  const md = `# \`wp ${top}\`\n\n` + group.map(cliMd).join('\n');
+  cliPages.push({ top, description: head.description, count: group.length, md });
+  await w(`cli/${top}.md`, md);
+}
+await w('cli-commands.json', { version: cliData.version, commands: cliData.commands, tops: cliPages.map(({ top, description, count }) => ({ top, description, count })) });
+
 // AGENTS.md (drop into any project, or use as a system prompt)
 const agentsMd = await readFile(join(ROOT, 'content/AGENTS.md'), 'utf8');
 await w('AGENTS.md', agentsMd);
@@ -97,12 +126,13 @@ const llms = [
   '## Start here', `- [Agent playbook](${site}/AGENTS.md): rules and workflow for agents building WordPress sites`,
   ...blueprints.map((b) => `- [${b.title}](${site}/blueprints/${b.slug}.md): ${b.summary}`), '',
   '## WordPress core API domains', ...domains.map((d) => `- [${d.group}: ${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',
+  '## WP-CLI (`wp`): verify, scaffold and administer from the shell', ...cliPages.map((c) => `- [wp ${c.top}](${site}/cli/${c.top}.md): ${c.description}`), '',
   '## AI API and Hosting (WP Engine)', `- [OpenAPI spec](${site}/openapi/wpe-ai.yaml)`, `- [Operations index](${site}/wpe-operations.json)`, ...ops.slice(0, 0), '',
   '## Machine interfaces', `- MCP server: \`npx wp-agentic-kit-mcp\` (stdio) or ${site}/mcp (streamable HTTP)`, `- Kit API OpenAPI: ${site}/openapi/kit-api.yaml`, `- OpenAI function tools: ${site}/tools/openai.json`, `- Anthropic tools: ${site}/tools/anthropic.json`, '',
 ].join('\n');
 await w('llms.txt', llms);
 const wpeOpsMd = '## AI API and Hosting operations (WP Engine)\n\n' + ops.map((o) => `- [${o.section}] \`${o.method} ${o.path}\` **${o.operationId}**: ${o.summary || ''}`).join('\n');
-await w('llms-full.txt', [llms, '\n---\n', agentsMd, ...blueprints.map((b) => `\n---\n\n# ${b.title}\n\n${b.md}`), '\n---\n', wpeOpsMd, ...domainPages.map((d) => `\n---\n\n${d.md}`)].join('\n'));
+await w('llms-full.txt', [llms, '\n---\n', agentsMd, ...blueprints.map((b) => `\n---\n\n# ${b.title}\n\n${b.md}`), '\n---\n', wpeOpsMd, ...domainPages.map((d) => `\n---\n\n${d.md}`), ...cliPages.map((c) => `\n---\n\n${c.md}`)].join('\n'));
 
 // OpenAPI specs
 await mkdir(join(DIST, 'openapi'), { recursive: true });
@@ -117,5 +147,5 @@ for (const t of TOOLS) {
 await w('openapi/kit-api.yaml', YAML.stringify(kitApi));
 await w('tools/openai.json', TOOLS.map((t) => ({ type: 'function', function: { name: t.name, description: t.description, parameters: t.inputSchema } })));
 await w('tools/anthropic.json', TOOLS.map((t) => ({ name: t.name, description: t.description, input_schema: t.inputSchema })));
-await w('stats.json', { wordpress: core.version, functions: entities.functions.length, classes: entities.classes.length, methods: entities.methods.length, hooks: entities.hooks.length, wpeOperations: ops.length, wpeDocs: wpeDocs.length, domains: domains.length, blueprints: blueprints.length, builtAt: new Date().toISOString() });
+await w('stats.json', { wordpress: core.version, functions: entities.functions.length, classes: entities.classes.length, methods: entities.methods.length, hooks: entities.hooks.length, wpeOperations: ops.length, cliCommands: cliData.commands.length, cliVersion: cliData.version, wpeDocs: wpeDocs.length, domains: domains.length, blueprints: blueprints.length, builtAt: new Date().toISOString() });
 console.log('dist built', JSON.parse(await readFile(join(DIST, 'stats.json'), 'utf8')));

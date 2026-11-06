@@ -27,6 +27,7 @@ This kit supports **both**. The data model, users, permissions, hooks and Abilit
 2. Authorization is WordPress capabilities. Never reimplement it in a UI.
 3. Custom operations are Abilities (`wp_register_ability`).
 4. AI features come from the AI API (gateway, knowledge base, agents) and work identically in every architecture; keys stay server-side.
-5. Hosting is independent of architecture. WP Engine is the preferred host for this project but optional (see `wpe-hosting`).
+5. WP-CLI works identically in every architecture; use it to scaffold, seed and verify (`wp-cli-for-agents`).
+6. Hosting is independent of architecture. WP Engine is the preferred host for this project but optional (see `wpe-hosting`).
 
 Ask the user only if the request does not make the architecture clear; otherwise default to **Headless, custom Node** for "build me an app" and **Standard** for "build me a website".

@@ -21,6 +21,13 @@ const link = (active) => 'block border-l py-1.5 pl-4 -ml-px text-[13.5px] ' + (a
       <summary class="flex cursor-pointer list-none items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-500 [&::-webkit-details-marker]:hidden"><span class="transition group-open:rotate-90">›</span>{g.title}</summary>
       <ul class="mt-1 space-y-px border-l border-slate-200 dark:border-slate-800">{g.items.map((i) => <li><a href={i.href} class={link(on(i.href))}>{i.label}</a></li>)}</ul></details>)}
     <div class="mt-10 border-t border-slate-200 pt-6 dark:border-slate-800">
+      <div class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-md bg-emerald-500/10 font-mono text-[11px] font-bold text-emerald-600 dark:text-emerald-400">&gt;_</span><h5 class="text-sm font-semibold text-slate-900 dark:text-white">WP-CLI</h5></div>
+      <p class="mt-1 text-xs text-slate-500">The `wp` command line. How agents verify and administer.</p>
+    </div>
+    {sb.cli.map((g) => <details class="group mt-3" open={open(g.items) || undefined}>
+      <summary class="flex cursor-pointer list-none items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-slate-500 [&::-webkit-details-marker]:hidden"><span class="transition group-open:rotate-90">›</span>{g.title}</summary>
+      <ul class="mt-1 space-y-px border-l border-slate-200 dark:border-slate-800">{g.items.map((i) => <li><a href={i.href} class={link(on(i.href))}>{i.label}</a></li>)}</ul></details>)}
+    <div class="mt-10 border-t border-slate-200 pt-6 dark:border-slate-800">
       <div class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-md bg-indigo-500/10 font-mono text-[11px] font-bold text-indigo-600 dark:text-indigo-400">AI</span><h5 class="text-sm font-semibold text-slate-900 dark:text-white">AI API</h5></div>
       <p class="mt-1 text-xs text-slate-500">WP Engine: gateway, knowledge base, agents. Cloud HTTP API.</p>
     </div>

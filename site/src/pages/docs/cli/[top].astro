@@ -1,0 +1,18 @@
+---
+import Docs from '../../../layouts/Docs.astro';
+import { marked } from 'marked';
+import { cli } from '../../../lib/data.mjs';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+export function getStaticPaths() { return cli().tops.map((t) => ({ params: { top: t.top }, props: { t } })); }
+const { t } = Astro.props;
+const md = readFileSync(join(process.cwd(), '..', 'dist', 'cli', `${t.top}.md`), 'utf8').replace(/^# .*\n+/, '');
+---
+<Docs title={`wp ${t.top}`} description={t.description}>
+  <div class="font-mono text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">WP-CLI</div>
+  <article class="prose prose-slate max-w-none dark:prose-invert">
+    <h1><code>wp {t.top}</code></h1><p class="lead">{t.description}</p>
+    <p class="text-sm">{t.count} command{t.count > 1 ? 's' : ''}. Exact flags via the <code>get_cli_command</code> MCP tool. <a href="/docs/wp-cli-for-agents">WP-CLI for agents</a></p>
+    <div set:html={marked.parse(md)} />
+  </article>
+</Docs>

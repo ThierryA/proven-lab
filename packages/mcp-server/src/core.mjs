@@ -8,7 +8,7 @@ const rj = async (f) => JSON.parse(await readFile(join(DIST, f), 'utf8'));
 let state;
 async function load() {
   if (state) return state;
-  const [entities, domains, blueprints, wpe, docs] = await Promise.all(['entities.json', 'domains.json', 'blueprints.json', 'wpe-operations.json', 'docs.json'].map(rj));
+  const [entities, domains, blueprints, wpe, docs, cli] = await Promise.all(['entities.json', 'domains.json', 'blueprints.json', 'wpe-operations.json', 'docs.json', 'cli-commands.json'].map(rj));
   const index = [];
   const add = (type, id, name, text, extra = {}) => index.push({ type, id, name, nameLc: name.toLowerCase(), textLc: text.toLowerCase(), ...extra });
   for (const f of entities.functions) add('function', f.name, f.name, f.summary + ' ' + f.description, { summary: f.summary, url: f.url });
@@ -16,7 +16,8 @@ async function load() {
   for (const m of entities.methods) add('method', `${m.class}::${m.name}`, `${m.class}::${m.name}`, m.summary, { summary: m.summary, url: m.url });
   for (const h of entities.hooks) add('hook', h.name, h.name, h.summary + ' ' + h.description, { summary: h.summary, url: h.url });
   for (const d of docs) add(d.source === 'wpengine' ? 'wpe-doc' : 'handbook', d.id, d.name, d.markdown.slice(0, 4000), { summary: d.markdown.slice(0, 160).replace(/\s+/g, ' '), url: d.url });
-  state = { entities, domains, blueprints, wpe, docs, index, fn: new Map(entities.functions.map((x) => [x.name, x])), cls: new Map(entities.classes.map((x) => [x.name, x])), hook: new Map(entities.hooks.map((x) => [x.name, x])), op: new Map(wpe.operations.map((o) => [o.operationId, o])) };
+  for (const c of cli.commands) add('cli', c.path, c.path, c.description + ' ' + c.longdesc.slice(0, 1500), { summary: c.description, url: `https://developer.wordpress.org/cli/commands/${c.path.replace(/^wp /, '').replace(/ /g, '/')}/` });
+  state = { cli, cliMap: new Map(cli.commands.map((c) => [c.path.replace(/^wp /, ''), c])), entities, domains, blueprints, wpe, docs, index, fn: new Map(entities.functions.map((x) => [x.name, x])), cls: new Map(entities.classes.map((x) => [x.name, x])), hook: new Map(entities.hooks.map((x) => [x.name, x])), op: new Map(wpe.operations.map((o) => [o.operationId, o])) };
   return state;
 }
 
@@ -66,6 +67,15 @@ const handlers = {
     const s = await load(); const h = s.hook.get(name);
     if (!h) return notFound('hook', name, s.hook);
     return { name: h.name, type: h.type, dynamic: h.dynamic, summary: h.summary, description: h.description, params: fmtParams(h), since: h.tags.since, firedIn: h.locations, docs: h.url };
+  },
+  async list_cli_commands({ filter } = {}) {
+    const s = await load(); const f = filter?.toLowerCase();
+    return s.cli.commands.filter((c) => !f || c.path.toLowerCase().includes(f) || c.description.toLowerCase().includes(f)).map((c) => ({ command: c.path, description: c.description }));
+  },
+  async get_cli_command({ path }) {
+    const s = await load(); const k = path.replace(/^wp\s+/, '').trim(); const c = s.cliMap.get(k);
+    if (!c) return notFound('WP-CLI command', k, s.cliMap);
+    return { command: c.path, description: c.description, usage: `${c.path} ${c.synopsis}`.trim(), details: c.longdesc, subcommands: c.hasChildren ? s.cli.commands.filter((x) => x.path.startsWith(c.path + ' ') && x.depth === c.depth + 1).map((x) => ({ command: x.path, description: x.description })) : undefined, wpCliVersion: s.cli.version, docs: `https://developer.wordpress.org/cli/commands/${k.replace(/ /g, '/')}/` };
   },
   async list_blueprints() { const s = await load(); return s.blueprints.map(({ slug, title, summary }) => ({ slug, title, summary })); },
   async get_blueprint({ slug }) {

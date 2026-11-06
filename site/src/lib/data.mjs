@@ -5,6 +5,7 @@ const rj = (f) => JSON.parse(readFileSync(dist(f), 'utf8'));
 export const domains = () => rj('domains.json');
 export const blueprints = () => rj('blueprints.json');
 export const wpe = () => rj('wpe-operations.json');
+export const cli = () => JSON.parse(readFileSync(dist('cli-commands.json'), 'utf8'));
 export const stats = () => rj('stats.json');
 export const domainMd = (slug) => readFileSync(dist('domains', `${slug}.md`), 'utf8');
 export const connectMd = () => readFileSync(join(process.cwd(), 'src', 'content', 'connect.md'), 'utf8');
@@ -18,8 +19,9 @@ export function sidebar() {
   };
   const hostingGuide = { label: 'Hosting on WP Engine', href: '/docs/wpe-hosting' };
   return {
-    guides: [...blueprints().filter((b) => b.slug !== 'wpe-hosting').map((b) => ({ label: b.title, href: `/docs/${b.slug}` })), { label: 'Connect your agent', href: '/docs/connect' }],
+    guides: [...blueprints().filter((b) => !['wpe-hosting', 'wp-cli-for-agents'].includes(b.slug)).map((b) => ({ label: b.title, href: `/docs/${b.slug}` })), { label: 'Connect your agent', href: '/docs/connect' }],
     core: groups,
+    cli: [{ title: 'Commands', items: [{ label: 'WP-CLI for agents', href: '/docs/wp-cli-for-agents' }, ...cli().tops.map((t) => ({ label: `wp ${t.top}`, href: `/docs/cli/${t.top}` }))] }],
     ai: byTag('ai'),
     hosting: [{ title: 'Overview', items: [hostingGuide] }, ...byTag('hosting')],
   };
