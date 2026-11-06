@@ -4,10 +4,62 @@ Proven Lab runs at `{{BASE}}`. No account, API key or install is needed.
 
 ## Just ask
 
-Give any coding agent that can fetch URLs the request and the Proven Lab URL:
+Give any coding agent that can fetch URLs your request and the Proven Lab URL. Describe what you want in your own words; the URL is the only part that matters.
+
+**Start a new app**
 
 ```text
-Build a members directory with Proven Lab: {{BASE}}
+Build a members directory.
+Use Proven Lab: {{BASE}}
+```
+
+```text
+Build a booking app for my yoga studio, with class schedules, member
+passes and a waitlist that fills free spots automatically.
+Use Proven Lab: {{BASE}}
+```
+
+```text
+Create a Node app with its own admin and frontend where a small team
+tracks client projects, deadlines and invoices.
+Use Proven Lab: {{BASE}}
+```
+
+**Add a feature to a website you already run on WordPress**
+
+```text
+I have a website on WordPress. Create a recipe feature: ingredients and
+steps as structured fields, a "what can I cook with what's in my fridge"
+search, and a printable shopping list.
+Use Proven Lab: {{BASE}}
+```
+
+```text
+I have a WordPress site for my bookshop. Add a reading club area where
+members vote on next month's book, and a page that shows the winner
+with a summary written by AI.
+Use Proven Lab: {{BASE}}
+```
+
+```text
+I have a WordPress blog. Let me dictate draft posts from my phone, and
+suggest categories and tags when I save them.
+Use Proven Lab: {{BASE}}
+```
+
+```text
+I have a WordPress site for my hardware store. Add an assistant that
+answers questions about our products and opening hours from the content
+already on the site.
+Use Proven Lab: {{BASE}}
+```
+
+**Work on a site hosted on WP Engine**
+
+```text
+My site is hosted on WP Engine. On staging, add an events section with
+a calendar and RSVPs, then show me before anything goes to production.
+Use Proven Lab: {{BASE}}
 ```
 
 The agent reads the playbook at `{{BASE}}/AGENTS.md`, asks you which setup you want, and looks up exact signatures, blueprints and WP-CLI commands by calling the tools over HTTP, for example `{{BASE}}/api/get_function?name=register_meta`. Everything below is optional: it makes lookups faster and keeps the playbook in your project.
