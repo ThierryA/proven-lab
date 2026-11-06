@@ -59,12 +59,7 @@ Drafts unless the user asks to publish. Show what will change before bulk update
 
 ## 5. Go live (step 6)
 
-Only after the user says staging is right:
-
-- **Production not launched yet:** create the production install if needed, then `wpe_copy_install` from staging to production. It overwrites everything on production; say so, and ask the user to type the production name as confirmation.
-- **Production already live:** never copy over it. `wpe_create_backup` and wait for `wpe_get_backup_status`, then write only the plugin's changed files to production with `sandbox_write` (or deploy from the repository, `wpe-deployment`), activate, and check.
-
-Then check the live pages, purge the cache if needed (`wpe_purge_cache`), connect production to WP Engine AI if the app uses AI, and tell the user what is live.
+Follow `wpe-deployment`: offer to deploy to production once the user is happy with staging (or straight away if they chose no staging), back up a live site first (`wpe_create_backup`), deploy the plugin's files, check the live pages, and tell the user what is live.
 
 ## Done when
 

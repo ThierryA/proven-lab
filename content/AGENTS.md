@@ -21,7 +21,7 @@ Read the request and adapt. Use the developer path when the user writes about co
 | Where to build | Local on their computer | In the cloud on WP Engine, nothing to install |
 | Repository | New, existing, or none for now | None; offer one later |
 | Checks | Coding standards, PHPUnit, PHPStan, Plugin Check | PHP lint, WP-CLI checks, the pages load |
-| Shipping | GitHub Action: staging, then production after approval | Staging link, then production after they say yes |
+| Shipping | Staging (suggested), then production after approval; GitHub Action if they want it | Staging link (suggested), then production after they say yes |
 
 Never ask a non-developer to run commands or edit files. When a person must act (signing in, clicking **Connect**, approving), say exactly where to click.
 
@@ -70,12 +70,12 @@ Not the Web Speech API or another provider unless the user asks. Code outside Wo
 
 ### 6. Ship: staging, then production
 
-Guide: `wpe-deployment` (non-developers: `wpengine-cloud`, section 5).
+Guide: `wpe-deployment`.
 
-- **Always staging first.** Send the user the staging link and what to check. Production only after they say yes.
-- From a repository: WP Engine's GitHub Action deploys to staging on every push to `main`, and to production after approval.
-- Without a repository: push from Local to staging, or write the plugin's files on staging through the WP Engine MCP server.
-- Never copy an environment over a production site that has real content. Back up before changing production.
+- **No staging environment?** Suggest creating one. If the user does not want it, deploy straight to production.
+- **Staging:** deploy, send the link and what to check, then offer to deploy to production. Production only after the user's yes.
+- **GitHub is optional:** with a repository and WP Engine's GitHub Action, push to deploy; without, write the plugin's files through the WP Engine MCP server.
+- Back up before changing a production site with real content, and never copy another environment's database over it.
 - WP Engine is optional: the app is a plugin, so it deploys to any WordPress host.
 
 ## Hard rules

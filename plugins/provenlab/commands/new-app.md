@@ -9,6 +9,6 @@ Build what the user asked for by following the Proven Lab runbook (`AGENTS.md`, 
 3. **Build** a regular plugin (`wp-content/plugins/<app>/`, activated with `wp plugin activate <app>`): `get_blueprint classic-wordpress` or `custom-app`. Check every WordPress call with `get_function`, `get_class` or `get_hook`, and every WP-CLI command with `get_cli_command`.
 4. **AI**, if needed: `get_blueprint wpe-ai-plugins` (the Cloud AI API through the WP Engine AI plugins, no API key; `get_ai_operation` gives the exact call).
 5. **Verify** with WP-CLI and real requests (`get_blueprint wp-cli-for-agents`). Developers: also PHPCS, PHPUnit, PHPStan and Plugin Check (`get_blueprint best-practices`). Report what you checked.
-6. **Ship:** staging first with a link for the user; production only after they say yes (`get_blueprint wpe-deployment`).
+6. **Ship** (`get_blueprint wpe-deployment`): suggest staging if there is none and deploy there with a link for the user, then offer production; straight to production if they do not want staging. GitHub is optional.
 
 If the `provenlab` tools are not available, use `curl "https://proven-lab.com/api/<tool>?<args>"` instead.
