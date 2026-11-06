@@ -54,3 +54,9 @@ a { text-underline-offset: 3px; }
 .prose-lab :where(pre) { border: 1px solid var(--color-line); border-radius: 0; font-size: 0.82rem; line-height: 1.7; }
 .prose-lab :where(table) { font-size: 0.875rem; }
 .prose-lab :where(thead th) { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-fg-3); }
+
+/* Highlighted code blocks (Shiki, theme in src/lib/md.mjs) */
+.code-block { position: relative; margin: 1.5em 0; }
+.code-block pre.shiki { margin: 0; background: var(--color-ink-2) !important; border: 1px solid var(--color-line); padding: 1.1rem 1.25rem; overflow-x: auto; font-size: 0.82rem; line-height: 1.7; }
+.code-block pre.shiki code { font-family: var(--font-mono); background: none; border: 0; padding: 0; font-size: inherit; }
+.code-block[data-lang]::after { content: attr(data-lang); position: absolute; top: 0.5rem; right: 0.75rem; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-fg-3); pointer-events: none; }

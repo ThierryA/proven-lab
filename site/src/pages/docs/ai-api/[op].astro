@@ -26,7 +26,7 @@ const group = raw === 'Sites' ? 'Site connection' : raw;
   <article class="prose prose-lab">
     <h1>{o.operationId}</h1>
     <p class="lead">{o.summary}</p>
-    <pre><code>{o.method} https://api.ai.wpengine.com{o.path}</code></pre>
+    <div class="code-block not-prose" data-lang="http"><pre class="shiki"><code><span style="color:#facc48">{o.method}</span> <span style="color:#ecebe6">https://api.ai.wpengine.com{o.path}</span></code></pre></div>
     {raw === 'Sites' && <p>Site connection operations are called by the WP Engine AI plugin with the site's own OAuth credentials, not with an API key. See <a href="/docs/ai-features">AI features</a>.</p>}
     {o.description && <div set:html={md.parse(o.description)} />}
     {params.length > 0 && <><h2>Parameters</h2><table><thead><tr><th>Name</th><th>In</th><th>Type</th><th>Description</th></tr></thead><tbody>{params.map((p) => <tr><td><code>{p.name}</code>{p.required ? ' (required)' : ''}</td><td>{p.in}</td><td>{p.type}</td><td set:html={inline(p.description)} /></tr>)}</tbody></table></>}
