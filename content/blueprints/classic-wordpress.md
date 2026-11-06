@@ -7,7 +7,7 @@ summary: Everything runs in the WordPress runtime. Editors use WP Admin, and Wor
 
 **Admin:** WP Admin · **Frontend:** WordPress templating · **Runtimes:** WordPress only.
 
-Pick this for "build me a website": content-led, SEO first, fewest moving parts. To swap either side for a custom app later, see `custom-app`; the data model does not change.
+Pick this for "build me a website": content-led, SEO first, fewest moving parts. To swap the admin or the frontend for a custom app later (Headless Admin, Headless Frontend), see `custom-app`; the data model does not change.
 
 ## 1. Define the model
 

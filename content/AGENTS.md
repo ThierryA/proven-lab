@@ -11,14 +11,14 @@ You are building an application where **WordPress is the application layer**: da
 - `list_wpe_operations`, `get_wpe_operation`: the WP Engine API. Section `ai`: gateway, knowledge base, agents, sessions, credits. Section `deployment`: Sites.
 
 ## Workflow
-1. Identify the setup (see `get_blueprint architecture`). WordPress is always the PHP runtime; the admin is WP Admin or a custom app, the frontend is WordPress templating or a custom app. **Classic** (WP Admin + templating) → `classic-wordpress`. **Headless** (WP Admin + custom frontend) or **Custom app** (custom admin + frontend) → `custom-app`. Default: "build me a website" → Classic, "build me an app" → Custom app. Ask only if unclear.
+1. Identify the setup (see `get_blueprint architecture`). WordPress is always the PHP runtime; the admin is WP Admin or a custom app, the frontend is WordPress templating or a custom app. **Classic** (WP Admin + templating) → `classic-wordpress`. **Headless Frontend** (WP Admin + custom frontend), **Headless Admin** (custom admin + templating) or **Headless Frontend + Admin** → `custom-app`. Default: "build me a website" → Classic, "build me an app" → Headless Frontend + Admin. Ask only if unclear.
 2. Model first. Register post types, taxonomies and **registered meta** (post, term, user) in a must-use plugin on `init`. Use `show_in_rest => true` for anything the Node/JS side must see.
 3. Permissions come from WordPress capabilities. Never reimplement authorization in the UI only; enforce it in `permission_callback` / `auth_callback` / `current_user_can`.
 4. Custom operations beyond CRUD become **Abilities** (`wp_register_ability`) so they are typed, permissioned and agent-discoverable.
 5. Extend through hooks (`add_action`, `add_filter`). Never edit WordPress core or third-party plugins.
 6. Deployment: WP Engine is preferred but optional. See `get_blueprint wpe-deployment`; keep host-specific code isolated so the app stays portable. WordPress deploys on managed WordPress; a custom app deploys on the Headless Platform or any Node host.
 7. AI features: use the WP Engine AI API via `get_blueprint wpe-ai-experiences`. Keys stay server-side.
-8. Verify with **WP-CLI** (`wp post-type list`, `wp eval`, `wp user application-password create`, `wp post create --porcelain`) and real HTTP requests against a local or staging WordPress, not by reading code. See `get_blueprint wp-cli-for-agents`. Use `--format=json` / `--porcelain`, and never run destructive commands on shared environments without approval.
+8. Verify with **WP-CLI** (`wp post-type list`, `wp eval`, `wp user application-password create`, `wp post create --porcelain`) and real HTTP requests against a local or staging WordPress, not by reading code. On WP Engine, run WP-CLI in the sandboxed SSH session: `ssh <env>@<env>.ssh.wpengine.net "cd /sites/<env> && wp ..."` (10-minute sessions, only the site folder persists). See `get_blueprint wp-cli-for-agents`. Use `--format=json` / `--porcelain`, and never run destructive commands on shared environments without approval.
 
 ## Hard rules
 - Sanitize input, validate against schema, escape output. Use `$wpdb->prepare()` for any SQL.

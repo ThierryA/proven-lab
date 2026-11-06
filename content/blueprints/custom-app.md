@@ -1,6 +1,6 @@
 ---
-title: "Custom app: your own admin, frontend, or both"
-summary: WordPress stays the PHP runtime and does the work. Your Node app runs separately and owns the admin, the frontend, or both, talking to WordPress over REST and Abilities. Custom frontend only (with WP Admin) is what people call headless.
+title: "Custom app: Headless Frontend, Headless Admin, or both"
+summary: WordPress stays the PHP runtime and does the work. Your Node app runs separately and owns the admin, the frontend, or both, talking to WordPress over REST and Abilities. Covers the three headless setups.
 ---
 
 # Custom app on WordPress
@@ -9,7 +9,9 @@ summary: WordPress stays the PHP runtime and does the work. Your Node app runs s
 
 **Prompt this blueprint answers:** "Create me a Node application that uses WordPress as the backend, with its own admin and frontend."
 
-**Headless** (WP Admin + custom frontend): follow the same steps and skip step 3, editors keep using WP Admin.
+- **Headless Frontend + Admin:** follow every step.
+- **Headless Frontend** (WP Admin stays): skip step 3; editors keep using WP Admin.
+- **Headless Admin** (WordPress templating stays): do step 3 and render the frontend with templates (`classic-wordpress`, step 2) instead of step 5.
 
 ## Architecture
 

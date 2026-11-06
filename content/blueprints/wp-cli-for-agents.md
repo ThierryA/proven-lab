@@ -83,12 +83,28 @@ Prefer structured output so you can parse results:
 - `--quiet` suppresses success lines; check the exit code instead.
 - `--skip-plugins --skip-themes` isolates your code from third-party plugin breakage when debugging.
 
-## 8. Remote and hosted targets
+## 8. Remote targets
 
 - `wp --path=/var/www/site --url=https://site.test <cmd>` targets a specific install or multisite blog.
-- `wp --ssh=user@host/path <cmd>` runs against a remote install over SSH. WP Engine provides an SSH gateway per install, so the same commands work on a hosted environment (see `wpe-hosting`; WP Engine is optional but preferred).
-- `wp --http=https://site.test/ <cmd>` uses the WP-CLI server-side companion where available.
+- `wp --ssh=user@host/path <cmd>` runs against a remote install over SSH on hosts where WP-CLI's SSH transport works.
 - Docker setups: `--ssh=docker:<container>` or `docker compose exec wordpress wp ...`.
+
+## 9. On WP Engine: sandboxed SSH session
+
+When the site is deployed on WP Engine, agents run WP-CLI directly in a **sandboxed SSH session** (WP Engine's SSH Gateway). Each session is a separate container next to the site with WP-CLI, `mysql`, bash, Composer, scp and rsync. Connect as `<environment>@<environment>.ssh.wpengine.net` and run `wp` from the site root:
+
+```bash
+ssh myenv@myenv.ssh.wpengine.net "cd /sites/myenv && wp core version"
+ssh myenv@myenv.ssh.wpengine.net "cd /sites/myenv && wp post-type list --format=json"
+ssh myenv@myenv.ssh.wpengine.net "cd /sites/myenv && wp search-replace 'old.test' 'new.test' --dry-run"
+```
+
+What the sandbox means for an agent:
+- **Isolated:** a new container per session, separate per site. No root or sudo, and server processes and logs are not visible.
+- **Short-lived:** the session times out after 10 minutes. Long-running processes die with it, so batch big jobs.
+- **Only the site persists:** files outside `/sites/<environment>/` (home, `/tmp`) are discarded. Keep scripts in `_wpeprivate/`, which is not web-accessible.
+- **Limits:** 5 connections per user. Use an `ssh-ed25519` key added in the User Portal, with `IdentitiesOnly yes`.
+- Take a backup before changing a live environment.
 
 ## Rules for agents
 1. Verify with `wp` after every model change; do not assume registration worked.

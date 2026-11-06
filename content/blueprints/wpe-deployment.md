@@ -25,6 +25,16 @@ For **Headless** and **Custom app** (`custom-app`), WP Engine's **Headless Platf
 
 You can also run your custom app on any Node host; WordPress stays on its own runtime either way.
 
+## Agents on WP Engine: sandboxed SSH and WP-CLI
+
+On WP Engine, agents are not limited to APIs. They can open a **sandboxed SSH session** next to the site (the SSH Gateway) and run **WP-CLI directly**: check versions, verify the data model, seed content, run updates and search-replace.
+
+```bash
+ssh myenv@myenv.ssh.wpengine.net "cd /sites/myenv && wp post-type list --format=json"
+```
+
+Each session is an isolated container that times out after 10 minutes; only the site folder persists. Details and limits: `wp-cli-for-agents`, section 9.
+
 ## Deployment API: Sites
 
 These operations connect a deployed WordPress site to WP Engine AI. They are about the site, not about calling models. Credits (balance) are part of the AI API.
