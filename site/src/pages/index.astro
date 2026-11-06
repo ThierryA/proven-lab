@@ -8,10 +8,10 @@ const fmt = (n) => n.toLocaleString('en-US');
 const aiOps = wpe().operations.length;
 
 const why = [
-  ['Efficiency', 'Less code to write and debug', 'Users, permissions, content modeling, input validation, media handling and scheduled events already exist and run on millions of sites. Reusing them leaves the agent less code to write, review and debug on every project.'],
-  ['Mature ecosystem', 'Two decades of production use', 'The runtime is open source, has a security team, a public bug bounty and a coordinated release process. Authentication an agent writes from scratch has had none of that review.'],
-  ['Decoupled value', 'The value is the API, not the admin screen', 'Registered post types and meta, capabilities, hooks and the REST API work the same whether you use WP Admin or build your own admin and frontend.'],
-  ['AI infrastructure', 'What the runtime does not provide', 'The Cloud AI API adds a gateway to models, a managed knowledge base for search over your content, and agents with sessions. Your code calls it from the runtime or from a custom app.'],
+  ['Efficiency', 'Reuse, don\'t regenerate', 'Users, permissions, content modeling, validation, media, cron, search. Reusing systems that already run at massive scale is cheaper, more reliable and far more scalable than asking an agent to rebuild them, and re-debug them, on every project.'],
+  ['Mature ecosystem', 'Years of collective intelligence', 'Battle-tested code, a huge security research community and an established disclosure and patching process. An agent-written auth layer has none of that. The runtime has all of it.'],
+  ['Decoupled value', 'You don\'t need to love WP Admin', 'The value was never the admin screen. It is the core API layer underneath: registered post types, meta, capabilities, hooks, the REST API. Build your own admin and frontend in Node and never open WP Admin.'],
+  ['Bridging the AI gap', 'Infrastructure agents can use', 'The Cloud AI API adds what core doesn\'t: an AI gateway, a managed knowledge base for semantic search, agents and sessions, all wired to your site.'],
 ];
 const compare = [
   ['Authentication and roles', 'New code, new attack surface', 'Capabilities, cookie auth with nonces, application passwords'],
