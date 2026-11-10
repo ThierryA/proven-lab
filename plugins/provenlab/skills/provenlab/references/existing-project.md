@@ -15,7 +15,7 @@ Use what the request and the environment tell you; ask only if nothing matches.
 
 ## 2. Understand it before changing it
 
-Look, then summarize what you found to the user in two or three lines:
+Look, then summarize what you found in two or three lines plus a small visual of the structure (pages, records, plugins; see "Explain visually" in the runbook):
 
 - **WordPress and plugins:** `wp core version`, `wp plugin list --format=json`, `wp theme list --format=json`.
 - **The setup:** a block or classic theme renders the site → Classic; a separate Node app reads the REST API or WPGraphQL → headless. Decide from the code, do not ask.

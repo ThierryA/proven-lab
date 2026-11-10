@@ -55,6 +55,14 @@ Decide from the request and the environment, and ask once only if it is unclear 
 
 Never ask a non-developer to run commands or edit files. When a person must act (signing in, clicking **Connect**, approving), say exactly where to click.
 
+**Explain visually.** When you explain a structure (the site's pages and navigation, the data model, how WordPress, the custom app and the Cloud AI API fit together, the plan, the path from local to staging to production), show it instead of describing it in paragraphs. Use the best your app supports, in this order:
+
+1. **Generative UI:** if your app can render interactive visuals (widgets, artifacts, canvases, rendered HTML or SVG), draw the diagram there: boxes for pages or records, arrows for links and relations, short labels.
+2. **Mermaid:** a fenced `mermaid` block (most chat apps, editors and GitHub render it), for example `flowchart` for pages and deploys, `erDiagram` for the data model.
+3. **Text:** a compact tree or table.
+
+Keep it small (one idea per visual, under about 15 boxes) and label in the user's words; for non-developers, no technical names in the visual.
+
 ## 1. New or existing project?
 
 Find out first, from the request or with one question.

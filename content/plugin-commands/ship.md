@@ -8,4 +8,4 @@ Ship the current work, following `get_blueprint wpe-deployment` and `get_bluepri
 2. Make sure everything is verified (`/provenlab:check`) and **committed**; then push if the push policy allows, or ask "Ready to push to GitHub?".
 3. **Staging first:** with deploy on push, follow the GitHub Action run (`gh run watch`); otherwise deploy the plugin and theme files to staging. No staging environment: suggest creating one, or deploy straight to production only after the user agrees, with a backup first.
 4. Send the staging link and what to check. **Production only after the user's yes**: back up a site with real content, deploy, check the live pages.
-5. Report what is live and where, and update `.provenlab/project.md`.
+5. Report what is live and where, with a small visual of the path (local → GitHub → staging → production) showing what is on each, and update `.provenlab/project.md`.

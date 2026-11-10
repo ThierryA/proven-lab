@@ -15,4 +15,4 @@ Plan this before writing code: $ARGUMENTS
    - **Verification:** the WP-CLI checks, requests and screenshots that prove each step.
    - **Commits:** one per step, with the message.
    - **Ship:** staging, then production after the user's yes.
-4. Show the plan briefly (plain words for non-developers) and wait for the user's OK or changes before building. Then work through it step by step, ticking steps off in `.provenlab/plan.md` and committing after each verified step.
+4. Show the plan visually first: the pages and navigation, and the data model (records, fields, relations), with generative UI if your app supports it, else Mermaid (`flowchart`, `erDiagram`). Then summarize it briefly (plain words for non-developers) and wait for the user's OK or changes before building. Then work through it step by step, ticking steps off in `.provenlab/plan.md` and committing after each verified step.

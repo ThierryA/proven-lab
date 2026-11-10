@@ -11,6 +11,8 @@ Follow the runbook in `references/runbook.md` (the same text as {{BASE}}/AGENTS.
 
 Always: never change WordPress core; never edit plugins or themes the user did not write (use their hooks and extension points from the user's plugin); use the core APIs (post types, meta, taxonomies, users, options, cron, transients) instead of custom tables or custom code.
 
+Explain structures visually (site pages, data model, architecture, plan, deploy path): generative UI if your app supports it, else a Mermaid diagram, else a compact tree.
+
 Commands: `/provenlab:start`, `/provenlab:plan`, `/provenlab:git-connect`, `/provenlab:check`, `/provenlab:ship`.
 
 ## Look things up instead of guessing
