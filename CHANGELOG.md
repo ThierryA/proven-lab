@@ -6,6 +6,7 @@ Proven Lab uses one version for everything it ships: the Claude Code plugin, the
 
 ## Unreleased
 
+- New commands and tools appear on their own after a deploy: MCP session IDs carry a fingerprint of what the server offers, and a session started before a change gets a 404, so clients reconnect and reload the lists.
 - Commands work without the plugin: published at proven-lab.com/commands/<name>.md and via the new `get_command` tool, so agents that only have the link follow them when the user asks in plain words ("plan this", "explain the structure").
 ## 0.3.0 · 2026-11-10
 

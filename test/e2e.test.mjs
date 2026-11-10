@@ -129,6 +129,18 @@ test('MCP over streamable HTTP', async () => {
   await exerciseMcp(client); await client.close();
 });
 
+test('MCP sessions carry a fingerprint; a stale session gets a 404 so clients reload the lists', async () => {
+  const headers = { 'content-type': 'application/json', accept: 'application/json, text/event-stream' };
+  const init = await fetch(`${base}/mcp`, { method: 'POST', headers, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 't', version: '1' } } }) });
+  const sid = init.headers.get('mcp-session-id');
+  assert.match(sid, /^pl-[0-9a-f]{12}-/);
+  const ok = await fetch(`${base}/mcp`, { method: 'POST', headers: { ...headers, 'mcp-session-id': sid }, body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'prompts/list', params: {} }) });
+  assert.equal(ok.status, 200);
+  const stale = await fetch(`${base}/mcp`, { method: 'POST', headers: { ...headers, 'mcp-session-id': 'pl-000000000000-x' }, body: JSON.stringify({ jsonrpc: '2.0', id: 3, method: 'prompts/list', params: {} }) });
+  assert.equal(stale.status, 404);
+  assert.equal((await stale.json()).error.code, -32001);
+});
+
 test('MCP over stdio (the @provenlab/mcp bin)', async () => {
   const client = new Client({ name: 'e2e', version: '1' });
   await client.connect(new StdioClientTransport({ command: 'node', args: [join(ROOT, 'packages', 'mcp-server', 'src', 'index.mjs')] }));
