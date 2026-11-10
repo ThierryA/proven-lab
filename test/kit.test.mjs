@@ -125,3 +125,16 @@ test('agents default to the WP Engine AI plugins and use the WP Engine MCP serve
   for (const s of ['sandbox_edit', 'wpe_create_backup', 'staging', 'approval', '--scope user wpengine']) assert.ok(hosted.includes(s), s);
   assert.equal(rj('plugins', 'provenlab', '.mcp.json').mcpServers.wpengine.url, 'https://api.ai.wpengine.com/v1/mcp');
 });
+
+test('everything Proven Lab ships carries the same version', async () => {
+  const version = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version;
+  assert.match(version, /^\d+\.\d+\.\d+$/);
+  assert.equal(rj('plugins', 'provenlab', '.claude-plugin', 'plugin.json').version, version, 'plugin.json');
+  assert.equal(rj('.claude-plugin', 'marketplace.json').plugins[0].version, version, 'marketplace entry');
+  assert.equal(rj('packages', 'mcp-server', 'package.json').version, version, '@provenlab/mcp');
+  assert.equal((await (await fetch(`${base}/kit/manifest.json`)).json()).version, version, 'kit manifest');
+  assert.match(readFileSync(join(ROOT, 'plugins/provenlab/skills/provenlab/SKILL.md'), 'utf8'), new RegExp(`version: "${version.replace(/\./g, '\\.')}"`), 'skill');
+  assert.ok((await (await fetch(`${base}/AGENTS.md`)).text()).includes(`Proven Lab ${version}`), 'runbook');
+  assert.ok(readFileSync(join(ROOT, 'CHANGELOG.md'), 'utf8').includes(`## ${version}`), 'changelog entry');
+});
+

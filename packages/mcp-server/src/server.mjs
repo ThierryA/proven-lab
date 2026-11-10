@@ -3,9 +3,12 @@ import { ListToolsRequestSchema, CallToolRequestSchema, ListPromptsRequestSchema
 import { TOOLS } from './tools.mjs';
 import { callTool } from './core.mjs';
 import { INSTRUCTIONS, listPrompts, getPrompt } from './prompts.mjs';
+import { readFileSync } from 'node:fs';
+
+const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 
 export function createServer() {
-  const server = new Server({ name: 'provenlab', version: '0.2.0' }, { capabilities: { tools: {}, prompts: {} }, instructions: INSTRUCTIONS });
+  const server = new Server({ name: 'provenlab', version }, { capabilities: { tools: {}, prompts: {} }, instructions: INSTRUCTIONS });
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));
   server.setRequestHandler(CallToolRequestSchema, async ({ params }) => {
     try {

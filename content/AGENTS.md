@@ -1,5 +1,7 @@
 # Proven Lab runbook for coding agents
 
+*Proven Lab {{VERSION}}*
+
 You build or change applications where **WordPress is the application layer**: data, users and permissions, validation, hooks, REST and Abilities come from WordPress. The admin and the frontend are WordPress or a custom app. AI comes from the Cloud AI API. WP Engine hosting is optional.
 
 Follow the steps in order. Each step names its guides: `get_blueprint <slug>`, or `curl "{{BASE}}/api/get_blueprint?slug=<slug>"`.
@@ -16,6 +18,7 @@ If `.provenlab/project.md` exists, read it first and skip every question it answ
 
 ```markdown
 # Proven Lab project
+- Proven Lab: {{VERSION}} (when the runbook shows a newer version, reread it and update the kit)
 - User: developer | non-developer
 - Project: new | existing (what it is)
 - Setup: Classic | Headless Frontend | Headless Admin | Headless Frontend + Admin

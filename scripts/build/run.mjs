@@ -12,6 +12,14 @@ const w = async (rel, data) => { const p = join(DIST, rel); await mkdir(join(p, 
 await rm(DIST, { recursive: true, force: true });
 // Public base URL: SITE_URL, else package.json homepage. Used for links in llms.txt, OpenAPI and the kit.
 const pkg = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8'));
+// One version for everything Proven Lab ships (root package.json); the build stamps it into the plugin, the MCP
+// package and server, the kit, the skill, the templates, the runbook, the OpenAPI spec and llms.txt.
+const VERSION = pkg.version;
+{
+  const mp = join(ROOT, 'packages/mcp-server/package.json');
+  const m = JSON.parse(await readFile(mp, 'utf8'));
+  if (m.version !== VERSION) { m.version = VERSION; await writeFile(mp, JSON.stringify(m, null, 2) + '\n'); }
+}
 const site = (process.env.SITE_URL || pkg.homepage || '').replace(/\/$/, '');
 
 const core = await rj('wp/source/core.json');
@@ -153,7 +161,7 @@ for (const name of (await readdir(tplRoot)).sort()) {
   const meta = JSON.parse(await readFile(join(dir, 'template.json'), 'utf8'));
   const files = [];
   for (const rel of (await walkFiles(dir)).filter((f) => f !== 'template.json').sort()) files.push({ path: rel, content: await readFile(join(dir, rel), 'utf8') });
-  templates.push({ name, ...meta, files });
+  templates.push({ name, version: VERSION, ...meta, files });
 }
 await w('templates.json', templates);
 
@@ -170,7 +178,7 @@ await w('templates.json', templates);
 
 // URLs filled into the kit and the playbook
 const mcpUrl = `${site}/mcp`;
-const fill = (text) => text.replaceAll('{{BASE}}', site).replaceAll('{{MCP_URL}}', mcpUrl);
+const fill = (text) => text.replaceAll('{{BASE}}', site).replaceAll('{{MCP_URL}}', mcpUrl).replaceAll('{{VERSION}}', VERSION);
 
 // AGENTS.md (drop into any project, or use as a system prompt)
 const agentsMd = fill(await readFile(join(ROOT, 'content/AGENTS.md'), 'utf8'));
@@ -184,11 +192,11 @@ const skillFiles = new Map();
 skillFiles.set('SKILL.md', fill(await readFile(join(kitDir, '.claude/skills/provenlab/SKILL.md'), 'utf8')));
 skillFiles.set('references/runbook.md', agentsMd);
 for (const b of blueprints) skillFiles.set(`references/${b.slug}.md`, `# ${b.title}\n` + fill(stripMarkers(b.md)).replace(/^\s*# .*\n/, ''));
-for (const t of templates) { skillFiles.set(`templates/${t.name}/template.json`, JSON.stringify({ description: t.description, placeholders: t.placeholders, next: t.next }, null, 2) + '\n'); for (const f of t.files) skillFiles.set(`templates/${t.name}/${f.path}`, f.content); }
+for (const t of templates) { skillFiles.set(`templates/${t.name}/template.json`, JSON.stringify({ version: VERSION, description: t.description, placeholders: t.placeholders, next: t.next }, null, 2) + '\n'); for (const f of t.files) skillFiles.set(`templates/${t.name}/${f.path}`, f.content); }
 const skillPaths = [...skillFiles.keys()].map((k) => `.claude/skills/provenlab/${k}`);
 const kitFiles = ['AGENTS.md', 'CLAUDE.md', '.mcp.json', '.cursor/mcp.json', '.vscode/mcp.json', ...skillPaths];
 for (const f of kitFiles) await w(`kit/${f}`, f === 'AGENTS.md' ? agentsMd : f.startsWith('.claude/skills/provenlab/') ? skillFiles.get(f.slice('.claude/skills/provenlab/'.length)) : fill(await readFile(join(kitDir, f), 'utf8')));
-await w('kit/manifest.json', { base: site, mcp: mcpUrl, files: kitFiles.map((path) => ({ path, url: `${site}/kit/${path}` })) });
+await w('kit/manifest.json', { version: VERSION, base: site, mcp: mcpUrl, files: kitFiles.map((path) => ({ path, url: `${site}/kit/${path}` })) });
 await w('kit/SETUP.md', fill(await readFile(join(ROOT, 'content/kit-setup.md'), 'utf8')));
 await w('install.sh', fill(await readFile(join(ROOT, 'scripts/kit/install.sh'), 'utf8')).replace('__FILES__', kitFiles.join(' ')));
 
@@ -197,8 +205,8 @@ await w('install.sh', fill(await readFile(join(ROOT, 'scripts/kit/install.sh'), 
   const P = (...p) => join(ROOT, ...p);
   const put = async (path, data) => { await mkdir(join(path, '..'), { recursive: true }); await writeFile(path, typeof data === 'string' ? data : JSON.stringify(data, null, 2) + '\n'); };
   const desc = 'Build on WordPress as the application layer with exact Core API, WP-CLI and Cloud AI API references, blueprints and a playbook for coding agents.';
-  await put(P('.claude-plugin/marketplace.json'), { name: 'provenlab', description: 'Proven Lab plugins for Claude Code', owner: { name: 'Proven Lab' }, plugins: [{ name: 'provenlab', source: './plugins/provenlab', description: desc }] });
-  await put(P('plugins/provenlab/.claude-plugin/plugin.json'), { name: 'provenlab', description: desc, version: pkg.version, author: { name: 'Proven Lab' }, homepage: site });
+  await put(P('.claude-plugin/marketplace.json'), { name: 'provenlab', description: 'Proven Lab plugins for Claude Code', owner: { name: 'Proven Lab' }, plugins: [{ name: 'provenlab', source: './plugins/provenlab', description: desc, version: VERSION }] });
+  await put(P('plugins/provenlab/.claude-plugin/plugin.json'), { name: 'provenlab', description: desc, version: VERSION, author: { name: 'Proven Lab' }, homepage: site });
   await put(P('plugins/provenlab/.mcp.json'), fill(await readFile(join(kitDir, '.mcp.json'), 'utf8')));
   await rm(P('plugins/provenlab/skills/provenlab'), { recursive: true, force: true });
   for (const [k, v] of skillFiles) await put(P('plugins/provenlab/skills/provenlab', k), v);
@@ -208,7 +216,7 @@ await w('install.sh', fill(await readFile(join(ROOT, 'scripts/kit/install.sh'), 
 
 // llms.txt + llms-full.txt
 const llms = [
-  '# Proven Lab', '',
+  '# Proven Lab', '', `Version ${VERSION}.`, '',
   '> Docs, an MCP server and tool schemas that let coding agents build on the WordPress Core API (post types, meta, users, hooks, blocks, Abilities API, AI Client), WP-CLI and the Cloud AI API (chat, images, text to speech, transcription, knowledge base search, agents and sessions). Generated from WordPress ' + core.version + ' source, WP-CLI ' + cliData.version + ' and a snapshot of the Cloud AI API OpenAPI spec.', '',
   `Agents: nothing to install. If a user asked you to build or update an app "with Proven Lab", read ${site}/AGENTS.md first, then call any tool over HTTP: GET ${site}/api/<tool>?<args> (for example ${site}/api/get_blueprint?slug=architecture). Connecting the MCP server at ${site}/mcp is optional.`, '',
   '## Start here', `- [Runbook for agents](${site}/AGENTS.md): read first. Six steps from the first question to production, for developers and non-developers`, `- [Set up a project](${site}/kit/SETUP.md): optional. Connect the MCP server and add the kit files`,
@@ -236,7 +244,7 @@ await mkdir(join(DIST, 'openapi'), { recursive: true });
   for (const kind of ['schemas', 'parameters', 'responses', 'requestBodies']) for (const name of Object.keys(pub.components?.[kind] || {})) if (!refs.has(`#/components/${kind}/${name}`)) delete pub.components[kind][name];
   await writeFile(join(DIST, 'openapi/cloud-ai-api.yaml'), YAML.stringify(pub));
 }
-const kitApi = { openapi: '3.1.0', info: { title: 'Proven Lab API', version: '0.1.0', description: 'Search and retrieve WordPress Core API docs, WP-CLI commands, blueprints and Cloud AI API operations. The same 12 tools as the MCP server.' }, servers: [{ url: site || '/' }], paths: {} };
+const kitApi = { openapi: '3.1.0', info: { title: 'Proven Lab API', version: VERSION, description: 'Search and retrieve WordPress Core API docs, WP-CLI commands, blueprints and Cloud AI API operations. The same 12 tools as the MCP server.' }, servers: [{ url: site || '/' }], paths: {} };
 for (const t of TOOLS) {
   const props = t.inputSchema.properties || {};
   kitApi.paths[`/api/${t.name}`] = { get: { operationId: t.name, summary: t.description.split('\n')[0], description: t.description,
@@ -248,5 +256,5 @@ await w('tools/openai.json', TOOLS.map((t) => ({ type: 'function', function: { n
 await w('tools/anthropic.json', TOOLS.map((t) => ({ name: t.name, description: t.description, input_schema: t.inputSchema })));
 const isPublic = (f) => !(f.tags.access || []).includes('private') && !f.tags.deprecated;
 
-await w('stats.json', { wordpress: core.version, functions: entities.functions.length, functionsPublic: entities.functions.filter(isPublic).length, cliLeafCommands: cliData.commands.filter((c) => !c.hasChildren).length, classes: entities.classes.length, methods: entities.methods.length, hooks: entities.hooks.length, wpeOperations: ops.length, wpeVersion: spec.info.version, cliCommands: cliData.commands.length, cliVersion: cliData.version, wpeDocs: wpeDocs.length, domains: domains.length, blueprints: blueprints.length, builtAt: new Date().toISOString() });
+await w('stats.json', { provenlab: VERSION, wordpress: core.version, functions: entities.functions.length, functionsPublic: entities.functions.filter(isPublic).length, cliLeafCommands: cliData.commands.filter((c) => !c.hasChildren).length, classes: entities.classes.length, methods: entities.methods.length, hooks: entities.hooks.length, wpeOperations: ops.length, wpeVersion: spec.info.version, cliCommands: cliData.commands.length, cliVersion: cliData.version, wpeDocs: wpeDocs.length, domains: domains.length, blueprints: blueprints.length, builtAt: new Date().toISOString() });
 console.log('dist built', JSON.parse(await readFile(join(DIST, 'stats.json'), 'utf8')));
