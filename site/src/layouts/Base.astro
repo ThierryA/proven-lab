@@ -22,7 +22,7 @@ const onDocs = path.startsWith('/docs') && !path.startsWith('/docs/connect');
 </head>
 <body class="bg-ink font-sans text-fg-2">
 <header class="sticky top-0 z-40 border-b border-line bg-ink/90 backdrop-blur-sm">
-  <div class="mx-auto flex h-14 max-w-[80rem] items-center gap-8 px-5 sm:px-8">
+  <div class="mx-auto flex h-14 max-w-[72rem] items-center gap-8 px-5 sm:px-8">
     <div class="flex flex-col leading-tight">
       <a href="/" class="text-fg">
         <span class="text-[15px] font-medium tracking-tight">Proven <span class="font-mono font-normal italic tracking-normal text-signal">Lab</span></span>
@@ -37,7 +37,7 @@ const onDocs = path.startsWith('/docs') && !path.startsWith('/docs/connect');
 </header>
 <slot />
 <footer class="mt-32 border-t border-line">
-  <div class="mx-auto flex max-w-[80rem] flex-wrap items-center gap-x-8 gap-y-2 px-5 py-8 font-mono text-[11px] text-fg-3 sm:px-8">
+  <div class="mx-auto flex max-w-[72rem] flex-wrap items-center gap-x-8 gap-y-2 px-5 py-8 font-mono text-[11px] text-fg-3 sm:px-8">
     <span>Proven Lab</span>
     <span>WordPress {s.wordpress} · WP-CLI {s.cliVersion} · Cloud AI API spec {s.wpeVersion ?? ''}</span>
     <span class="ml-auto flex gap-6"><a class="hover:text-fg" href="/llms.txt">llms.txt</a><a class="hover:text-fg" href="/AGENTS.md">AGENTS.md</a><a class="hover:text-fg" href="/openapi/provenlab-api.yaml">OpenAPI</a><a class="hover:text-fg" href="/tools/openai.json">Tool schemas</a></span>
