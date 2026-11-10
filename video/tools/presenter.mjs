@@ -29,13 +29,14 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const sha = (x) => createHash('sha1').update(x).digest('hex');
 const list = (res) => (Array.isArray(res) ? res : res.data || res.voices || []);
 
-async function api(path, body) {
+async function api(path, body, meta) {
   for (let attempt = 0; ; attempt++) {
     const res = await fetch(`https://api.heygen.com${path}`, {
       method: body ? 'POST' : 'GET',
       headers: { 'x-api-key': key, 'content-type': 'application/json' },
       body: body && JSON.stringify(body),
     });
+    if (meta) meta.requestId = res.headers.get('x-request-id');
     if ((res.status === 429 || res.status === 503) && attempt < 6) { await sleep(2000 * 2 ** attempt); continue; }
     const json = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(`HeyGen ${res.status} on ${path}: ${JSON.stringify(json.error || json)}`);
@@ -76,12 +77,51 @@ if (args.includes('--consent')) {
 }
 
 // Your cloned voice with word timings. The free model first; the paid one if the free one is busy or refuses.
-async function speak(text) {
-  const body = { voice_id: twin.voiceId, text, language: 'en', with_timestamps: true };
+async function speakPart(text, previous) {
+  const body = { voice_id: twin.voiceId, text, language: 'en', with_timestamps: true, ...(previous ? { previous_request_ids: [previous] } : {}) };
   for (const model of [cfg.voiceModel, 'heygen-voice-1']) {
-    try { return await api('/v3/models/audio/tts', { ...body, model }); }
+    const meta = {};
+    try { return { ...(await api('/v3/models/audio/tts', { ...body, model }, meta)), requestId: meta.requestId, model }; }
     catch (e) { if (model === 'heygen-voice-1') throw e; console.log(`\n  (${model}: ${e.message.slice(0, 120)}; trying heygen-voice-1)`); }
   }
+}
+
+// HeyGen Voice takes up to 5,000 characters per request. Longer scripts are spoken in parts at section
+// boundaries (each part continues from the previous one for a consistent delivery), joined with a short pause,
+// and uploaded as one audio file. Word timings are shifted to match.
+const PART_LIMIT = 4500;
+const PAUSE = 0.35;
+async function speak(sections, dir) {
+  const parts = [];
+  for (const s of sections) {
+    const last = parts[parts.length - 1];
+    if (last && (last + ' ' + s.text).length <= PART_LIMIT) parts[parts.length - 1] = last + ' ' + s.text;
+    else parts.push(s.text);
+  }
+  if (parts.length === 1) { const r = await speakPart(parts[0]); return { audio_url: r.audio_url, duration: r.duration, original_words: r.original_words }; }
+  const files = [], words = [];
+  let offset = 0, previous;
+  for (const [i, text] of parts.entries()) {
+    const r = await speakPart(text, previous);
+    previous = r.requestId;
+    const file = join(dir, `voice-${i}.wav`);
+    await download(r.audio_url, file);
+    for (const w of r.original_words) words.push({ ...w, start_time: w.start_time + offset, end_time: w.end_time + offset });
+    offset += r.duration + PAUSE;
+    files.push(file);
+    process.stdout.write(`part ${i + 1}/${parts.length} `);
+  }
+  // Join with ffmpeg (a short silence between parts), as MP3 to keep the upload small.
+  const joined = join(dir, 'voice.mp3');
+  const inputs = files.flatMap((f) => ['-i', f]);
+  const chain = files.map((_, i) => `[${i}:a]apad=pad_dur=${PAUSE}[a${i}]`).join(';') + ';' + files.map((_, i) => `[a${i}]`).join('') + `concat=n=${files.length}:v=0:a=1[out]`;
+  execFileSync('npx', ['remotion', 'ffmpeg', '-v', 'error', '-y', ...inputs, '-filter_complex', chain, '-map', '[out]', '-ar', '44100', '-ac', '1', '-b:a', '192k', joined], { stdio: 'inherit' });
+  const form = new FormData();
+  form.append('file', new Blob([await readFile(joined)], { type: 'audio/mpeg' }), 'voice.mp3');
+  const res = await fetch('https://api.heygen.com/v3/assets', { method: 'POST', headers: { 'x-api-key': key }, body: form });
+  const up = await res.json();
+  if (!res.ok) throw new Error(`HeyGen upload ${res.status}: ${JSON.stringify(up.error || up)}`);
+  return { audio_asset_id: up.data.asset_id, duration: offset - PAUSE, original_words: words };
 }
 
 async function makeTake(episode) {
@@ -108,15 +148,15 @@ async function makeTake(episode) {
     console.log(`${episode.id}: take up to date`);
     return;
   }
-  console.log(`${episode.id}: one take, about ${(text.split(/\s+/).length / 150).toFixed(1)} min of video`);
+  console.log(`${episode.id}: one take, about ${(text.split(/\s+/).length / 180).toFixed(1)} min of video (${text.length} characters)`);
   if (dry) return;
   process.stdout.write('  voice ');
-  const speech = await speak(text);
+  const speech = await speak(episode.sections, dir);
   process.stdout.write(`${speech.duration.toFixed(1)}s, take `);
   const { video_id } = await api('/v3/videos', {
     type: 'avatar',
     avatar_id: look,
-    audio_url: speech.audio_url,
+    ...(speech.audio_asset_id ? { audio_asset_id: speech.audio_asset_id } : { audio_url: speech.audio_url }),
     // The look gives the setting and outfit; your recorded twin footage gives the motion. No motion prompt.
     engine: { type: cfg.avatarModel, ...(twin.motionFrom && twin.motionFrom !== look ? { reference_look_id: twin.motionFrom } : {}) },
     resolution: cfg.resolution,

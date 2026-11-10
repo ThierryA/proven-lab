@@ -1,0 +1,584 @@
+{
+  "id": "setup-first-site",
+  "series": "How to Proven Lab",
+  "title": "Set up your first site",
+  "camera": "a",
+  "music": {
+    "file": "music/lofi-bed.mp3",
+    "volume": 0.32,
+    "underVoice": 0.06
+  },
+  "thumbnail": {
+    "at": 3,
+    "lines": [
+      "Your first site,",
+      "step by step"
+    ]
+  },
+  "sections": [
+    {
+      "id": "intro",
+      "shot": "close",
+      "lowerThird": true,
+      "text": "Want your coding agent to build a real site, on a platform that's already battle-tested? In this tutorial, I'll set one up from scratch with Proven Lab."
+    },
+    {
+      "id": "plan",
+      "shot": "wide",
+      "callout": "Simple first, then advanced",
+      "text": "First the simple way: one prompt, all the way to a working app on staging. Then the advanced setup: the plugin, the commands and the MCP server. I'm using Claude Code in the Claude desktop app, but everything works the same in Codex, Cursor or any coding agent that can read a web page. Let's go."
+    },
+    {
+      "id": "prompt",
+      "chapter": "01 \u00b7 The first prompt",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "user",
+            "text": "Build a booking app for my yoga studio, with class schedules, member passes and a waitlist.\nUse Proven Lab: https://proven-lab.com"
+          }
+        ]
+      },
+      "text": "I'm in the Code tab, in an empty folder. I describe what I want, in my own words, and I add the Proven Lab link at the end. That's all. Nothing to install, no account, no API key for Proven Lab."
+    },
+    {
+      "id": "runbook",
+      "chapter": "01 \u00b7 The first prompt",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "user",
+            "text": "Build a booking app for my yoga studio, with class schedules, member passes and a waitlist.\nUse Proven Lab: https://proven-lab.com"
+          },
+          {
+            "kind": "agent",
+            "text": "Fetching https://proven-lab.com/llms.txt"
+          },
+          {
+            "kind": "agent",
+            "text": "Reading the Proven Lab runbook: steps, rules, guides, templates"
+          }
+        ]
+      },
+      "text": "That link is the key. Your agent opens it and finds the Proven Lab runbook: the steps to follow, the rules, the guides and the starter templates. So instead of improvising, it follows a proven path."
+    },
+    {
+      "id": "wizard",
+      "chapter": "02 \u00b7 The wizard",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "agent",
+            "text": "Before I write any code, a few questions:"
+          },
+          {
+            "kind": "ask",
+            "text": "1. New project, or a site you already have?"
+          },
+          {
+            "kind": "ask",
+            "text": "2. Setup: Classic WordPress (recommended), or headless with your own frontend and/or admin?"
+          },
+          {
+            "kind": "ask",
+            "text": "3. Where to build: on your computer (Local) or in the cloud on WP Engine?"
+          },
+          {
+            "kind": "ask",
+            "text": "4. Save the work to GitHub? Push after your OK, or automatically?"
+          }
+        ]
+      },
+      "text": "Before writing a single line of code, it asks everything it needs, in one message."
+    },
+    {
+      "id": "q1",
+      "chapter": "02 \u00b7 The wizard",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "ask",
+            "text": "1. New project, or a site you already have?"
+          },
+          {
+            "kind": "agent",
+            "text": "   New: I start from the Proven Lab templates."
+          },
+          {
+            "kind": "agent",
+            "text": "   Existing: I inspect it first, and change only what you ask."
+          }
+        ]
+      },
+      "text": "One: is this a new project, or a site you already have? For an existing site, it inspects it first. We're starting fresh."
+    },
+    {
+      "id": "q2",
+      "chapter": "02 \u00b7 The wizard",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "ask",
+            "text": "2. Setup"
+          },
+          {
+            "kind": "agent",
+            "text": "   Classic            WordPress does it all"
+          },
+          {
+            "kind": "agent",
+            "text": "   Headless frontend  your frontend, WordPress behind"
+          },
+          {
+            "kind": "agent",
+            "text": "   Headless admin     your admin, WordPress behind"
+          },
+          {
+            "kind": "agent",
+            "text": "   Both               your frontend and admin"
+          },
+          {
+            "kind": "ok",
+            "text": "Recommended for a studio site: Classic"
+          }
+        ]
+      },
+      "text": "Two: the setup. Classic WordPress, where WordPress does everything, or headless, with your own frontend, your own admin, or both, on top of WordPress. It recommends one. If you're not a developer, it explains them in plain words and suggests Classic. I'll go Classic."
+    },
+    {
+      "id": "q3",
+      "chapter": "02 \u00b7 The wizard",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "ask",
+            "text": "3. Where to build"
+          },
+          {
+            "kind": "agent",
+            "text": "   Local      on your computer, with Local"
+          },
+          {
+            "kind": "agent",
+            "text": "   WP Engine  in the cloud; I connect through the WP Engine MCP server"
+          },
+          {
+            "kind": "ok",
+            "text": "No SSH key needed"
+          }
+        ]
+      },
+      "text": "Three: where to build. On your computer with Local, or in the cloud on WP Engine. I'll take WP Engine. The agent connects through the WP Engine MCP server, so there's no SSH key to set up."
+    },
+    {
+      "id": "q4",
+      "chapter": "02 \u00b7 The wizard",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "ask",
+            "text": "4. Save the work to GitHub? Push after your OK, or automatically?"
+          },
+          {
+            "kind": "user",
+            "text": "New, Classic, WP Engine, GitHub yes, push after my OK."
+          }
+        ]
+      },
+      "text": "Four: GitHub. Should it save the work to a repository, and push after your OK, or automatically? Yes, after my OK."
+    },
+    {
+      "id": "github",
+      "chapter": "03 \u00b7 GitHub and project memory",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "code",
+            "text": "gh auth status"
+          },
+          {
+            "kind": "ok",
+            "text": "Logged in to github.com"
+          },
+          {
+            "kind": "code",
+            "text": "gh repo create yoga-studio --private"
+          },
+          {
+            "kind": "file",
+            "text": ".gitignore"
+          },
+          {
+            "kind": "code",
+            "text": "git commit -m \"Start the yoga studio project\" && git push"
+          },
+          {
+            "kind": "ask",
+            "text": "Deploy to your WP Engine staging on every push? (WP Engine GitHub Action)"
+          }
+        ]
+      },
+      "text": "For GitHub, it checks you're signed in to the GitHub command line. If not, it asks you to run the login yourself; it never asks for a token in chat. Then it creates a private repository, adds a clean gitignore, makes the first commit, and offers deploy on push: every push to GitHub can deploy straight to your WP Engine staging."
+    },
+    {
+      "id": "memory",
+      "chapter": "03 \u00b7 GitHub and project memory",
+      "screen": {
+        "title": ".provenlab/project.md",
+        "lines": [
+          {
+            "kind": "agent",
+            "text": "# Yoga studio"
+          },
+          {
+            "kind": "agent",
+            "text": "Setup: Classic WordPress"
+          },
+          {
+            "kind": "agent",
+            "text": "Environments: WP Engine staging, production"
+          },
+          {
+            "kind": "agent",
+            "text": "Repository: github.com/you/yoga-studio (push after OK)"
+          },
+          {
+            "kind": "agent",
+            "text": "Deploy: on push to staging; production after your yes"
+          },
+          {
+            "kind": "ok",
+            "text": "Pages: Classes \u00b7 Book \u00b7 My passes   Records: class, booking, member"
+          }
+        ]
+      },
+      "text": "Then it writes a small file in your project: provenlab slash project dot md. Your setup, your environments, your addresses, your repository. Next time, the agent reads it and skips the questions. And it shows you the structure as a diagram: the pages, the main records, and where everything runs."
+    },
+    {
+      "id": "build",
+      "chapter": "04 \u00b7 The build",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "agent",
+            "text": "get_template plugin studio-bookings"
+          },
+          {
+            "kind": "file",
+            "text": "studio-bookings/studio-bookings.php"
+          },
+          {
+            "kind": "file",
+            "text": "studio-bookings/includes/ \u00b7 composer.json \u00b7 phpcs.xml.dist \u00b7 phpstan.neon.dist"
+          },
+          {
+            "kind": "agent",
+            "text": "Starting from the Proven Lab plugin template"
+          }
+        ]
+      },
+      "text": "Now it builds. And this is the important part: not from scratch. It starts from the Proven Lab plugin template, a regular WordPress plugin with coding standards and static analysis already set up."
+    },
+    {
+      "id": "blocks",
+      "chapter": "04 \u00b7 The build",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "agent",
+            "text": "register_post_type( 'class' )"
+          },
+          {
+            "kind": "agent",
+            "text": "register_post_meta( 'class', 'time' | 'teacher' | 'seats' )"
+          },
+          {
+            "kind": "agent",
+            "text": "add_role( 'member' ) with booking capabilities"
+          },
+          {
+            "kind": "agent",
+            "text": "Abilities: studio/book-class, studio/join-waitlist (input, output, permission check)"
+          },
+          {
+            "kind": "ok",
+            "text": "No custom tables \u00b7 no hand-made login"
+          }
+        ]
+      },
+      "text": "Then it uses WordPress's own building blocks. A class content type. Fields for the time, the teacher and the seats, registered properly. A member role with its own permissions. Booking actions exposed as Abilities, with a clear input, output and permission check. No custom database tables, no hand-made login system. All of that already exists, it's secure, and it's been reviewed on millions of sites."
+    },
+    {
+      "id": "hooks",
+      "chapter": "04 \u00b7 The build",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "ok",
+            "text": "WordPress core: untouched"
+          },
+          {
+            "kind": "ok",
+            "text": "Other plugins: untouched"
+          },
+          {
+            "kind": "agent",
+            "text": "add_filter( ... ) from studio-bookings when behavior needs to change"
+          }
+        ]
+      },
+      "text": "And it never touches WordPress core or other people's plugins. If it needs to change how something works, it uses hooks from your own plugin."
+    },
+    {
+      "id": "verify",
+      "chapter": "05 \u00b7 Checking the work",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "agent",
+            "text": "WP Engine sandbox, next to your staging site"
+          },
+          {
+            "kind": "code",
+            "text": "wp post create --post_type=class --post_title=\"Morning flow\" --meta_input='{\"seats\":2}'"
+          },
+          {
+            "kind": "code",
+            "text": "wp eval-file verify.php"
+          },
+          {
+            "kind": "ok",
+            "text": "book seat 1 \u00b7 book seat 2 \u00b7 third booking joins the waitlist \u00b7 cancel frees a seat"
+          },
+          {
+            "kind": "ok",
+            "text": "12 checks passed"
+          }
+        ]
+      },
+      "text": "Then it proves it works. Not by rereading its own code: with WP-CLI and real requests. On WP Engine, it runs WP-CLI in a sandbox next to your site. It creates a test class, books a seat, fills the waitlist, and checks every result."
+    },
+    {
+      "id": "screens",
+      "chapter": "05 \u00b7 Checking the work",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "agent",
+            "text": "Screenshots: 375 px \u00b7 768 px \u00b7 1280 px"
+          },
+          {
+            "kind": "agent",
+            "text": "Fixed: the class card wraps on phones"
+          },
+          {
+            "kind": "code",
+            "text": "git commit -m \"Add class bookings and the waitlist\""
+          }
+        ]
+      },
+      "text": "For anything people see, it takes screenshots on a phone, a tablet and a laptop, and fixes what doesn't look right. Then it commits the work."
+    },
+    {
+      "id": "result",
+      "chapter": "06 \u00b7 Result and shipping",
+      "screen": {
+        "title": "yoga-studio-stg.wpengine.com",
+        "lines": [
+          {
+            "kind": "ok",
+            "text": "Staging: https://yoga-studio-stg.wpengine.com"
+          },
+          {
+            "kind": "agent",
+            "text": "Classes \u00b7 Book \u00b7 My passes"
+          },
+          {
+            "kind": "agent",
+            "text": "Morning flow \u00b7 Tue 7:00 \u00b7 2 seats left  [Book]"
+          }
+        ]
+      },
+      "text": "And here it is: a working booking app, on staging. Staging is a private copy of your site, just for checking."
+    },
+    {
+      "id": "ship",
+      "chapter": "06 \u00b7 Result and shipping",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "user",
+            "text": "ship it"
+          },
+          {
+            "kind": "agent",
+            "text": "Ready to push to GitHub?  \u203a yes"
+          },
+          {
+            "kind": "code",
+            "text": "git push \u00b7 gh run watch"
+          },
+          {
+            "kind": "ok",
+            "text": "Deployed to staging. Check: booking, waitlist, phone layout."
+          },
+          {
+            "kind": "ask",
+            "text": "Ready for production? I'll back up the site first."
+          }
+        ]
+      },
+      "text": "Happy with it? I just say ship it. It pushes to GitHub, the deploy runs, and it sends me the staging link with what to check. Production only happens after my yes, with a backup first. That's the simple way: one prompt and a short wizard."
+    },
+    {
+      "id": "plugin",
+      "chapter": "07 \u00b7 Advanced: the plugin",
+      "screen": {
+        "title": "Claude \u00b7 Code",
+        "lines": [
+          {
+            "kind": "user",
+            "text": "/plugin install provenlab --marketplace ThierryA/proven-lab"
+          },
+          {
+            "kind": "ok",
+            "text": "Installed provenlab: tools, skill, commands"
+          }
+        ]
+      },
+      "text": "Now, the advanced setup. In Claude Code, install the Proven Lab plugin with one command. It connects the Proven Lab tools, adds the Proven Lab skill, and gives you six commands."
+    },
+    {
+      "id": "commands",
+      "chapter": "07 \u00b7 Advanced: the plugin",
+      "screen": {
+        "title": "Claude \u00b7 Code",
+        "lines": [
+          {
+            "kind": "user",
+            "text": "/provenlab:"
+          },
+          {
+            "kind": "agent",
+            "text": "start        set up or resume a project"
+          },
+          {
+            "kind": "agent",
+            "text": "plan         goal, reuse, steps, data model, checks, commits; waits for your OK"
+          },
+          {
+            "kind": "agent",
+            "text": "check        WP-CLI, quality checks, screenshots"
+          },
+          {
+            "kind": "agent",
+            "text": "git-connect  repository, push policy, deploy on push"
+          },
+          {
+            "kind": "agent",
+            "text": "ship         staging, then production after your yes"
+          },
+          {
+            "kind": "agent",
+            "text": "explain      the project as a diagram"
+          }
+        ]
+      },
+      "text": "Start sets up or resumes a project. Plan writes a plan before building: the goal, what to reuse, the steps, the data model, how each step gets verified, and the commits. It shows you the pages and the data model as a diagram, and waits for your OK. Check verifies the work. Git connect sets up GitHub and deploy on push. And ship takes it to staging, then to production after your yes."
+    },
+    {
+      "id": "explain",
+      "chapter": "07 \u00b7 Advanced: the plugin",
+      "screen": {
+        "title": "Claude \u00b7 Code",
+        "lines": [
+          {
+            "kind": "user",
+            "text": "/provenlab:explain"
+          },
+          {
+            "kind": "agent",
+            "text": "Your computer \u2192 GitHub \u2192 Staging \u2192 Live   (with each address)"
+          },
+          {
+            "kind": "user",
+            "text": "/provenlab:explain --dev"
+          },
+          {
+            "kind": "agent",
+            "text": "class \u00b7 booking \u00b7 member role \u00b7 hooks \u00b7 Abilities \u00b7 deploy pipeline"
+          },
+          {
+            "kind": "agent",
+            "text": "Tip: without the plugin, just ask \"explain the basics\" or \"plan this first\""
+          }
+        ]
+      },
+      "text": "And explain. By default you get the basics: where your site lives, its addresses, and how a change goes live. Add dash dash dev and you get the developer view: content types, roles, hooks and the deploy pipeline. Perfect to share with a client, or with a teammate. Without the plugin, you can still ask for all of these in plain words: plan this first, explain the basics, ship it."
+    },
+    {
+      "id": "mcp",
+      "chapter": "08 \u00b7 Advanced: the MCP server",
+      "screen": {
+        "title": "Terminal",
+        "lines": [
+          {
+            "kind": "code",
+            "text": "codex mcp add provenlab --url https://proven-lab.com/mcp"
+          },
+          {
+            "kind": "agent",
+            "text": ".cursor/mcp.json   { \"mcpServers\": { \"provenlab\": { \"url\": \"https://proven-lab.com/mcp\" } } }"
+          },
+          {
+            "kind": "ok",
+            "text": "get_function \u00b7 get_hook \u00b7 get_cli_command \u00b7 get_blueprint \u00b7 get_template \u00b7 get_ai_operation"
+          }
+        ]
+      },
+      "text": "Using Codex, Cursor or another agent? Add Proven Lab as an MCP server. In Codex it's one command; in Cursor, one line of config. You get the same tools: exact WordPress function signatures, hooks, WP-CLI commands, the guides, the templates, and the Cloud AI API for AI features, so your agent looks things up instead of guessing."
+    },
+    {
+      "id": "kit",
+      "chapter": "09 \u00b7 For teams",
+      "screen": {
+        "title": "Claude \u00b7 Code \u00b7 ~/yoga-studio",
+        "lines": [
+          {
+            "kind": "user",
+            "text": "Set up Proven Lab in this project by following https://proven-lab.com/kit/SETUP.md"
+          },
+          {
+            "kind": "file",
+            "text": "AGENTS.md \u00b7 CLAUDE.md \u00b7 .mcp.json \u00b7 .claude/skills/provenlab/"
+          },
+          {
+            "kind": "agent",
+            "text": "Updates: the MCP server updates itself; the plugin with /plugin update provenlab@provenlab"
+          }
+        ]
+      },
+      "text": "And for a team, ask your agent to add the Proven Lab kit to your project. It adds the instructions to your repository, so every agent and every teammate follows the same playbook. Updates are simple too: the MCP server updates itself, and the plugin updates with one command."
+    },
+    {
+      "id": "outro",
+      "shot": "close",
+      "callout": "proven-lab.com",
+      "text": "That's it. Start with one link, and add the plugin when you want more. A real app, built on a platform with more than twenty years of collective intelligence behind it. Try it at proven-lab.com, tell me what you build, and in the next episode we'll add AI features with the Cloud AI API. See you there."
+    }
+  ]
+}

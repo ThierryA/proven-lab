@@ -2,6 +2,7 @@ import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useVideoConfig 
 import { theme } from './theme';
 import { Presenter } from './scenes/Presenter';
 import { Callout, LowerThird, Points } from './scenes/Overlays';
+import { PresenterBox, ScreenPanel } from './scenes/ScreenShare';
 import type { EpisodeProps } from './types';
 
 // One continuous presenter take. Sections only change the framing (a punch-in, like a second camera)
@@ -19,11 +20,22 @@ export const Episode = ({ episode: script, version, take }: EpisodeProps) => {
         const to = i + 1 < script.sections.length ? at(t.starts[i + 1]) : durationInFrames;
         return (
           <Sequence key={s.id} from={from} durationInFrames={Math.max(1, to - from)} name={s.id}>
-            {/* The presenter clip runs continuously below; this layer only sets the framing for the section. */}
-            <Presenter clip={t.clip} still={t.still} side={!!s.points} shot={s.shot} offset={from} />
-            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,0.45) 100%)' }} />
-            {s.points && <Points points={s.points} />}
-            {s.callout && <Callout text={s.callout} />}
+            {/* The take runs continuously; each section only chooses how it is framed. */}
+            {s.screen ? (
+              <>
+                <AbsoluteFill style={{ background: theme.ink, backgroundImage: `radial-gradient(circle at 20% 0%, ${theme.ink2} 0%, ${theme.ink} 60%)` }} />
+                <ScreenPanel screen={s.screen} offset={from} />
+                <PresenterBox clip={t.clip} still={t.still} offset={from} />
+                {s.chapter && <Chapter text={s.chapter} />}
+              </>
+            ) : (
+              <>
+                <Presenter clip={t.clip} still={t.still} side={!!s.points} shot={s.shot} offset={from} />
+                <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,0.45) 100%)' }} />
+                {s.points && <Points points={s.points} />}
+                {s.callout && <Callout text={s.callout} />}
+              </>
+            )}
             {s.lowerThird && <LowerThird series={script.series} title={script.title} />}
           </Sequence>
         );
@@ -64,3 +76,8 @@ const musicVolume = (t: number, end: number, music: { volume?: number; underVoic
   }
   return level * fadeOut;
 };
+
+// The chapter name above the screen in screen-share sections.
+const Chapter = ({ text }: { text: string }) => (
+  <div style={{ position: 'absolute', right: 72, top: 200, width: 470, fontFamily: theme.mono, fontSize: 24, color: theme.signal }}>{text}</div>
+);
