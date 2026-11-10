@@ -55,7 +55,8 @@ const takeComposition = (script: TakeScript) => (
         clip: clip ? `host/${s.id}/take.mp4` : undefined,
         scratch: !clip && scratch ? `scratch/${s.id}/take.wav` : undefined,
       };
-      return { durationInFrames: Math.ceil((duration + 1.5) * FPS), props: { ...props, take } };
+      // A few seconds after the last word for the music and the end card to breathe.
+      return { durationInFrames: Math.ceil((duration + 3.5) * FPS), props: { ...props, take } };
     }}
   />
 );

@@ -35,16 +35,32 @@ export const OneTake = ({ script, version, take }: TakeProps) => {
       <div style={{ position: 'absolute', top: 56, right: 96, fontFamily: theme.mono, fontSize: 26, color: theme.fg3 }}>v{version}</div>
 
       {t.scratch && <Audio src={staticFile(t.scratch)} />}
-      {t.music && music && (
-        <Audio
-          src={staticFile(t.music)}
-          loop
-          // Up at the start and the end, low under the voice.
-          volume={(f) => interpolate(f, [0, fps * 2.5, fps * 3.5, durationInFrames - fps * 4, durationInFrames - fps * 1.5, durationInFrames],
-            [music.volume ?? 0.35, music.volume ?? 0.35, music.underVoice ?? 0.08, music.underVoice ?? 0.08, music.volume ?? 0.35, 0],
-            { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })}
-        />
-      )}
+      {t.music && music && <Audio src={staticFile(t.music)} loop volume={(f) => musicVolume(f / fps, durationInFrames / fps, music, t.words)} />}
     </AbsoluteFill>
   );
+};
+
+// The music ducks under the voice: low while words are spoken, up in real pauses and after the last word,
+// then fades out. Without word timings (scratch preview), it stays low except for the last seconds.
+const musicVolume = (t: number, end: number, music: { volume?: number; underVoice?: number }, words?: { start_time: number; end_time: number }[]) => {
+  const full = music.volume ?? 0.35;
+  const under = music.underVoice ?? 0.08;
+  const fadeOut = interpolate(t, [end - 1.5, end], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  if (!words?.length) return interpolate(t, [end - 4, end - 2.5], [under, full], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }) * fadeOut;
+  // Speech segments: words closer than 0.7 s count as one stretch of talking.
+  const segments: [number, number][] = [];
+  for (const w of words) {
+    const last = segments[segments.length - 1];
+    if (last && w.start_time - last[1] < 0.7) last[1] = w.end_time;
+    else segments.push([w.start_time, w.end_time]);
+  }
+  // Distance in seconds to the nearest speech (0 inside it), eased over 0.25 s before and 0.5 s after.
+  let level = full;
+  for (const [a, b] of segments) {
+    if (t >= a - 0.25 && t <= b + 0.5) {
+      const k = t < a ? (a - t) / 0.25 : t > b ? (t - b) / 0.5 : 0;
+      level = Math.min(level, under + (full - under) * k);
+    }
+  }
+  return level * fadeOut;
 };
