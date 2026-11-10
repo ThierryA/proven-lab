@@ -19,9 +19,13 @@ Build a members directory.
 Use Proven Lab: {{BASE}}
 ```
 
+[See more example requests ↓](#examples)
+
 ## 3. Answer a few questions
 
 Your agent reads the Proven Lab instructions and first asks whether this is a new project or a change to something you already have. Then it asks only what it needs (the kind of site, where to build it, or where your existing project lives), does the work, and shows you the result. You sign in where needed and approve before anything goes live.
+
+<a id="examples"></a>
 
 ## Example requests
 
