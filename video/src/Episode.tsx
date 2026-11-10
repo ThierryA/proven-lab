@@ -1,12 +1,12 @@
 import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useVideoConfig } from 'remotion';
 import { theme } from './theme';
 import { Presenter } from './scenes/Presenter';
-import { Callout, LowerThird, Points } from './scenes/HostScene';
-import type { TakeProps } from './types';
+import { Callout, LowerThird, Points } from './scenes/Overlays';
+import type { EpisodeProps } from './types';
 
 // One continuous presenter take. Sections only change the framing (a punch-in, like a second camera)
 // and bring in graphics; the picture and voice never break.
-export const OneTake = ({ script, version, take }: TakeProps) => {
+export const Episode = ({ episode: script, version, take }: EpisodeProps) => {
   const { fps, durationInFrames } = useVideoConfig();
   const t = take ?? { duration: durationInFrames / fps, starts: script.sections.map(() => 0) };
   const at = (sec: number) => Math.round(sec * fps);
@@ -20,7 +20,7 @@ export const OneTake = ({ script, version, take }: TakeProps) => {
         return (
           <Sequence key={s.id} from={from} durationInFrames={Math.max(1, to - from)} name={s.id}>
             {/* The presenter clip runs continuously below; this layer only sets the framing for the section. */}
-            <Presenter clip={t.clip} still={t.still} variant={s.points ? 'side' : 'full'} shot={s.shot} offset={from} />
+            <Presenter clip={t.clip} still={t.still} side={!!s.points} shot={s.shot} offset={from} />
             <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,0.45) 100%)' }} />
             {s.points && <Points points={s.points} />}
             {s.callout && <Callout text={s.callout} />}

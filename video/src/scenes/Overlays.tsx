@@ -1,35 +1,8 @@
-import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
+import { interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
 import { theme } from '../theme';
 import { enter } from './anim';
-import { Presenter } from './Presenter';
-import type { Scene } from '../types';
 
-type Props = { scene: Extract<Scene, { type: 'host' }>; clip?: string; still?: string; series: string; title: string; version: string };
-
-// The presenter on camera: full frame, or beside a short list of points.
-export const HostScene = ({ scene, clip, still, series, title, version }: Props) => {
-  const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
-  const points = scene.points ?? [];
-  return (
-    <AbsoluteFill>
-      <Presenter clip={clip} still={still} variant={points.length ? 'side' : 'full'} shot={scene.shot} />
-      {/* Studio grade: a soft vignette so text reads over any set. */}
-      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,0.45) 100%)' }} />
-      <div style={{ position: 'absolute', top: 56, left: 96, fontFamily: theme.mono, fontSize: 26, color: theme.fg, textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>
-        <span style={{ color: theme.signal }}>■</span> Proven Lab
-      </div>
-      <div style={{ position: 'absolute', top: 56, right: 96, fontFamily: theme.mono, fontSize: 26, color: theme.fg3 }}>v{version}</div>
-
-      {points.length > 0 && <Points points={points} />}
-
-      {scene.callout && <Callout text={scene.callout} />}
-      {scene.lowerThird && <LowerThird series={series} title={title} />}
-    </AbsoluteFill>
-  );
-};
-
-// Series and episode name, in for a few seconds at the start of the scene.
+// Series and episode name, in for a few seconds at the start of the section.
 export const LowerThird = ({ series, title }: { series: string; title: string }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -72,7 +45,7 @@ export const Callout = ({ text }: { text: string }) => {
   );
 };
 
-// A numbered list on the left, each point in turn across the scene.
+// A numbered list on the left, each point in turn across the section.
 export const Points = ({ points }: { points: string[] }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();

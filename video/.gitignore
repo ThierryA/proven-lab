@@ -1,9 +1,6 @@
 node_modules/
 out/
+# Presenter takes, scratch narration and music: generated, not committed.
 public/host/
-# The presenter photo is a real person: keep it out of the repo.
-presenter/
 public/scratch/
-
-# Music tracks: licensed or generated, not committed.
 public/music/

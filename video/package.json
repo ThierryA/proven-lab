@@ -1,12 +1,11 @@
 {
   "name": "provenlab-video",
   "private": true,
-  "description": "Proven Lab tutorial videos, built with Remotion from versioned scripts in tutorials/",
+  "description": "Proven Lab videos: one-take episodes with an AI presenter (HeyGen), edited with Remotion from scripts in episodes/",
   "type": "module",
   "scripts": {
     "studio": "node tools/scratch-voice.mjs && remotion studio src/index.ts",
     "render": "node tools/scratch-voice.mjs && node tools/render.mjs",
-    "still": "remotion still src/index.ts build-an-app out/preview.png --frame=300",
     "presenter": "node tools/presenter.mjs",
     "scratch": "node tools/scratch-voice.mjs",
     "music": "node tools/music.mjs",
