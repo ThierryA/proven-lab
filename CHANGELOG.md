@@ -2,12 +2,13 @@
 
 Proven Lab uses one version for everything it ships: the Claude Code plugin, the `@provenlab/mcp` package and MCP server, the project kit, the skill, the templates, the runbook and the HTTP API. The version lives in `package.json`; `npm run build` stamps it everywhere.
 
-**Every change** gets a line under **Unreleased** in the same commit. **To release:** `npm version minor` (or `patch` / `major`), rename **Unreleased** to the new version and date, add a fresh empty **Unreleased** section, build, commit, and tag `v<version>`.
+**To release:** `npm version minor` (or `patch` / `major`), add a section for the new version and date at the top of the list below, written from the commits since the last tag (`git log v<previous>..HEAD`), build, commit, and tag `v<version>`. This file is public: only released versions appear here.
 
-## Unreleased
+## 0.3.1 · 2026-11-10
 
-- New commands and tools appear on their own after a deploy: MCP session IDs carry a fingerprint of what the server offers, and a session started before a change gets a 404, so clients reconnect and reload the lists.
-- Commands work without the plugin: published at proven-lab.com/commands/<name>.md and via the new `get_command` tool, so agents that only have the link follow them when the user asks in plain words ("plan this", "explain the structure").
+- Commands work without the plugin: each one is published at `proven-lab.com/commands/<name>.md` and through the new `get_command` tool, so agents that only have the link follow a command when the user asks for it in plain words ("plan this", "explain the structure").
+- New commands and tools appear on their own after a deploy: MCP session IDs carry a fingerprint of what the server offers, and a session started before a change is asked to start a new one, which reloads the lists. Sessions opened before this release need one reconnect.
+
 ## 0.3.0 · 2026-11-10
 
 - How to update: plugin, MCP server and project kit, on the Start building page and in the kit setup guide.

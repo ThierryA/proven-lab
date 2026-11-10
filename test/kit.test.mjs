@@ -141,9 +141,10 @@ test('everything Proven Lab ships carries the same version', async () => {
   assert.ok((await (await fetch(`${base}/AGENTS.md`)).text()).includes(`Proven Lab ${version}`), 'runbook');
   const changelog = readFileSync(join(ROOT, 'CHANGELOG.md'), 'utf8');
   assert.ok(changelog.includes(`## ${version}`), 'changelog entry for the current version');
-  assert.ok(/^## Unreleased$/m.test(changelog), 'changelog keeps an Unreleased section');
+  assert.ok(!/^## Unreleased/m.test(changelog), 'the public changelog lists released versions only');
+  assert.ok(!/^[^`\n]*<[a-z][^>`]*>/m.test(changelog.replace(/`[^`]*`/g, '')), 'no raw <tags> that the page would hide');
   const page = await (await fetch(`${base}/changelog`)).text();
-  assert.ok(page.includes(version) && page.includes('Unreleased'), 'changelog page renders the file');
+  assert.ok(page.includes(version), 'changelog page renders the file');
   assert.equal((await fetch(`${base}/CHANGELOG.md`)).status, 200, 'raw changelog served');
 });
 

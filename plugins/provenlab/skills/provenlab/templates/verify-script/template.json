@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A verification script for a plugin: PHP lint on every file, activation, the plugin's post types and REST routes registered, no new PHP errors from the plugin in debug.log, and Plugin Check when it is installed. Exits non-zero on failure. Set WP to the site's WP-CLI command, for example WP=\"wp --path=/path/to/site\".",
   "placeholders": {
     "slug": "the plugin slug",
