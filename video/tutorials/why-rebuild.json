@@ -9,6 +9,13 @@
     "volume": 0.32,
     "underVoice": 0.07
   },
+  "thumbnail": {
+    "at": 101,
+    "lines": [
+      "Why pay agents",
+      "to rebuild?"
+    ]
+  },
   "sections": [
     {
       "id": "hook",

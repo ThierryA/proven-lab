@@ -9,7 +9,8 @@
     "still": "remotion still src/index.ts build-an-app out/preview.png --frame=300",
     "presenter": "node tools/presenter.mjs",
     "scratch": "node tools/scratch-voice.mjs",
-    "music": "node tools/music.mjs"
+    "music": "node tools/music.mjs",
+    "thumbnail": "node tools/thumbnail.mjs"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.542",

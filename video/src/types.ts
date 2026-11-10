@@ -44,6 +44,8 @@ export type TakeScript = {
   title: string;
   camera?: string;
   music?: Music;
+  // YouTube thumbnail: a frame of the take (seconds) and a bold title in two or three short lines.
+  thumbnail?: { at: number; lines: string[] };
   sections: Section[];
 };
 export type Word = { text: string; start_time: number; end_time: number };

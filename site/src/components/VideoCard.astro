@@ -1,0 +1,56 @@
+---
+// A small "watch" card with a gentle float; the video opens in a lightbox (YouTube, no-cookie, loaded on click).
+import { heroVideo as v } from '../data/videos.mjs';
+const { youtubeId = v.youtubeId } = Astro.props;
+---
+{youtubeId && (
+  <div class="video-card-wrap mt-10">
+    <button type="button" class="video-card group flex max-w-[400px] items-center gap-4 border border-line bg-ink-2/80 p-2 pr-5 text-left transition-colors hover:border-line-2" data-video={youtubeId} aria-haspopup="dialog">
+      <span class="relative block aspect-video w-[132px] shrink-0 overflow-hidden">
+        <img src={v.image} alt="" width="640" height="360" loading="eager" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+        <span class="absolute inset-0 flex items-center justify-center bg-ink/20">
+          <span class="flex h-9 w-9 items-center justify-center rounded-full bg-signal text-ink shadow-[0_4px_16px_rgba(0,0,0,0.45)] transition-transform group-hover:scale-110">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
+          </span>
+        </span>
+      </span>
+      <span class="min-w-0">
+        <span class="label block">Watch · {v.duration}</span>
+        <span class="mt-1 block text-[14px] leading-snug text-fg">{v.title}</span>
+      </span>
+    </button>
+  </div>
+)}
+
+{youtubeId && (
+  <dialog class="video-dialog m-auto w-[min(960px,92vw)] bg-transparent p-0 text-fg backdrop:bg-ink/85" aria-label={v.title}>
+    <div class="relative aspect-video w-full border border-line-2 bg-ink">
+      <iframe class="absolute inset-0 h-full w-full" title={v.title} allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+    </div>
+    <form method="dialog" class="mt-3 flex justify-end">
+      <button class="font-mono text-[13px] text-fg-2 hover:text-fg">Close ✕</button>
+    </form>
+  </dialog>
+)}
+
+<style>
+  .video-card-wrap { animation: float 4.5s ease-in-out infinite; }
+  .video-card-wrap:hover, .video-card-wrap:focus-within { animation-play-state: paused; }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @media (prefers-reduced-motion: reduce) { .video-card-wrap { animation: none; } }
+</style>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('.video-dialog');
+  const frame = dialog?.querySelector('iframe');
+  document.querySelectorAll<HTMLButtonElement>('.video-card').forEach((btn) =>
+    btn.addEventListener('click', () => {
+      if (!dialog || !frame) return;
+      frame.src = `https://www.youtube-nocookie.com/embed/${btn.dataset.video}?autoplay=1&rel=0&modestbranding=1`;
+      dialog.showModal();
+    }),
+  );
+  // Stop playback when the lightbox closes (Escape, the button, or a click outside the video).
+  dialog?.addEventListener('close', () => { if (frame) frame.src = ''; });
+  dialog?.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
+</script>

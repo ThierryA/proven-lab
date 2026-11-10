@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import ArchitectureDiagram from '../components/ArchitectureDiagram.astro';
 import GridBackground from '../components/GridBackground.astro';
 import HeroTerminal from '../components/HeroTerminal.astro';
+import VideoCard from '../components/VideoCard.astro';
 import { stats as getStats, wpe } from '../lib/data.mjs';
 import { TOOLS } from '../../../packages/mcp-server/src/tools.mjs';
 const s = getStats();
@@ -60,6 +61,7 @@ const labelRight = 'label lg:order-last lg:text-right';
       <a href="/docs/connect" class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Start building</a>
       <a href="/docs/architecture" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">How it fits together</a>
     </div>
+    <VideoCard />
   </div>
   <div class="min-w-0"><HeroTerminal /></div>
   </div>

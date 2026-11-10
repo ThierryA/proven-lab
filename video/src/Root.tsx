@@ -1,6 +1,8 @@
 import { Composition, staticFile } from 'remotion';
 import { Tutorial, withIntro } from './Tutorial';
 import { OneTake } from './OneTake';
+import { Still } from 'remotion';
+import { Thumbnail } from './Thumbnail';
 import { tutorials } from '../tutorials';
 import type { TakeProps, TakeScript, Timing, TutorialProps, TutorialScript } from './types';
 import pkg from '../../package.json';
@@ -64,6 +66,10 @@ const takeComposition = (script: TakeScript) => (
 export const RemotionRoot = () => (
   <>
     {tutorials.filter(isTake).map(takeComposition)}
+    {tutorials.filter(isTake).filter((s) => s.thumbnail).map((s) => (
+      <Still key={`${s.id}-thumbnail`} id={`${s.id}-thumbnail`} component={Thumbnail} width={1280} height={720}
+        defaultProps={{ frame: `host/${s.id}/frame.jpg`, lines: s.thumbnail!.lines, series: s.series }} />
+    ))}
     {tutorials.filter((s): s is TutorialScript => !isTake(s)).map((script) => (
       <Composition
         key={script.id}
