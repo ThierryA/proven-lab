@@ -141,6 +141,22 @@ for (const top of cliTop) {
 }
 await w('cli-commands.json', { version: cliData.version, commands: cliData.commands, tops: cliPages.map(({ top, description, count }) => ({ top, description, count })) });
 
+// Templates: verified starter files served by get_template and shipped in the skill.
+const tplRoot = join(ROOT, 'content/templates');
+const walkFiles = async (dir, base = dir) => (await Promise.all((await readdir(dir, { withFileTypes: true })).map(async (e) => {
+  const p = join(dir, e.name);
+  return e.isDirectory() ? walkFiles(p, base) : [p.slice(base.length + 1)];
+}))).flat();
+const templates = [];
+for (const name of (await readdir(tplRoot)).sort()) {
+  const dir = join(tplRoot, name);
+  const meta = JSON.parse(await readFile(join(dir, 'template.json'), 'utf8'));
+  const files = [];
+  for (const rel of (await walkFiles(dir)).filter((f) => f !== 'template.json').sort()) files.push({ path: rel, content: await readFile(join(dir, rel), 'utf8') });
+  templates.push({ name, ...meta, files });
+}
+await w('templates.json', templates);
+
 // URLs filled into the kit and the playbook
 const mcpUrl = `${site}/mcp`;
 const fill = (text) => text.replaceAll('{{BASE}}', site).replaceAll('{{MCP_URL}}', mcpUrl);
@@ -151,8 +167,16 @@ await w('AGENTS.md', agentsMd);
 
 // Project kit: files an agent or a person drops into a project, plus SETUP.md and install.sh
 const kitDir = join(ROOT, 'content/kit');
-const kitFiles = ['AGENTS.md', 'CLAUDE.md', '.mcp.json', '.cursor/mcp.json', '.vscode/mcp.json', '.claude/skills/provenlab/SKILL.md'];
-for (const f of kitFiles) await w(`kit/${f}`, f === 'AGENTS.md' ? agentsMd : fill(await readFile(join(kitDir, f), 'utf8')));
+// The skill (Agent Skills format): SKILL.md, references/ (the runbook and every guide, read when a step needs it)
+// and templates/ (verified starter files). Same files in the project kit and the Claude Code plugin.
+const skillFiles = new Map();
+skillFiles.set('SKILL.md', fill(await readFile(join(kitDir, '.claude/skills/provenlab/SKILL.md'), 'utf8')));
+skillFiles.set('references/runbook.md', agentsMd);
+for (const b of blueprints) skillFiles.set(`references/${b.slug}.md`, `# ${b.title}\n` + fill(stripMarkers(b.md)).replace(/^\s*# .*\n/, ''));
+for (const t of templates) { skillFiles.set(`templates/${t.name}/template.json`, JSON.stringify({ description: t.description, placeholders: t.placeholders, next: t.next }, null, 2) + '\n'); for (const f of t.files) skillFiles.set(`templates/${t.name}/${f.path}`, f.content); }
+const skillPaths = [...skillFiles.keys()].map((k) => `.claude/skills/provenlab/${k}`);
+const kitFiles = ['AGENTS.md', 'CLAUDE.md', '.mcp.json', '.cursor/mcp.json', '.vscode/mcp.json', ...skillPaths];
+for (const f of kitFiles) await w(`kit/${f}`, f === 'AGENTS.md' ? agentsMd : f.startsWith('.claude/skills/provenlab/') ? skillFiles.get(f.slice('.claude/skills/provenlab/'.length)) : fill(await readFile(join(kitDir, f), 'utf8')));
 await w('kit/manifest.json', { base: site, mcp: mcpUrl, files: kitFiles.map((path) => ({ path, url: `${site}/kit/${path}` })) });
 await w('kit/SETUP.md', fill(await readFile(join(ROOT, 'content/kit-setup.md'), 'utf8')));
 await w('install.sh', fill(await readFile(join(ROOT, 'scripts/kit/install.sh'), 'utf8')).replace('__FILES__', kitFiles.join(' ')));
@@ -165,7 +189,8 @@ await w('install.sh', fill(await readFile(join(ROOT, 'scripts/kit/install.sh'), 
   await put(P('.claude-plugin/marketplace.json'), { name: 'provenlab', description: 'Proven Lab plugins for Claude Code', owner: { name: 'Proven Lab' }, plugins: [{ name: 'provenlab', source: './plugins/provenlab', description: desc }] });
   await put(P('plugins/provenlab/.claude-plugin/plugin.json'), { name: 'provenlab', description: desc, version: pkg.version, author: { name: 'Proven Lab' }, homepage: site });
   await put(P('plugins/provenlab/.mcp.json'), fill(await readFile(join(kitDir, '.mcp.json'), 'utf8')));
-  await put(P('plugins/provenlab/skills/provenlab/SKILL.md'), fill(await readFile(join(kitDir, '.claude/skills/provenlab/SKILL.md'), 'utf8')));
+  await rm(P('plugins/provenlab/skills/provenlab'), { recursive: true, force: true });
+  for (const [k, v] of skillFiles) await put(P('plugins/provenlab/skills/provenlab', k), v);
   for (const f of await readdir(P('content/plugin-commands'))) await put(P('plugins/provenlab/commands', f), fill(await readFile(P('content/plugin-commands', f), 'utf8')));
 }
 
@@ -210,5 +235,6 @@ await w('openapi/provenlab-api.yaml', YAML.stringify(kitApi));
 await w('tools/openai.json', TOOLS.map((t) => ({ type: 'function', function: { name: t.name, description: t.description, parameters: t.inputSchema } })));
 await w('tools/anthropic.json', TOOLS.map((t) => ({ name: t.name, description: t.description, input_schema: t.inputSchema })));
 const isPublic = (f) => !(f.tags.access || []).includes('private') && !f.tags.deprecated;
+
 await w('stats.json', { wordpress: core.version, functions: entities.functions.length, functionsPublic: entities.functions.filter(isPublic).length, cliLeafCommands: cliData.commands.filter((c) => !c.hasChildren).length, classes: entities.classes.length, methods: entities.methods.length, hooks: entities.hooks.length, wpeOperations: ops.length, wpeVersion: spec.info.version, cliCommands: cliData.commands.length, cliVersion: cliData.version, wpeDocs: wpeDocs.length, domains: domains.length, blueprints: blueprints.length, builtAt: new Date().toISOString() });
 console.log('dist built', JSON.parse(await readFile(join(DIST, 'stats.json'), 'utf8')));

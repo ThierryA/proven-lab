@@ -26,12 +26,14 @@ claude mcp add --transport http --scope user wpengine https://api.ai.wpengine.co
 
 Ask the user to sign in: `/mcp` → `wpengine` → **Authenticate** in Claude Code (OAuth, no API key); other clients add a remote MCP server with that URL. Check with `wpe_list_accounts`. The server is in closed beta: read its tool list rather than assuming names.
 
-No WP Engine account: offer to set one up (https://wpengine.com/plans/) or switch to `local-development`.
+No WP Engine account: say it is a paid service, offer to set one up (https://wpengine.com/plans/), or switch to `local-development` (free).
+
+The server is in beta. If sign-in fails or the tools you need are missing, tell the user, build locally (`local-development`), and deploy with the GitHub Action or a plugin zip (`wpe-deployment`).
 
 ## 2. Find or create the site
 
 - **Existing site:** `wpe_list_sites`, `wpe_list_installs`. Work on its **staging** install; create one with `wpe_create_install` if it has none.
-- **New site:** `wpe_create_site`, then `wpe_create_install` with `environment: staging` (a name of 3 to 14 lowercase letters and digits). Poll `wpe_get_install` until active (5 to 15 minutes) and tell the user it is on its way.
+- **New site:** `wpe_create_site`, then `wpe_create_install` with `environment: staging` (a name of 3 to 14 lowercase letters and digits). Check `wpe_get_install` every minute or two, up to 20 minutes (it usually takes 5 to 15), and tell the user it is on its way; if it is still not active, tell them and stop.
 - Tools that change things preview first: explain in one sentence, then call again with `confirm: true` after the user's approval.
 
 Three IDs, never interchangeable; look them up, never guess: the hosting site ID (UUID, `wpe_list_sites`), the install ID (UUID, `wpe_list_installs`) for one environment, used by the sandbox, backups and caches, and the WordPress site ID (`site_…`, `list_account_sites`) for Abilities and the knowledge base.
@@ -46,7 +48,7 @@ Three IDs, never interchangeable; look them up, never guess: the hosting site ID
 - AI features: install the WP Engine AI plugins with WP-CLI (`wpe-ai-plugins`) and ask the user to click **Connect** once in the staging site's WP Admin.
 - Keep a copy of every file you write in the user's working folder; for a site with a repository, commit the change there too.
 
-Send the staging link (`wpe_get_install`, primary domain) with what to try, and iterate until the user is happy.
+Send the staging link (`wpe_get_install`, primary domain) with what to try, and iterate until the user is happy. To reach WP Admin (for **Connect**, or to look around), the user opens the User Portal → the environment → **WP Admin**.
 
 ## 4. Content on a live site
 

@@ -1,0 +1,9 @@
+{
+  "description": "GitHub Actions workflow for WP Engine: every push to main deploys wp-content/ to staging; production deploys when the workflow is started by hand (and waits for approval if the repository has a `production` environment). Uses WP Engine's official action. The SSH key is for GitHub, set up by the user through WP Engine's guided GitHub Action setup; agents never create it.",
+  "placeholders": {},
+  "next": [
+    "Ask the user to connect the repository with WP Engine's guided setup (User Portal → Profile → GitHub Action), which provides the WPE_SSHG_KEY_PRIVATE secret.",
+    "Set the environment names: gh variable set WPE_STAGING_ENV --body <staging install>; gh variable set WPE_PRODUCTION_ENV --body <production install>",
+    "Without a staging environment, delete the staging job and the `needs: staging` line."
+  ]
+}

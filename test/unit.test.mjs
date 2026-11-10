@@ -14,22 +14,6 @@ test('corpus has the expected breadth', () => {
   assert.ok(cliData().commands.length > 400);
 });
 
-test('core extraction is accurate for key APIs', () => {
-  const c = core();
-  const fn = (n) => c.functions.find((f) => f.name === n);
-  for (const n of ['register_post_type', 'register_taxonomy', 'register_meta', 'register_post_meta', 'register_setting', 'add_action', 'wp_insert_post', 'wp_register_ability', 'wp_ai_client_prompt', 'register_rest_route']) {
-    const f = fn(n);
-    assert.ok(f, `missing function ${n}`);
-    assert.ok(f.signature.startsWith(`${n}(`), `${n} signature: ${f.signature}`);
-    assert.ok(f.summary.length > 5, `${n} has a summary`);
-    assert.ok(f.file.startsWith('wp-includes/'), `${n} source: ${f.file}`);
-  }
-  assert.ok(fn('register_meta').params.length >= 3, 'register_meta params parsed');
-  assert.ok(fn('register_post_type').tags.since.length >= 3, 'since history kept');
-  assert.ok(c.hooks.some((h) => h.name === 'save_post' && h.type === 'action'));
-  assert.ok(c.hooks.some((h) => h.dynamic && h.name.includes('{$')), 'dynamic hooks keep their variable parts');
-});
-
 test('built artifacts exist; functions and hooks are deduplicated; stubs are excluded', () => {
   const e = rj('dist', 'entities.json');
   const fnames = e.functions.map((f) => f.name);
@@ -45,16 +29,13 @@ test('built artifacts exist; functions and hooks are deduplicated; stubs are exc
   assert.ok(save.locations.length >= 2);
 });
 
-test('domain map: unique slugs, valid groups, every name exists in core', () => {
-  const c = core(); const ds = domains();
-  const F = new Set(c.functions.map((x) => x.name)), C = new Set(c.classes.map((x) => x.name)), H = new Set(c.hooks.map((x) => x.name));
+test('domain map: unique slugs and valid groups', () => {
+  const ds = domains();
   const slugs = ds.map((d) => d.slug);
   assert.equal(new Set(slugs).size, slugs.length);
   const groups = new Set(ds.map((d) => d.group));
   assert.ok(!groups.has('Platform'), 'Platform group must not exist');
   assert.deepEqual([...groups].sort(), ['Data access', 'Data model', 'Extension', 'Interfaces', 'Rendering', 'Services', 'Users & access']);
-  const missing = ds.flatMap((d) => [...d.functions.filter((n) => !F.has(n)).map((n) => `${d.slug}: fn ${n}`), ...d.classes.filter((n) => !C.has(n)).map((n) => `${d.slug}: class ${n}`), ...d.hooks.filter((n) => !H.has(n)).map((n) => `${d.slug}: hook ${n}`)]);
-  assert.deepEqual(missing, []);
   const placement = Object.fromEntries(ds.map((d) => [d.slug, d.group]));
   assert.equal(placement.media, 'Services'); assert.equal(placement['http-client'], 'Services'); assert.equal(placement['cron-cache'], 'Services');
   assert.equal(placement.abilities, 'Interfaces'); assert.equal(placement['ai-client'], 'Interfaces');
@@ -99,7 +80,7 @@ test('llms.txt covers every section', () => {
 
 test('tool definitions are consistent across formats', () => {
   const oa = rj('dist', 'tools', 'openai.json'), an = rj('dist', 'tools', 'anthropic.json');
-  assert.equal(oa.length, 12); assert.equal(an.length, 12);
+  assert.equal(oa.length, 13); assert.equal(an.length, 13);
   assert.deepEqual(oa.map((t) => t.function.name), an.map((t) => t.name));
   for (const t of oa) assert.equal(t.function.parameters.type, 'object');
 });

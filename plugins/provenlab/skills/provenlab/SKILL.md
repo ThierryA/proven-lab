@@ -5,7 +5,7 @@ description: Build applications on WordPress as the application layer (post type
 
 # Proven Lab: build on WordPress, don't rebuild it
 
-Follow the playbook in `AGENTS.md` at the project root (the full version is at https://proven-lab.com/AGENTS.md).
+Follow the runbook in `references/runbook.md` (the same text as https://proven-lab.com/AGENTS.md). Each step names a guide: read `references/<slug>.md`, or call `get_blueprint`. Start new code from `templates/` (or `get_template`), and record decisions in `.provenlab/project.md`.
 
 ## Look things up instead of guessing
 

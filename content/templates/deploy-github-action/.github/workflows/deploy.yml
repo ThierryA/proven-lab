@@ -1,0 +1,33 @@
+name: Deploy
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: wpengine/github-action-wpe-site-deploy@v3
+        with:
+          WPE_SSHG_KEY_PRIVATE: ${{ secrets.WPE_SSHG_KEY_PRIVATE }}
+          WPE_ENV: ${{ vars.WPE_STAGING_ENV }}
+          SRC_PATH: "wp-content/"
+          REMOTE_PATH: "wp-content/"
+          PHP_LINT: TRUE
+          SCRIPT: "wp-content/deploy/post-deploy.sh"
+  production:
+    needs: staging
+    if: github.event_name == 'workflow_dispatch'
+    environment: production
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: wpengine/github-action-wpe-site-deploy@v3
+        with:
+          WPE_SSHG_KEY_PRIVATE: ${{ secrets.WPE_SSHG_KEY_PRIVATE }}
+          WPE_ENV: ${{ vars.WPE_PRODUCTION_ENV }}
+          SRC_PATH: "wp-content/"
+          REMOTE_PATH: "wp-content/"
+          PHP_LINT: TRUE
+          SCRIPT: "wp-content/deploy/post-deploy.sh"

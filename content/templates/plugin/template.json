@@ -1,0 +1,15 @@
+{
+  "description": "A WordPress plugin for the app: data model (post type and registered meta), a REST route and an Ability, each with a permission check, plus WordPress Coding Standards, PHPStan and Composer scripts. Activate it with WP-CLI; add tests with `wp scaffold plugin-tests <slug>`.",
+  "placeholders": {
+    "slug": "plugin folder and text domain, lowercase with dashes, e.g. book-club",
+    "name": "human-readable plugin name, e.g. Book Club",
+    "prefix": "PHP prefix, lowercase with underscores, derived from slug, e.g. book_club",
+    "namespace": "PHP namespace, derived from slug, e.g. BookClub"
+  },
+  "next": [
+    "Rename the example post type, meta, route and ability to the app's real model; delete what the app does not need.",
+    "Copy the files to wp-content/plugins/{{slug}}/ and run: wp plugin activate {{slug}}",
+    "Developers: composer install && composer lint && composer stan",
+    "Add tests: wp scaffold plugin-tests {{slug}} (PHPUnit with the WordPress test suite)."
+  ]
+}

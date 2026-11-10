@@ -22,14 +22,14 @@ Fetch each file from `{{BASE}}/kit/<path>`:
 
 | Path | Purpose | If the file already exists |
 |---|---|---|
-| `AGENTS.md` | Playbook for every agent | Append a section `## Proven Lab` that says to follow `{{BASE}}/AGENTS.md`, and copy in its Workflow and Hard rules |
+| `AGENTS.md` | The runbook for every agent | Keep the project's file and add a section `## Proven Lab` with one line: follow the runbook in `.claude/skills/provenlab/references/runbook.md` (also at `{{BASE}}/AGENTS.md`) |
 | `CLAUDE.md` | Makes Claude Code read `AGENTS.md` | Add the line `@AGENTS.md` if it is not there |
 | `.mcp.json` | Claude Code project MCP config (`provenlab` and `wpengine`) | Add both entries under `mcpServers`; keep the other servers |
-| `.cursor/mcp.json` | Cursor MCP config | Add the `provenlab` entry under `mcpServers` |
-| `.vscode/mcp.json` | VS Code MCP config | Add the `provenlab` entry under `servers` |
-| `.claude/skills/provenlab/SKILL.md` | Claude Code skill: when and how to use the tools | Replace it only if it is an older Proven Lab skill |
+| `.cursor/mcp.json` | Cursor MCP config (`provenlab` and `wpengine`) | Add both entries under `mcpServers` |
+| `.vscode/mcp.json` | VS Code MCP config (`provenlab` and `wpengine`) | Add both entries under `servers` |
+| `.claude/skills/provenlab/` | The skill: `SKILL.md`, `references/` (runbook and guides) and `templates/` (starter files) | Replace it only if it is an older Proven Lab skill |
 
-The file list is also at `{{BASE}}/kit/manifest.json`. A person can run `curl -fsSL {{BASE}}/install.sh | sh` instead; it adds missing files and leaves existing ones alone.
+The full file list is at `{{BASE}}/kit/manifest.json`. If the Proven Lab Claude Code plugin is already installed, skip the skill and the MCP entries: the plugin provides them. A person can run `curl -fsSL {{BASE}}/install.sh | sh` instead; it adds missing files and leaves existing ones alone.
 
 ## 3. Verify
 
@@ -39,4 +39,4 @@ The file list is also at `{{BASE}}/kit/manifest.json`. A person can run `curl -f
 
 ## 4. Start building
 
-Read the playbook (`AGENTS.md`). Before writing code, ask the user which setup they want (Classic, Headless Frontend, Headless Admin, Headless Frontend + Admin), and check whether Local (localwp.com) is installed to run WordPress locally (`get_blueprint local-development`); then follow the matching blueprint.
+Follow the runbook from step 0: read `.provenlab/project.md` if it exists, then find out whether this is a new or an existing project (ask the user if the request does not say). For a new project, the runbook's step 1 covers the setup (Classic, Headless Frontend, Headless Admin, Headless Frontend + Admin) and where to build.

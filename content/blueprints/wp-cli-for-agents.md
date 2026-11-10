@@ -58,7 +58,7 @@ Test authorization with the real user: `wp --user=editor1 eval 'var_dump( curren
 ## 4. Seed, import, migrate
 
 ```bash
-wp post generate --count=20 --post_type=project     # fake content for UI work
+wp post create --post_type=book_club_item --post_title="The Overstory" --post_status=draft --porcelain   # realistic sample content, as drafts
 wp plugin install wordpress-importer --activate   # wp import needs it
 wp import content.xml --authors=create
 wp media import ./images/*.jpg --porcelain

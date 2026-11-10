@@ -17,13 +17,14 @@ Use these plugins by default for every AI feature on a WordPress site. The site 
 
 ## 1. Install
 
-WordPress 7.0 or newer (the connector uses the core AI Client). Install the hub first; the others need it:
+WordPress 7.0 or newer (the connector uses the core AI Client; set the app plugin's `Requires at least` to 7.0). Install the hub and the connector; add the chatbot or Coworker only when the table says so:
 
 ```bash
 wp plugin install "https://wp-product-info.wpesvc.net/v1/plugins/wpe-hub?download" --activate
 wp plugin install "https://wp-product-info.wpesvc.net/v1/plugins/wpe-ai-connector?download" --activate
-wp plugin install "https://wp-product-info.wpesvc.net/v1/plugins/wpe-ai-chatbot?download" --activate
-wp plugin install "https://wp-product-info.wpesvc.net/v1/plugins/power-coworker?download" --activate
+# Only if needed:
+# wp plugin install "https://wp-product-info.wpesvc.net/v1/plugins/wpe-ai-chatbot?download" --activate
+# wp plugin install "https://wp-product-info.wpesvc.net/v1/plugins/power-coworker?download" --activate
 ```
 
 | Plugin (slug) | Name in WP Admin | Install when |
@@ -37,7 +38,13 @@ In Local, run these in the site shell or use Local's MCP tools (`wp_plugin_insta
 
 ## 2. Connect the site (once, by a person)
 
-An administrator opens **WP Engine AI** in WP Admin (`/wp-admin/admin.php?page=power-overview`), clicks **Connect**, signs in with their WP Engine account and picks a project. This step cannot be automated: there is no WP-CLI command or constant for it. Ask the user to do it, then check:
+This step cannot be automated. Give the user these exact steps (it needs a WP Engine account with AI access, and AI requests use its credits):
+
+1. Open WP Admin: `<site URL>/wp-admin` (on WP Engine: User Portal → the environment → **WP Admin**).
+2. Go to **WP Engine AI** in the left menu (`/wp-admin/admin.php?page=power-overview`) and click **Connect**.
+3. Sign in with the WP Engine account and choose the project.
+
+Each environment (local, staging, production) connects separately. Running Abilities through the WP Engine MCP server additionally needs each person's **Connect WordPress User** on the same screen. Then check:
 
 ```bash
 wp eval 'var_dump( function_exists( "wpe_auth_is_connected" ) && wpe_auth_is_connected() );'
@@ -148,7 +155,7 @@ Browser: get a token, then talk to the API directly:
 
 ```js
 const { session_id, token } = await fetch('/wp-json/my-app/v1/assistant/session', {
-  method: 'POST', headers: { 'X-WP-Nonce': wpApiSettings.nonce },
+  method: 'POST', headers: { 'X-WP-Nonce': myApp.nonce }, // pass wp_create_nonce( 'wp_rest' ) with wp_localize_script() or wp_add_inline_script()
 }).then((r) => r.json());
 
 const events = `https://api.ai.wpengine.com/v1/sessions/${session_id}/events`;

@@ -20,7 +20,7 @@ for f in $FILES; do
     continue
   fi
   case "$f" in */*) mkdir -p "${f%/*}" ;; esac
-  curl -fsSL "$BASE/kit/$f" -o "$f"
+  curl -fsSLg "$BASE/kit/$f" -o "$f"
   added="$added $f"
 done
 

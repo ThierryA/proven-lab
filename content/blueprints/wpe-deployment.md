@@ -35,7 +35,8 @@ Use the first option that fits. GitHub is not required.
 |---|---|
 | Repository with WP Engine's GitHub Action set up | Push to `main` (staging), then run the workflow for production (section below) |
 | Repository without the Action | Offer to set it up; if the user prefers not to, use the next row |
-| No repository, or no GitHub | Write the plugin's files to the target environment with the WP Engine MCP server's `sandbox_write`, then `wp plugin activate <app>` in `sandbox_bash`. Changed files only. |
+| No repository, or no GitHub | Write the plugin's and the theme's changed files to the target environment with the WP Engine MCP server's `sandbox_write`, then `wp plugin activate <slug>` in `sandbox_bash` |
+| WP Engine MCP server unavailable | Zip the plugin (and theme) and ask the user to upload it in WP Admin → Plugins → Add New → Upload, or set up the GitHub Action |
 | Site built in Local | `local_wpe_push` (`local-development`) to staging. A push replaces the environment's files and database: to production only before launch |
 | Production not launched yet | `wpe_copy_install` from staging to production (copies everything; the user types the production name to confirm) |
 
@@ -48,7 +49,8 @@ WP Engine's GitHub Action (`wpengine/github-action-wpe-site-deploy`) copies the 
 1. Ask the user to connect the repository with WP Engine's guided setup (User Portal → **Profile → GitHub Action**, https://my.wpengine.com/profile/github_action). It creates the deploy key and tells them to save it as the `WPE_SSHG_KEY_PRIVATE` repository secret.
 2. Environment names: `gh variable set WPE_STAGING_ENV --body <staging install>` and `gh variable set WPE_PRODUCTION_ENV --body <production install>`.
 3. Optional: a `production` environment in the repository settings with the user as required reviewer.
-4. Add `.github/workflows/deploy.yml`. A push to `main` deploys staging; production runs when the workflow is started by hand (**Actions → Deploy → Run workflow**). Without staging, drop the `staging` job and the `needs` line.
+4. Repository layout: the workflow below deploys a repository whose root contains `wp-content/` (plugin and theme together). For a repository that holds only the plugin, use `SRC_PATH: "."` and `REMOTE_PATH: "wp-content/plugins/<slug>/"`, and exclude development files with a `.deployignore` and `FLAGS: -azvr --inplace --exclude=.* --exclude-from=.deployignore`. If the plugin has Composer dependencies, add a `composer install --no-dev` step before the deploy.
+5. Add `.github/workflows/deploy.yml` (`get_template` with `deploy-github-action`). A push to `main` deploys staging; production runs when the workflow is started by hand (**Actions → Deploy → Run workflow**). Without staging, drop the `staging` job and the `needs` line.
 
 ```yaml
 name: Deploy

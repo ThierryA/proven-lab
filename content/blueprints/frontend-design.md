@@ -71,8 +71,10 @@ Define in the child theme's `theme.json` (`settings`): `color.palette` (neutrals
 Take screenshots of every new page at three widths with your browser tool, or Playwright:
 
 ```bash
-npx playwright screenshot --viewport-size=375,812 http://my-site.local/ home-mobile.png
-npx playwright screenshot --viewport-size=1280,800 http://my-site.local/ home-desktop.png
+npx playwright install chromium   # once
+npx playwright screenshot --viewport-size=375,812 http://my-site.local/ home-375.png
+npx playwright screenshot --viewport-size=768,1024 http://my-site.local/ home-768.png
+npx playwright screenshot --viewport-size=1280,800 http://my-site.local/ home-1280.png
 ```
 
 Look at them and fix before reporting: alignment, spacing rhythm, contrast, text that wraps badly, overflowing elements, empty or placeholder content, and anything on the "avoid" list. Then show the user the screenshots with the link.

@@ -29,8 +29,8 @@ test('pages render with the right content', async () => {
     ['/docs/ai-api/searchCollection', 'text/html', ['searchCollection', '/v1/kb/collections']],
     ['/docs/ai-api/getCredits', 'text/html', ['Cloud AI API', 'Credits']],
     ['/docs/ai-api/registerSite', 'text/html', ['Cloud AI API', 'Site connection']],
-    ['/docs/custom-app', 'text/html', ['register_post_meta']],
-    ['/docs/classic-wordpress', 'text/html', ['single-project.php', 'WP Admin']],
+    ['/docs/custom-app', 'text/html', ['authorize-application']],
+    ['/docs/classic-wordpress', 'text/html', ['register_block_template', 'WP Admin']],
     ['/docs/architecture', 'text/html', ['data-arch', 'Application layer', 'AI API', 'Classic', 'Headless Frontend', 'Headless Admin', 'Headless Frontend + Admin', 'Data &amp;', 'sandboxed session']],
     ['/docs/wpe-deployment', 'text/html', ['Headless Platform', 'optional', 'staging', 'github-action-wpe-site-deploy', 'WP Engine MCP server']],
     ['/docs/connect', 'text/html', ['@provenlab/mcp']],
@@ -98,7 +98,9 @@ test('REST mirror of the tools', async () => {
 
 async function exerciseMcp(client) {
   const { tools } = await client.listTools();
-  assert.equal(tools.length, 12);
+  assert.equal(tools.length, 13);
+  assert.ok(tools.every((t) => t.annotations?.readOnlyHint === true), 'every tool is read-only');
+  const text = async (name, args) => (await client.callTool({ name, arguments: args })).content[0].text;
   const call = async (name, args) => { const r = await client.callTool({ name, arguments: args }); return { isError: r.isError, data: JSON.parse(r.content[0].text) }; };
   const domains = await call('list_domains', {});
   assert.ok(domains.data.length === 22 && domains.data.every((d) => d.group));
@@ -110,11 +112,12 @@ async function exerciseMcp(client) {
   assert.ok(cls.data.methods.length > 20);
   const hook = await call('get_hook', { name: 'save_post' });
   assert.equal(hook.data.params.length, 3);
-  const bp = await call('get_blueprint', { slug: 'custom-app' });
-  assert.ok(bp.data.markdown.includes('register_post_meta'));
-  assert.equal((await call('list_blueprints', {})).data.length, 12);
+  assert.match(await text('get_blueprint', { slug: 'custom-app' }), /authorize-application/);
+  assert.match(await text('get_blueprint', { slug: 'runbook' }), /^# Proven Lab runbook/);
+  const list = (await call('list_blueprints', {})).data; assert.equal(list.length, 13); assert.equal(list[0].slug, 'runbook');
+  const tpl = (await call('get_template', { name: 'plugin', slug: 'book-club' })).data; assert.ok(tpl.files.some((f) => f.path === 'wp-content/plugins/book-club/book-club.php'));
   const op = await call('get_ai_operation', { operationId: 'searchCollection' });
-  assert.equal(op.data.method, 'POST'); assert.equal(op.data.path, '/v1/kb/collections/{id}/search');
+  assert.equal(op.data.method, 'POST'); assert.match(op.data.url, /\/v1\/kb\/collections\/\{id\}\/search$/); assert.match(op.data.howToCall.php, /wpe_auth_api_request/);
   assert.ok((await call('list_cli_commands', { filter: 'cron' })).data.length >= 5);
   const bad = await call('get_function', { name: 'nope_nope' });
   assert.equal(bad.isError, true);

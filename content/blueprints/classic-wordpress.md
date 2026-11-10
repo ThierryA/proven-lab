@@ -1,10 +1,10 @@
 ---
 nav: "Classic"
 title: "Build: Classic (WP Admin and WordPress templating)"
-summary: Everything runs inside WordPress. Editors use WP Admin, and WordPress renders the frontend with its PHP templates. The simplest setup, one runtime to deploy.
+summary: Everything runs inside WordPress. Editors use WP Admin; a block theme renders the frontend, and the plugin ships the templates for its own content types. The simplest setup, one runtime to deploy.
 agent_does:
   - "Builds your app as a WordPress plugin: content types, fields, permissions, pages."
-  - "Uses WordPress's own admin and templates."
+  - "Uses WordPress's own admin and a block theme designed for your site."
 you_do:
   - "Nothing, unless the agent asks a question about what you want."
 ---
@@ -13,50 +13,56 @@ you_do:
 
 > **Runbook step 3 · Build,** for the Classic setup, and for the frontend of Headless Admin. **Next:** step 4, `wpe-ai-plugins` if the app needs AI; otherwise step 5, `wp-cli-for-agents`.
 
-**Admin:** WP Admin · **Frontend:** WordPress templating · **Deploy:** WordPress.
+**Admin:** WP Admin · **Frontend:** a block theme · **Deploy:** the plugin and the theme.
 
-Pick this for "build me a website": content-led, server-rendered pages, fewest moving parts. To swap the admin or the frontend for a custom app later (Headless Admin, Headless Frontend), see `custom-app`; the data model does not change.
+## 1. The plugin: data model and logic
 
-## 1. Define the model
+Start from `get_template` with `plugin` and the app's slug, then replace the example post type, meta, route and ability with the app's model. WP Admin lists a public post type automatically. Keep `show_in_rest => true` so the block editor can edit it. Registered meta has no editing UI by default: add a block editor panel, `add_meta_box()`, or bind it to blocks (below).
 
-Same as every setup: a plugin in `wp-content/plugins/<app>/` (activated with `wp plugin activate <app>`) that registers post types, taxonomies and fields on `init` (`register_post_type`, `register_taxonomy`, `register_post_meta`, `register_meta`). WP Admin lists the post type automatically (`show_ui` defaults to the value of `public`). Set `show_in_rest => true` on post types and taxonomies so the block editor can edit them; without it the post type falls back to the classic editor. Registered meta has no editing UI by default: add one with `add_meta_box()`, a block editor sidebar panel, or block bindings.
+## 2. The look: a block theme
 
-## 2. Render with the template hierarchy
+New sites use a block theme: start from `get_template` with `block-theme-child` (a child of the default theme) and set its design tokens from the brief in `frontend-design`. Pages, headers and footers are templates, template parts and patterns that editors can change in the Site Editor.
 
-For the look itself (brief, `theme.json` tokens, layout, screenshot review), follow `frontend-design`.
-
-A theme (block theme or classic PHP theme) renders each page. WordPress picks the template from the template hierarchy, for example `single-{post_type}.php`, `archive-{post_type}.php` (only if the post type sets `has_archive`), `page.php`, then `index.php`. Reusable partials go in `template-parts/` and load with `get_template_part()`.
+**Templates for the plugin's post types ship with the plugin**, so they work with any block theme. Register them on `init` with `register_block_template()` (WordPress 6.7+); show registered meta with block bindings (`core/post-meta`, WordPress 6.5+; the meta needs `show_in_rest`):
 
 ```php
-<?php
-// single-project.php
-get_header();
-while ( have_posts() ) : the_post();
-	$budget = get_post_meta( get_the_ID(), 'budget', true );
-	?>
-	<article <?php post_class(); ?>>
-		<h1><?php the_title(); ?></h1>
-		<p>Budget: <?php echo esc_html( $budget ); ?></p>
-		<?php the_content(); ?>
-	</article>
-<?php endwhile;
-get_footer();
+add_action( 'init', function () {
+	if ( ! function_exists( 'register_block_template' ) ) {
+		return;
+	}
+	register_block_template(
+		'book-club//single-book_club_item',
+		array(
+			'title'       => __( 'Single item', 'book-club' ),
+			'description' => __( 'Displays one item with its price.', 'book-club' ),
+			'post_types'  => array( 'book_club_item' ),
+			'content'     => '<!-- wp:template-part {"slug":"header"} /-->
+<!-- wp:group {"tagName":"main","layout":{"type":"constrained"}} --><main class="wp-block-group">
+<!-- wp:post-title {"level":1} /-->
+<!-- wp:post-featured-image /-->
+<!-- wp:paragraph {"metadata":{"bindings":{"content":{"source":"core/post-meta","args":{"key":"book_club_price"}}}}} --><p></p><!-- /wp:paragraph -->
+<!-- wp:post-content /-->
+</main><!-- /wp:group -->
+<!-- wp:template-part {"slug":"footer"} /-->',
+		)
+	);
+} );
 ```
 
-Core APIs: `have_posts`, `the_post`, `the_title`, `the_content`, `get_template_part`, `WP_Query`, `wp_enqueue_script`, `add_theme_support`. For a block theme, use `templates/single-project.html` and blocks instead of PHP.
+Archives work the same way (`archive-book_club_item`, with a `core/query` block); the post type needs `has_archive`.
 
-Escape on output (`esc_html`, `esc_attr`, `esc_url`, `wp_kses_post`) and sanitize on input (`sanitize_text_field`, `sanitize_key`).
+**Existing classic (PHP) theme:** keep its approach. Add `single-{post_type}.php` and `archive-{post_type}.php` to the theme (or a child theme), using `get_header()`, the loop and `get_footer()`, and escape every value (`esc_html()`, `esc_attr()`, `esc_url()`). Never put PHP templates in a block theme: `get_header()` there loads a deprecated fallback.
 
 ## 3. Add AI
 
-Call the Cloud AI API from PHP with the WordPress AI Client (`wp_ai_client_prompt`) or `wp_remote_post`, and keep the knowledge base in sync from `save_post`. See `ai-features`.
+Through the WP Engine AI plugins, with no API key: `wpe-ai-plugins`.
 
-## 4. Verify with WP-CLI
+## 4. Verify
 
 ```bash
-wp post-type list --fields=name,public
-wp post create --post_type=project --post_title="Smoke test" --post_status=publish --porcelain
-wp theme list --status=active
+wp post-type list --fields=name,public,show_in_rest --format=json
+wp post create --post_type=book_club_item --post_title="The Overstory" --post_status=draft --porcelain
+wp theme list --status=active --fields=name,version
 ```
 
-Then open the post's URL to check the template renders.
+Open the draft's preview link and the archive, check the layout at phone and desktop widths (`frontend-design`), then delete test posts the user did not ask for.

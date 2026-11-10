@@ -20,7 +20,7 @@ On a WordPress site, use the **WP Engine AI plugins** first (`wpe-ai-plugins`): 
 
 ## Use the Cloud AI API for every AI capability
 
-When the app needs AI, call the Cloud AI API (through the plugins when possible). Do not use browser APIs (such as the Web Speech API) or another provider's SDK unless the user asks for it. One key, one bill, the same models in every setup, and the calls run on your server.
+When the app needs AI, call the Cloud AI API. Do not use browser APIs (such as the Web Speech API) or another provider's SDK unless the user asks for it.
 
 | The user asks for | Operation |
 |---|---|
@@ -52,7 +52,7 @@ Every request except the model catalog (`GET /v1/models`, `getModelSchema`) need
 - **Account key** (`wpe_`, called a *project* key in the API): service-to-service. Use this for a server. Agents and sessions require a key scoped to the project.
 - **User key** (`wpe_pat_`, called a *personal* key): acts as the person who created it.
 - **Scopes:** each endpoint needs one scope at `read` or `write`: `chat`, `image`, `speech`, `transcribe` (these four need `write`), `collections`, `documents`, `search`, `agents`, `session_events`. A *Restricted* key can only set `chat`, `image`, `speech` and `transcribe`; for the knowledge base, agents or sessions, create a *Full access* or *Read only* key.
-- Keep keys on the server. Browser code calls your server, which calls the API. (The spec mentions short-lived browser session tokens, `wpbs_`, but does not document how to create them yet.)
+- Keep keys on the server. For an interactive chat in the browser, let WordPress mint a short-lived browser session token (`wpe-ai-plugins`, section 4) instead of exposing a key.
 
 ## Pattern 1: gateway from Node
 
@@ -67,23 +67,9 @@ const r = await ai.chat.completions.create({
 });
 ```
 
-## Pattern 2: gateway from PHP inside WordPress
-
-On WordPress 7.0+, use the core AI Client. Install and activate the **WP Engine AI Connector** and **WP Engine AI** plugins, then connect the site under **Settings → Connectors → WP Engine AI Connector**.
-
-```php
-$text = wp_ai_client_prompt( 'Write an excerpt for: ' . $content )->generate_text();
-if ( is_wp_error( $text ) ) {
-	// No provider configured, prompt blocked (code prompt_prevented), or the request failed.
-}
-```
-
-- `wp_ai_client_prompt()` returns a `WP_AI_Client_Prompt_Builder`. It forwards snake_case calls such as `generate_text()` to the bundled PHP AI Client (`generateText()`) and returns a `WP_Error` instead of throwing.
-- The connector only attaches credentials for logged-in users with `edit_posts`, WP-CLI and WP-Cron. Requests from anonymous visitors fail unless the site filters `wpe_ai_connector_authorize_request`; those requests spend the site's credits.
-- `using_abilities()` declares registered Abilities as tools for the model. It does not run them: execute the model's tool calls with `WP_AI_Client_Ability_Function_Resolver` and send the results back.
-- Check `get_function wp_ai_client_prompt` and `get_class WP_AI_Client_Prompt_Builder` for the methods in your WordPress version.
-
 ## Pattern 3: search over site content (knowledge base)
+
+On a WordPress site, turn on the WP Engine AI plugin's knowledge base sync instead (`wpe-ai-plugins`). The steps below are for content that lives outside WordPress.
 
 1. Create a collection with `createCollection`. Indexing and search need only an API key with the knowledge base scopes; the site does not have to be connected.
 2. Load existing content with `bulkIndexDocuments` (up to 100 documents per call). Map each post to a document: `id` = post ID (no `/`), `content` = plain text, `title`, `uri` = permalink, `type` = post type, `modified_at`; put terms in `metadata` (stored as keywords for exact-match filters).

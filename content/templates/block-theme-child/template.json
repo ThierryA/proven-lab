@@ -1,0 +1,12 @@
+{
+  "description": "A child theme of the default block theme with the design tokens in theme.json: a neutral palette and one accent, two font families, a type scale, a spacing scale and content widths. Fill the tokens from the design brief (blueprint frontend-design).",
+  "placeholders": {
+    "slug": "theme folder and text domain, e.g. book-club",
+    "name": "theme name, e.g. Book Club"
+  },
+  "next": [
+    "Replace the palette, fonts and sizes with the design brief's values; bundle font files under assets/fonts/ and reference them in fontFace.",
+    "Copy to wp-content/themes/{{slug}}/ and run: wp theme activate {{slug}}",
+    "Build pages from templates, template parts and patterns; review screenshots at 375, 768 and 1280 px (blueprint frontend-design)."
+  ]
+}

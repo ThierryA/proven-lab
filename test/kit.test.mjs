@@ -21,7 +21,9 @@ const tmp = () => mkdtempSync(join(tmpdir(), 'provenlab-kit-'));
 
 test('kit files, manifest, setup guide and installer are served with real URLs', async () => {
   const manifest = await (await fetch(`${base}/kit/manifest.json`)).json();
-  assert.deepEqual(manifest.files.map((f) => f.path), KIT);
+  const listed = manifest.files.map((f) => f.path);
+  for (const f of KIT) assert.ok(listed.includes(f), `manifest lists ${f}`);
+  assert.ok(listed.includes('.claude/skills/provenlab/references/runbook.md') && listed.some((f) => f.startsWith('.claude/skills/provenlab/templates/plugin/')), 'manifest lists the skill references and templates');
   assert.equal(manifest.mcp, `${home}/mcp`);
   for (const f of KIT) {
     const r = await fetch(`${base}/kit/${f}`); const body = await r.text();

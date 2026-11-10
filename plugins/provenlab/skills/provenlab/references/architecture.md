@@ -1,0 +1,70 @@
+# Choose a setup: Classic or headless
+
+> **Runbook step 1 · New project.** Read this to explain the four setups and recommend one. Changing something that exists: `existing-project`. **Next:** step 2, set up the workspace (`local-development` or `wpengine-cloud`).
+
+WordPress is the application layer; a custom app is optional. Two choices: the admin and the frontend.
+
+```
+                  YOUR APP (optional)        APPLICATION LAYER · WORDPRESS (always)
+                ┌────────────────────┐     ┌───────────────────────────────────┐
+  ADMIN         │ Custom app         │ or  │ WP Admin                          │
+  FRONTEND      │ Custom app         │ or  │ WordPress templating              │
+  DATA & LOGIC  │ REST · Abilities ──┼────►│ Core API · WP-CLI         │
+                └─────────┬──────────┘     └─────────────────┬─────────────────┘
+                          ▼                                  ▼ content sync · site connection · Abilities
+                ┌─────────────────────────────────────────────────────────────────┐
+  AI            │ AI API · its own AI infrastructure · powers the agents          │
+                │ Gateway · Knowledge base · Agents & sessions                    │
+                └─────────────────────────────────────────────────────────────────┘
+  On WP Engine, agents also run WP-CLI in a sandboxed session next to the site (WP Engine MCP server).
+```
+
+## 1. WordPress is the application layer
+
+WordPress runs on PHP in every setup and holds the data, users, permissions and logic. Its **Core API** (Proven Lab's name for the WordPress core PHP APIs) handles the data model, users, permissions and hooks (actions and filters), whichever admin and frontend you choose. Coding agents drive it with **WP-CLI**.
+
+## 2. Admin: inside WordPress or a separate app
+
+| Choice | Runs | Talks to WordPress |
+|---|---|---|
+| **WP Admin** | inside WordPress | directly |
+| **Custom app** (Node, React…) | separately | REST API and Abilities |
+
+## 3. Frontend: inside WordPress or a separate app
+
+| Choice | Runs | Talks to WordPress |
+|---|---|---|
+| **WordPress templating** (classic) | inside WordPress | directly |
+| **Custom app** (Node, Next.js…) | separately | REST API (or WPGraphQL) |
+
+Running the admin or the frontend as a separate app is what *headless* means here: **Headless Frontend**, **Headless Admin**, or both.
+
+## 4. The AI API provides models, search and agents
+
+The Cloud AI API runs on WP Engine's infrastructure, not inside WordPress. It provides the gateway to models (chat, images, text to speech and transcription), the knowledge base for search, and agents with sessions for the AI features you build. It works with WordPress where needed: your code indexes content into the knowledge base, and the WP Engine AI plugin connects the site so WP Engine AI can use its Abilities.
+
+**On WP Engine, coding agents can also use WP-CLI on the deployed site.** They run commands in a sandboxed session next to the site through the WP Engine MCP server (`sandbox_bash`), with no SSH setup: inspect, seed, update and verify without a browser. See `wpengine-cloud`.
+
+## The four setups
+
+| Setup | Admin | Frontend | Deploy | Blueprint |
+|---|---|---|---|---|
+| **Classic** | WP Admin | WordPress templating | WordPress | `classic-wordpress` |
+| **Headless Frontend** | WP Admin | Custom app | WordPress + your app | `custom-app` |
+| **Headless Admin** | Custom app | WordPress templating | WordPress + your app | `custom-app` + `classic-wordpress` |
+| **Headless Frontend + Admin** | Custom app | Custom app | WordPress + your app | `custom-app` |
+
+The AI API plugs in the same way in every setup.
+
+## Recommending a setup
+
+Developers choose (runbook step 1): ask the user which setup they want, offering the four setups, each in one line, with a recommendation from the request, and wait. For non-developers, propose **Classic** in plain words and continue unless they object.
+
+Recommendations:
+
+- A content site or blog → **Classic**.
+- Editors keep WP Admin, the frontend is a React/Next.js app → **Headless Frontend**.
+- A themed site with a purpose-built admin instead of WP Admin → **Headless Admin**.
+- An application with its own UI → **Headless Frontend + Admin**.
+
+Whatever the setup: define the model once in a plugin, let WordPress capabilities decide who can do what, turn custom actions into Abilities, and verify with WP-CLI (locally, or on WP Engine through the WP Engine MCP server's sandbox).

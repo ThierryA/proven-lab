@@ -1,18 +1,23 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { ListToolsRequestSchema, CallToolRequestSchema, ListPromptsRequestSchema, GetPromptRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { TOOLS } from './tools.mjs';
 import { callTool } from './core.mjs';
+import { PROMPTS, INSTRUCTIONS, getPrompt } from './prompts.mjs';
 
 export function createServer() {
-  const server = new Server({ name: 'provenlab', version: '0.1.0' }, { capabilities: { tools: {} } });
+  const server = new Server({ name: 'provenlab', version: '0.2.0' }, { capabilities: { tools: {}, prompts: {} }, instructions: INSTRUCTIONS });
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: TOOLS }));
   server.setRequestHandler(CallToolRequestSchema, async ({ params }) => {
     try {
       const result = await callTool(params.name, params.arguments || {});
-      return { content: [{ type: 'text', text: typeof result === 'string' ? result : JSON.stringify(result, null, 2) }], isError: Boolean(result?.error) };
+      // Guides are markdown: send them as text instead of an escaped JSON string.
+      const text = typeof result === 'string' ? result : result && typeof result.markdown === 'string' && !result.error ? result.markdown : JSON.stringify(result);
+      return { content: [{ type: 'text', text }], isError: Boolean(result?.error) };
     } catch (e) {
       return { content: [{ type: 'text', text: String(e.message || e) }], isError: true };
     }
   });
+  server.setRequestHandler(ListPromptsRequestSchema, async () => ({ prompts: PROMPTS }));
+  server.setRequestHandler(GetPromptRequestSchema, async ({ params }) => getPrompt(params.name, params.arguments || {}));
   return server;
 }
