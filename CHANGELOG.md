@@ -1,6 +1,12 @@
 # Changelog
 
-Proven Lab uses one version for everything it ships: the Claude Code plugin, the `@provenlab/mcp` package and MCP server, the project kit, the skill, the templates, the runbook and the HTTP API. The version lives in `package.json`; `npm run build` stamps it everywhere. Bump it with `npm version minor` (or `patch` / `major`) for every release, add an entry here, and tag the commit `v<version>`.
+Proven Lab uses one version for everything it ships: the Claude Code plugin, the `@provenlab/mcp` package and MCP server, the project kit, the skill, the templates, the runbook and the HTTP API. The version lives in `package.json`; `npm run build` stamps it everywhere.
+
+**Every change** gets a line under **Unreleased** in the same commit. **To release:** `npm version minor` (or `patch` / `major`), rename **Unreleased** to the new version and date, add a fresh empty **Unreleased** section, build, commit, and tag `v<version>`.
+
+## Unreleased
+
+- Changelog kept up to date with every change, and published at proven-lab.com/changelog.
 
 ## 0.2.0 · 2026-11-10
 

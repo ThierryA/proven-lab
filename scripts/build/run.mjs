@@ -256,5 +256,6 @@ await w('tools/openai.json', TOOLS.map((t) => ({ type: 'function', function: { n
 await w('tools/anthropic.json', TOOLS.map((t) => ({ name: t.name, description: t.description, input_schema: t.inputSchema })));
 const isPublic = (f) => !(f.tags.access || []).includes('private') && !f.tags.deprecated;
 
+await w('CHANGELOG.md', await readFile(join(ROOT, 'CHANGELOG.md'), 'utf8'));
 await w('stats.json', { provenlab: VERSION, wordpress: core.version, functions: entities.functions.length, functionsPublic: entities.functions.filter(isPublic).length, cliLeafCommands: cliData.commands.filter((c) => !c.hasChildren).length, classes: entities.classes.length, methods: entities.methods.length, hooks: entities.hooks.length, wpeOperations: ops.length, wpeVersion: spec.info.version, cliCommands: cliData.commands.length, cliVersion: cliData.version, wpeDocs: wpeDocs.length, domains: domains.length, blueprints: blueprints.length, builtAt: new Date().toISOString() });
 console.log('dist built', JSON.parse(await readFile(join(DIST, 'stats.json'), 'utf8')));

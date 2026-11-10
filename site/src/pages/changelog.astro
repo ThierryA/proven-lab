@@ -1,0 +1,16 @@
+---
+// The changelog, rendered from CHANGELOG.md at the repository root (the single source).
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import Base from '../layouts/Base.astro';
+import { render } from '../lib/md.mjs';
+const md = readFileSync(join(process.cwd(), '..', 'CHANGELOG.md'), 'utf8').replace(/^# Changelog\s*\n/, '');
+---
+<Base title="Changelog · Proven Lab" description="What changed in each Proven Lab release: the agent kit, the MCP server and the site.">
+<section class="mx-auto max-w-[72rem] px-5 pt-20 pb-16 sm:px-8">
+  <p class="label">Proven Lab</p>
+  <h1 class="mt-4 text-4xl font-medium tracking-tight text-fg">Changelog</h1>
+  <p class="mt-3 text-[14px] text-fg-3">Also as plain text for agents: <a class="text-fg-2 underline decoration-line-2 underline-offset-4 hover:decoration-signal" href="/CHANGELOG.md">/CHANGELOG.md</a></p>
+  <article class="prose prose-lab mt-10 max-w-3xl" set:html={render(md)} />
+</section>
+</Base>

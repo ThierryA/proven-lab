@@ -135,6 +135,11 @@ test('everything Proven Lab ships carries the same version', async () => {
   assert.equal((await (await fetch(`${base}/kit/manifest.json`)).json()).version, version, 'kit manifest');
   assert.match(readFileSync(join(ROOT, 'plugins/provenlab/skills/provenlab/SKILL.md'), 'utf8'), new RegExp(`version: "${version.replace(/\./g, '\\.')}"`), 'skill');
   assert.ok((await (await fetch(`${base}/AGENTS.md`)).text()).includes(`Proven Lab ${version}`), 'runbook');
-  assert.ok(readFileSync(join(ROOT, 'CHANGELOG.md'), 'utf8').includes(`## ${version}`), 'changelog entry');
+  const changelog = readFileSync(join(ROOT, 'CHANGELOG.md'), 'utf8');
+  assert.ok(changelog.includes(`## ${version}`), 'changelog entry for the current version');
+  assert.ok(/^## Unreleased$/m.test(changelog), 'changelog keeps an Unreleased section');
+  const page = await (await fetch(`${base}/changelog`)).text();
+  assert.ok(page.includes(version) && page.includes('Unreleased'), 'changelog page renders the file');
+  assert.equal((await fetch(`${base}/CHANGELOG.md`)).status, 200, 'raw changelog served');
 });
 
