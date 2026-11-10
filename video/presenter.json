@@ -1,13 +1,26 @@
 {
-  "identity": ["presenter/me-1.jpg", "presenter/me-2.jpg", "presenter/me-3.jpg"],
-  "cameras": {
-    "a": "presenter/studio-a.jpg",
-    "b": "presenter/studio-b.jpg"
+  "mode": "twin",
+  "twin": {
+    "cameras": {
+      "a": "b5fb1a209c904c38bb630346e488a735"
+    },
+    "voiceId": "18a855f86a1b4fa69dc20b7de6e9a232"
   },
   "intro": "Hey, this is the AI inside of me speaking.",
-  "voiceId": "83548de556df48ba8c09c42a57c51d85",
-  "voiceModel": "heygen-voice-1-turbo-free",
   "avatarModel": "heygen-avatar-6",
   "resolution": "1080p",
-  "motionPrompt": "Seated in a recording studio, talking to the camera like a developer advocate: relaxed, warm, engaged, natural hand gestures while explaining, small nods, a light smile."
+  "photo": {
+    "identity": [
+      "presenter/me-1.jpg",
+      "presenter/me-2.jpg",
+      "presenter/me-3.jpg"
+    ],
+    "cameras": {
+      "a": "presenter/studio-a.jpg",
+      "b": "presenter/studio-b.jpg"
+    },
+    "voiceId": "83548de556df48ba8c09c42a57c51d85",
+    "voiceModel": "heygen-voice-1-turbo-free",
+    "motionPrompt": "Talking to the camera like a developer advocate: relaxed, warm, engaged, natural hand gestures while explaining, small nods, a light smile."
+  }
 }

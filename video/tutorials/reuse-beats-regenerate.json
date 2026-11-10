@@ -1,0 +1,62 @@
+{
+  "id": "reuse-beats-regenerate",
+  "series": "Lab Notes",
+  "title": "Reuse beats regenerate",
+  "captions": false,
+  "scenes": [
+    {
+      "id": "hook",
+      "type": "host",
+      "camera": "a",
+      "shot": "close",
+      "lowerThird": true,
+      "narration": "Here's something I keep seeing. You ask a coding agent for an app, and it happily writes a login system, a content model and a search engine. From scratch. Again."
+    },
+    {
+      "id": "cheap",
+      "type": "host",
+      "camera": "a",
+      "shot": "wide",
+      "callout": "Code is cheap. Owning it isn't.",
+      "narration": "Generating code got cheap. Owning it didn't. Every line your agent writes is a line someone has to secure, debug and maintain."
+    },
+    {
+      "id": "decades",
+      "type": "host",
+      "camera": "a",
+      "shot": "close",
+      "callout": "Decades of fixes, already shipped",
+      "narration": "Meanwhile, open-source platforms have spent decades on exactly these problems. Millions of sites, a huge security community, and a patching process that already works."
+    },
+    {
+      "id": "wiring",
+      "type": "host",
+      "camera": "a",
+      "shot": "wide",
+      "callout": "Agents shine at wiring",
+      "narration": "And here's the thing: agents are great at wiring proven pieces together. That's where they shine. Rebuilding those pieces is where the cost and the risk come from."
+    },
+    {
+      "id": "question",
+      "type": "host",
+      "camera": "a",
+      "shot": "close",
+      "callout": "What can we reuse?",
+      "narration": "So start every project with one question: what can we reuse? Users, permissions, content, search. Then let the agent spend its effort on what makes your app unique."
+    },
+    {
+      "id": "recap",
+      "type": "host",
+      "camera": "a",
+      "points": ["Code is cheap, owning it isn't", "Reuse what's proven", "Build what's unique"],
+      "narration": "Code is cheap, owning it isn't. Reuse what's proven. And build what's actually unique."
+    },
+    {
+      "id": "outro",
+      "type": "host",
+      "camera": "a",
+      "shot": "wide",
+      "narration": "That's what we're exploring at Proven Lab. Tell me in the comments what your agents keep rebuilding. See you in the next one."
+    }
+  ]
+}

@@ -1,5 +1,10 @@
-// The AI presenter, made with HeyGen. Two steps:
+// The AI presenter, made with HeyGen. Two modes (presenter.json "mode"):
 //
+// twin (recommended): your HeyGen digital twin. "twin.cameras" maps each camera to one of your twin's looks
+//   (an outfit or setting you made in HeyGen), "twin.voiceId" is your cloned voice. Avatar 6 renders each scene
+//   straight from the narration. List your looks and voices: npm run presenter -- --twin-info
+//
+// photo: you from photos, in two steps:
 // 1. Studio (once):  HEYGEN_API_KEY=... npm run presenter -- --studio
 //    HeyGen Image puts you in the studio: your photos ("identity") keep your face, and each camera's reference
 //    shot ("cameras": one person in the studio set, any person) gives the setting, pose, clothes and light.
@@ -26,8 +31,10 @@ const key = process.env.HEYGEN_API_KEY;
 if (!key && !dry) { console.error('Set HEYGEN_API_KEY in your environment (not in a file in this repo). Create one at https://platform.heygen.com/api-keys'); process.exit(1); }
 
 const cfg = JSON.parse(await readFile('presenter.json', 'utf8'));
-const identity = cfg.identity || [cfg.photo];
-const cameras = cfg.cameras || {};
+const twin = cfg.mode === 'twin' ? cfg.twin : null;
+const photoCfg = cfg.photo || {};
+const identity = photoCfg.identity || [];
+const cameras = photoCfg.cameras || {};
 const SHARED = join('public', 'host', '_shared');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const sha = (x) => createHash('sha1').update(x).digest('hex');
@@ -60,6 +67,31 @@ const poll = async (path) => {
 const download = async (url, to) => writeFile(to, Buffer.from(await (await fetch(url)).arrayBuffer()));
 const manifestOf = async (dir) => JSON.parse(await readFile(join(dir, 'manifest.json'), 'utf8').catch(() => '{"scenes":{},"stills":{}}'));
 const saveManifest = (dir, m) => writeFile(join(dir, 'manifest.json'), JSON.stringify(m, null, 2));
+
+// HeyGen needs the twin's subject to record consent once before the API can use it.
+if (args.includes('--consent')) {
+  const res = await api('/v3/avatars/looks?avatar_type=digital_twin&ownership=private');
+  const looks = Array.isArray(res) ? res : res.data || [];
+  const groups = [...new Set(looks.filter((l) => Object.values(twin?.cameras || {}).includes(l.id)).map((l) => l.group_id))];
+  for (const g of groups) {
+    const group = await api(`/v3/avatars/${g}`);
+    const status = group.consent_status ?? group.avatar_group?.consent_status;
+    if (status === 'accepted') { console.log(`${g}: consent accepted`); continue; }
+    const started = await api(`/v3/avatars/${g}/consent`, {});
+    console.log(`${g}: record your consent here (link valid 24 hours):\n  ${started.url}`);
+  }
+  process.exit(0);
+}
+
+if (args.includes('--twin-info')) {
+  const looks = await api('/v3/avatars/looks?avatar_type=digital_twin&ownership=private');
+  console.log('Looks (use as twin.cameras):');
+  for (const l of looks.data || looks) console.log(`  ${l.id}  ${l.name}  engines: ${(l.supported_api_engines || []).join(', ')}`);
+  const voices = await api('/v3/models/audio/voices?type=private');
+  console.log('Your voices (use as twin.voiceId):');
+  for (const v of voices.voices || voices) console.log(`  ${v.voice_id}  ${v.name}`);
+  process.exit(0);
+}
 
 if (args.includes('--voices')) {
   const data = await api('/v3/models/audio/voices?type=public');
@@ -100,14 +132,36 @@ if (args.includes('--studio')) {
   process.exit(0);
 }
 
+async function makeTwinClip(text, look) {
+  const { video_id } = await api('/v3/videos', {
+    type: 'avatar',
+    avatar_id: look,
+    script: text,
+    voice_id: twin.voiceId,
+    engine: { type: cfg.avatarModel },
+    resolution: cfg.resolution,
+    aspect_ratio: '16:9',
+    // No motion prompt or background: the look's own footage drives the motion and keeps its setting.
+    title: `Proven Lab: ${text.slice(0, 40)}`,
+  });
+  return poll(`/v3/videos/${video_id}`);
+}
+
+// Clip length from the file itself when the API does not report it.
+const probe = (file) => {
+  try {
+    return Number(execFileSync('npx', ['remotion', 'ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', file]).toString().trim());
+  } catch { return undefined; }
+};
+
 async function makeClip(text, image) {
-  const speech = await api('/v3/models/audio/tts', { model: cfg.voiceModel, voice_id: cfg.voiceId, text, language: 'en' });
+  const speech = await api('/v3/models/audio/tts', { model: photoCfg.voiceModel, voice_id: photoCfg.voiceId, text, language: 'en' });
   const { video_id } = await api('/v3/models/avatars', {
     model: cfg.avatarModel,
     reference_images: [await b64(image)],
     audio: { type: 'url', url: speech.audio_url },
     resolution: cfg.resolution,
-    motion_prompt: cfg.motionPrompt,
+    motion_prompt: photoCfg.motionPrompt,
     output_width: 1920,
     output_height: 1080,
   });
@@ -117,26 +171,49 @@ async function makeClip(text, image) {
 async function run(dir, label, items) {
   await mkdir(dir, { recursive: true });
   const manifest = await manifestOf(dir);
-  const settings = { voiceId: cfg.voiceId, voiceModel: cfg.voiceModel, avatarModel: cfg.avatarModel, resolution: cfg.resolution, motionPrompt: cfg.motionPrompt };
+  const settings = { mode: cfg.mode, avatarModel: cfg.avatarModel, resolution: cfg.resolution, motionPrompt: twin ? null : photoCfg.motionPrompt,
+    voice: twin ? twin.voiceId : [photoCfg.voiceId, photoCfg.voiceModel] };
   const todo = [];
   for (const s of items) {
-    const image = await portrait(s.camera);
-    const imageHash = (await exists(image)) ? sha(await readFile(image)) : 'missing';
-    const hash = sha(JSON.stringify([s.text, settings, imageHash]));
-    if (force || manifest.scenes[s.id]?.hash !== hash) todo.push({ ...s, image, hash });
+    let source, sourceHash;
+    if (twin) {
+      source = twin.cameras[s.camera] || twin.cameras.a;
+      sourceHash = source;
+    } else {
+      source = await portrait(s.camera);
+      sourceHash = (await exists(source)) ? sha(await readFile(source)) : 'missing';
+    }
+    const hash = sha(JSON.stringify([s.text, settings, sourceHash]));
+    if (force || manifest.scenes[s.id]?.hash !== hash) todo.push({ ...s, image: source, hash });
   }
   const words = todo.reduce((n, s) => n + s.text.split(/\s+/).length, 0);
   console.log(`${label}: ${todo.length} clip(s) to make, about ${(words / 150).toFixed(1)} min of video`);
   for (const s of todo) {
     if (dry) { console.log(`  ${s.id} (camera ${s.camera}): ${s.text.slice(0, 64)}…`); continue; }
-    if (!(await exists(s.image))) { console.error(`Missing presenter image video/${s.image} (README: Presenter).`); process.exit(1); }
+    if (!twin && !(await exists(s.image))) { console.error(`Missing presenter image video/${s.image} (README: Presenter).`); process.exit(1); }
     process.stdout.write(`  ${s.id} `);
-    const done = await makeClip(s.text, s.image);
-    await download(done.video_url, join(dir, `${s.id}.mp4`));
-    manifest.scenes[s.id] = { hash: s.hash, duration: done.duration };
+    const done = twin ? await makeTwinClip(s.text, s.image) : await makeClip(s.text, s.image);
+    const file = join(dir, `${s.id}.mp4`);
+    await download(done.video_url, file);
+    manifest.scenes[s.id] = { hash: s.hash, duration: done.duration || probe(file) };
     await saveManifest(dir, manifest);
-    console.log(` ${done.duration}s`);
+    console.log(` ${manifest.scenes[s.id].duration}s`);
   }
+}
+
+// Twin mode: each look's preview image is the still shown until the clips exist.
+if (twin && !dry) {
+  const shared = await manifestOf(SHARED);
+  const res = await api('/v3/avatars/looks?avatar_type=digital_twin&ownership=private');
+  const looks = Array.isArray(res) ? res : res.data || [];
+  for (const [cam, id] of Object.entries(twin.cameras)) {
+    const look = looks.find((l) => l.id === id);
+    if (!look) { console.error(`Look ${id} (camera ${cam}) not found: npm run presenter -- --twin-info`); process.exit(1); }
+    if (shared.stills[cam]?.hash === id) continue;
+    await download(look.preview_image_url, join(SHARED, `cam-${cam}.jpg`));
+    shared.stills[cam] = { hash: id, file: `host/_shared/cam-${cam}.jpg` };
+  }
+  await saveManifest(SHARED, shared);
 }
 
 await run(SHARED, 'intro', [{ id: 'hello', text: cfg.intro, camera: 'a' }]);
