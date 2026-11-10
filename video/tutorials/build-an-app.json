@@ -1,0 +1,73 @@
+{
+  "id": "build-an-app",
+  "title": "Build an app with Proven Lab",
+  "scenes": [
+    {
+      "id": "intro",
+      "type": "title",
+      "kicker": "Proven Lab tutorial",
+      "heading": "Build an app on WordPress with your coding agent",
+      "sub": "From one link to a live site, step by step.",
+      "narration": "In this tutorial, your coding agent builds a real app on WordPress with Proven Lab. All you need is one link."
+    },
+    {
+      "id": "connect",
+      "type": "terminal",
+      "label": "01 / Connect",
+      "lines": [
+        { "kind": "prompt", "text": "Read proven-lab.com/llms.txt and build me a booking app for my yoga studio." },
+        { "kind": "out", "text": "Reading the Proven Lab runbook…" },
+        { "kind": "ask", "text": "Where should we build it: on your computer (Local) or in the cloud on WP Engine?" },
+        { "kind": "prompt", "text": "On WP Engine." },
+        { "kind": "ask", "text": "Should I save the work to GitHub?" },
+        { "kind": "prompt", "text": "Yes." }
+      ],
+      "narration": "Give your agent the Proven Lab link and describe what you want. It reads the runbook, then asks a few plain questions: where to build, and whether to save the work to GitHub."
+    },
+    {
+      "id": "build",
+      "type": "terminal",
+      "label": "02 / Build",
+      "lines": [
+        { "kind": "out", "text": "get_template plugin studio-bookings" },
+        { "kind": "out", "text": "Post type: class · Fields: time, teacher, seats · Role: member" },
+        { "kind": "out", "text": "wp eval-file verify.php" },
+        { "kind": "ok", "text": "12 checks passed" },
+        { "kind": "out", "text": "git commit -m \"Add class bookings\"" }
+      ],
+      "narration": "The agent builds the app as a regular WordPress plugin, from a tested template. It uses WordPress's own building blocks: post types, fields and roles. It checks its work with real requests, then commits."
+    },
+    {
+      "id": "path",
+      "type": "diagram",
+      "label": "03 / How a change goes live",
+      "nodes": [
+        { "title": "Your computer", "sub": "the agent works here" },
+        { "title": "GitHub", "sub": "every change saved" },
+        { "title": "Staging", "sub": "a private copy to check" },
+        { "title": "Live site", "sub": "after your yes" }
+      ],
+      "narration": "Every change follows the same path. It is saved to GitHub, appears on staging for you to check, and goes live only after you say yes."
+    },
+    {
+      "id": "ship",
+      "type": "terminal",
+      "label": "04 / Ship",
+      "lines": [
+        { "kind": "prompt", "text": "/provenlab:ship" },
+        { "kind": "out", "text": "git push · deploying to staging…" },
+        { "kind": "ok", "text": "Staging is ready: studio-bookings-stg.wpengine.com" },
+        { "kind": "ask", "text": "Ready for production?" }
+      ],
+      "narration": "When you are happy, ask the agent to ship. It deploys to staging, gives you the link, and waits for your OK before production."
+    },
+    {
+      "id": "outro",
+      "type": "card",
+      "heading": "Start building",
+      "url": "proven-lab.com/docs/connect",
+      "sub": "Works with Claude Code, Codex, Cursor and any agent that reads a link.",
+      "narration": "That's it. Start building at proven-lab.com."
+    }
+  ]
+}

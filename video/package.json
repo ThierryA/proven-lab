@@ -1,0 +1,24 @@
+{
+  "name": "provenlab-video",
+  "private": true,
+  "description": "Proven Lab tutorial videos, built with Remotion from versioned scripts in tutorials/",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "voice": "node tools/voice.mjs",
+    "render": "node tools/render.mjs",
+    "still": "remotion still src/index.ts build-an-app out/preview.png --frame=300"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.542",
+    "@remotion/google-fonts": "4.0.542",
+    "@remotion/media-utils": "4.0.542",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "4.0.542"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "typescript": "^5.6.0"
+  }
+}
