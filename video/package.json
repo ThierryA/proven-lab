@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "studio": "remotion studio src/index.ts",
-    "voice": "node tools/voice.mjs",
     "render": "node tools/render.mjs",
-    "still": "remotion still src/index.ts build-an-app out/preview.png --frame=300"
+    "still": "remotion still src/index.ts build-an-app out/preview.png --frame=300",
+    "presenter": "node tools/presenter.mjs"
   },
   "dependencies": {
     "@remotion/cli": "4.0.542",

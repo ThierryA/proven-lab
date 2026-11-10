@@ -1,0 +1,9 @@
+{
+  "photo": "presenter/photo.jpg",
+  "intro": "Hey, this is the AI inside of me speaking.",
+  "voiceId": "83548de556df48ba8c09c42a57c51d85",
+  "voiceModel": "heygen-voice-1-turbo-free",
+  "avatarModel": "heygen-avatar-6",
+  "resolution": "1080p",
+  "motionPrompt": "Face the camera, relaxed and friendly, like a developer showing something they enjoy. Small, natural hand gestures, a light smile."
+}

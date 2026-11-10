@@ -3,7 +3,7 @@ import { AbsoluteFill } from 'remotion';
 import { theme } from '../theme';
 
 // The chrome around every scene: wordmark, section label, version, subtle grid.
-export const Frame = ({ label, version, children }: { label?: string; version: string; children: ReactNode }) => (
+export const Frame = ({ label, version, inset, children }: { label?: string; version: string; inset?: boolean; children: ReactNode }) => (
   <AbsoluteFill
     style={{
       backgroundImage: `linear-gradient(${theme.ink2} 1px, transparent 1px), linear-gradient(90deg, ${theme.ink2} 1px, transparent 1px)`,
@@ -17,6 +17,6 @@ export const Frame = ({ label, version, children }: { label?: string; version: s
       </span>
       <span>v{version}</span>
     </div>
-    <AbsoluteFill style={{ padding: '150px 96px 220px', justifyContent: 'center' }}>{children}</AbsoluteFill>
+    <AbsoluteFill style={{ padding: inset ? '150px 96px 270px' : '150px 96px 220px', justifyContent: 'center' }}>{children}</AbsoluteFill>
   </AbsoluteFill>
 );
