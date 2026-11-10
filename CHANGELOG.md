@@ -6,6 +6,7 @@ Proven Lab uses one version for everything it ships: the Claude Code plugin, the
 
 ## Unreleased
 
+- Commands work without the plugin: published at proven-lab.com/commands/<name>.md and via the new `get_command` tool, so agents that only have the link follow them when the user asks in plain words ("plan this", "explain the structure").
 ## 0.3.0 · 2026-11-10
 
 - How to update: plugin, MCP server and project kit, on the Start building page and in the kit setup guide.

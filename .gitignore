@@ -19,3 +19,4 @@ corpus/wp/extra
 .env
 .env.local
 site/public/CHANGELOG.md
+site/public/commands

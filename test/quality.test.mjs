@@ -44,6 +44,9 @@ test('MCP: server instructions, prompts and the runbook as a guide', async () =>
   assert.match(start.messages[0].content.text, /Build a members directory[\s\S]*project\.md/);
   const list = await callTool('list_blueprints', {});
   assert.equal(list[0].slug, 'runbook');
+  const cmd = await callTool('get_command', { name: '/provenlab:plan' });
+  assert.match(cmd.markdown, /\.provenlab\/plan\.md/);
+  assert.deepEqual((await callTool('get_command', {})).commands.map((c) => c.name), ['check', 'explain', 'git-connect', 'plan', 'ship', 'start']);
   assert.match((await callTool('get_blueprint', { slug: 'runbook' })).markdown, /^# Proven Lab runbook/);
 });
 

@@ -53,6 +53,13 @@ const notFound = (kind, name, map) => ({ error: `${kind} not found: ${name}`, di
 const fmtParams = (r) => r.params.map((p) => ({ type: p.type, name: p.name, description: p.description }));
 
 const handlers = {
+  async get_command({ name } = {}) {
+    const s = await load();
+    const list = s.commands.filter((c) => c.name !== 'setup-project').map(({ name: n, description }) => ({ name: n, description }));
+    if (!name) return { commands: list, usage: 'When the user asks for one of these in plain words, call get_command with its name and follow the steps.' };
+    const c = s.commands.find((x) => x.name === String(name).replace(/^\/?(provenlab:)?/, ''));
+    return c ? { name: c.name, description: c.description, markdown: c.body } : { error: `unknown command ${name}`, commands: list };
+  },
   async get_template({ name, slug, title } = {}) {
     const s = await load();
     const list = s.templates.map(({ name: n, description }) => ({ name: n, description }));

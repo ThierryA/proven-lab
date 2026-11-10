@@ -158,7 +158,7 @@ Guide: `wpe-deployment`.
 
 ## Commands
 
-In Claude Code with the Proven Lab plugin (other MCP clients get the same as MCP prompts):
+In Claude Code with the Proven Lab plugin these are slash commands; MCP clients get them as prompts. **Without either** (the user only gave the Proven Lab link), when the user asks for one in plain words ("plan this", "explain the structure", "ship it"), read `{{BASE}}/commands/<name>.md` (or call `get_command`) and follow its steps.
 
 | Command | Does |
 |---|---|

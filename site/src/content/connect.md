@@ -21,6 +21,8 @@ Use Proven Lab: {{BASE}}
 
 [See more example requests ↓](#examples)
 
+With just the link you can also ask in plain words for what the commands do: "plan this first", "explain the site structure", "connect it to GitHub", "check it", "ship it".
+
 ## 3. Answer a few questions
 
 Your agent reads the Proven Lab instructions and first asks whether this is a new project or a change to something you already have. Then it asks only what it needs (the kind of site, where to build it, or where your existing project lives), does the work, and shows you the result. You sign in where needed and approve before anything goes live.

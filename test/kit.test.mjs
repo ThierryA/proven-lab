@@ -42,6 +42,10 @@ test('kit files, manifest, setup guide and installer are served with real URLs',
   const connect = await (await fetch(`${base}/docs/connect`)).text();
   assert.ok(connect.includes(`${home}/mcp`) && connect.includes('install.sh') && connect.includes('--marketplace ThierryA/proven-lab'));
   assert.ok(!connect.includes('your-provenlab-host'));
+  for (const n of ['start', 'plan', 'git-connect', 'check', 'explain', 'ship']) {
+    const r = await fetch(`${base}/commands/${n}.md`); const body = await r.text();
+    assert.equal(r.status, 200, `/commands/${n}.md`); assert.ok(body.startsWith(`# /provenlab:${n}`) && !body.includes('{{'), `/commands/${n}.md content`);
+  }
 });
 
 test('install.sh adds the kit to an empty project and respects existing files', async () => {

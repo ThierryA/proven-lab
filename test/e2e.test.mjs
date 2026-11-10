@@ -98,7 +98,7 @@ test('REST mirror of the tools', async () => {
 
 async function exerciseMcp(client) {
   const { tools } = await client.listTools();
-  assert.equal(tools.length, 13);
+  assert.equal(tools.length, 14);
   assert.ok(tools.every((t) => t.annotations?.readOnlyHint === true), 'every tool is read-only');
   const text = async (name, args) => (await client.callTool({ name, arguments: args })).content[0].text;
   const call = async (name, args) => { const r = await client.callTool({ name, arguments: args }); return { isError: r.isError, data: JSON.parse(r.content[0].text) }; };

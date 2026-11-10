@@ -80,7 +80,7 @@ test('llms.txt covers every section', () => {
 
 test('tool definitions are consistent across formats', () => {
   const oa = rj('dist', 'tools', 'openai.json'), an = rj('dist', 'tools', 'anthropic.json');
-  assert.equal(oa.length, 13); assert.equal(an.length, 13);
+  assert.equal(oa.length, 14); assert.equal(an.length, 14);
   assert.deepEqual(oa.map((t) => t.function.name), an.map((t) => t.name));
   for (const t of oa) assert.equal(t.function.parameters.type, 'object');
 });

@@ -174,6 +174,8 @@ await w('templates.json', templates);
     cmds.push({ name: f.replace(/\.md$/, ''), description: fm.description || '', argumentHint: fm['argument-hint'] || null, body: raw.replace(/^---[\s\S]*?---\n/, '').trim().replaceAll('{{BASE}}', site).replaceAll('{{MCP_URL}}', `${site}/mcp`) });
   }
   await w('commands.json', cmds);
+  // Plain pages, so agents that only have the URL can follow a command when the user asks for it in words.
+  for (const c of cmds) await w(`commands/${c.name}.md`, `# /provenlab:${c.name}\n\n${c.description}.\n\nWhen the user asks for this in plain words (or types the command), follow these steps. Where it says $ARGUMENTS, use what the user asked for.\n\n${c.body}\n`);
 }
 
 // URLs filled into the kit and the playbook
@@ -222,6 +224,7 @@ const llms = [
   '## Start here', `- [Runbook for agents](${site}/AGENTS.md): read first. Six steps from the first question to production, for developers and non-developers`, `- [Set up a project](${site}/kit/SETUP.md): optional. Connect the MCP server and add the kit files`,
   '', '## Guides, in runbook order', ...blueprints.map((b) => `- [${b.title}](${site}/blueprints/${b.slug}.md): ${b.summary}`), '',
   '## Overviews', ...overviews.map((o) => `- [${o.title}](${site}/overviews/${o.slug}.md): ${o.summary}`), '',
+  '## Commands (follow one when the user asks for it in plain words)', ...['start', 'plan', 'git-connect', 'check', 'explain', 'ship'].map((n) => `- [${n}](${site}/commands/${n}.md)`), '',
   '## Core API domains', ...domains.map((d) => `- [${d.group}: ${d.title}](${site}/domains/${d.slug}.md): ${d.summary}`), '',
   '## WP-CLI (`wp`): verify, scaffold and administer from the shell', ...cliPages.map((c) => `- [wp ${c.top}](${site}/cli/${c.top}.md): ${c.description}`), '',
   '## Cloud AI API', `- [OpenAPI spec](${site}/openapi/cloud-ai-api.yaml)`, `- [Operations index, incl. the Sites API](${site}/wpe-operations.json)`, '',
