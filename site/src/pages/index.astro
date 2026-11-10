@@ -50,24 +50,26 @@ const section = 'mx-auto grid max-w-[72rem] gap-x-12 gap-y-6 border-t border-lin
   <h1 class="mt-6 max-w-[20em] text-[clamp(2.2rem,4.6vw,3.55rem)] font-medium leading-[1.03] tracking-[-0.035em] text-fg">
     Why pay agents to rebuild a <span class="whitespace-nowrap">battle-tested</span> platform? <span class="text-fg-3">Instead, build on top of it!</span>
   </h1>
-  <div class="mt-12 grid items-start gap-12 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-12 xl:grid-cols-[minmax(0,23rem)_minmax(0,1fr)] xl:gap-12">
-  <div>
-  <p class="text-[17px] leading-relaxed">
-    Let agents leverage the most widely used open-source website and web app platform, with more than twenty years of collective intelligence. Proven Lab gives coding agents the exact framework to build new or update existing applications that are <em class="text-signal">reliable</em>, <em class="text-signal">secure</em> and <em class="text-signal">scalable</em>, more <em class="text-signal">efficiently</em> and at <em class="text-signal">lower cost</em>.
-  </p>
-  <div class="mt-10 flex flex-wrap items-center gap-6">
-    <a href="/docs/connect" class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Start building</a>
-    <a href="/docs/architecture" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">How it fits together</a>
-  </div>
+  <div class="mt-12 grid items-start gap-12 lg:grid-cols-[minmax(0,19rem)_minmax(0,1fr)] lg:gap-14">
+  <div class="flex flex-col gap-10">
+    <div class="flex flex-wrap items-center gap-6">
+      <a href="/docs/connect" class="bg-signal px-5 py-2.5 text-[14px] font-medium text-ink transition-colors hover:bg-fg">Start building</a>
+      <a href="/docs/architecture" class="text-[14px] text-fg underline decoration-line-2 underline-offset-4 hover:decoration-signal">How it fits together</a>
+    </div>
+    <dl class="grid grid-cols-2 border-t border-l border-line">
+      {[[fmt(s.functionsPublic), 'public core functions'], [fmt(s.hooks), 'hooks (actions and filters)'], [fmt(s.cliLeafCommands), `WP-CLI ${s.cliVersion} commands`], [String(aiOps), 'Cloud AI API operations']].map(([n, l]) => (
+        <div class="border-r border-b border-line p-4"><dt class="text-2xl tracking-tight text-fg">{n}</dt><dd class="label mt-1.5">{l}</dd></div>
+      ))}
+    </dl>
   </div>
   <div class="min-w-0"><HeroTerminal /></div>
   </div>
 
-  <dl class="mt-20 grid grid-cols-2 border-t border-line lg:grid-cols-4">
-    {[[fmt(s.functionsPublic), 'public core functions'], [fmt(s.hooks), 'hooks (actions and filters)'], [fmt(s.cliLeafCommands), `WP-CLI ${s.cliVersion} commands`], [String(aiOps), 'Cloud AI API operations']].map(([n, l]) => (
-      <div class="border-b border-line py-5 pr-4 lg:border-b-0"><dt class="text-2xl tracking-tight text-fg">{n}</dt><dd class="label mt-1.5">{l}</dd></div>
-    ))}
-  </dl>
+  <blockquote class="mt-20 border-l-2 border-signal pl-6 sm:pl-8">
+    <p class="max-w-[46rem] text-[clamp(1.15rem,1.9vw,1.45rem)] leading-relaxed text-fg">
+      Let agents leverage the most widely used open-source website and web app platform, with more than twenty years of collective intelligence. Proven Lab gives coding agents the exact framework to build new or update existing applications that are <em class="not-italic text-signal">reliable</em>, <em class="not-italic text-signal">secure</em> and <em class="not-italic text-signal">scalable</em>, more <em class="not-italic text-signal">efficiently</em> and at <em class="not-italic text-signal">lower cost</em>.
+    </p>
+  </blockquote>
 </section>
 
 </div>
