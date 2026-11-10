@@ -25,3 +25,31 @@ export type TutorialProps = {
   stills?: Record<string, string>; // studio portraits per camera, shown until the clips exist
   timing?: Timing[]; // filled by calculateMetadata, one per scene including the intro
 };
+
+// One continuous take: the presenter speaks every section in one clip, and the edit (shots, callouts,
+// points, lower third) follows the timing of the words.
+export type Section = {
+  id: string;
+  text: string;
+  shot?: 'wide' | 'close';
+  callout?: string;
+  points?: string[];
+  lowerThird?: boolean;
+};
+export type Music = { file: string; volume?: number; underVoice?: number };
+export type TakeScript = {
+  id: string;
+  take: 'single';
+  series: string;
+  title: string;
+  camera?: string;
+  music?: Music;
+  sections: Section[];
+};
+export type Word = { text: string; start_time: number; end_time: number };
+export type TakeProps = {
+  script: TakeScript;
+  version: string;
+  // Filled by calculateMetadata.
+  take?: { clip?: string; scratch?: string; still?: string; duration: number; starts: number[]; words?: Word[]; music?: string };
+};

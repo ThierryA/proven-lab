@@ -1,7 +1,8 @@
 import { Composition, staticFile } from 'remotion';
 import { Tutorial, withIntro } from './Tutorial';
+import { OneTake } from './OneTake';
 import { tutorials } from '../tutorials';
-import type { Timing, TutorialProps } from './types';
+import type { TakeProps, TakeScript, Timing, TutorialProps, TutorialScript } from './types';
 import pkg from '../../package.json';
 import presenter from '../presenter.json';
 
@@ -12,7 +13,7 @@ const PAD = 0.6; // seconds of air after each scene
 const estimate = (text: string) => Math.max(2.5, text.split(/\s+/).length / 2.5);
 
 // Clip lengths, written by tools/presenter.mjs. Missing manifest = no clips yet.
-type Manifest = { scenes: Record<string, { duration: number }>; stills?: Record<string, { file: string }> };
+type Manifest = { scenes: Record<string, { duration: number; starts?: number[]; words?: { text: string; start_time: number; end_time: number }[] }>; stills?: Record<string, { file: string }> };
 const read = async (dir: string, kind = 'host'): Promise<Manifest> => {
   try {
     const res = await fetch(staticFile(`${kind}/${dir}/manifest.json`));
@@ -23,9 +24,46 @@ const read = async (dir: string, kind = 'host'): Promise<Manifest> => {
 };
 const manifest = async (dir: string, kind = 'host') => (await read(dir, kind)).scenes;
 
+const isTake = (s: TutorialScript | TakeScript): s is TakeScript => (s as TakeScript).take === 'single';
+
+// Music files live in public/music/ (gitignored); a missing file just means no music yet.
+const exists = async (file: string) => {
+  try { return (await fetch(staticFile(file), { method: 'HEAD' })).ok; } catch { return false; }
+};
+
+const takeComposition = (script: TakeScript) => (
+  <Composition
+    key={script.id}
+    id={script.id}
+    component={OneTake}
+    fps={FPS}
+    width={1920}
+    height={1080}
+    durationInFrames={FPS * 60}
+    defaultProps={{ script, version: pkg.version } as TakeProps}
+    calculateMetadata={async ({ props }) => {
+      const s = props.script;
+      const still = (await read('_shared')).stills?.[s.camera ?? 'a']?.file;
+      const clip = (await manifest(s.id)).take;
+      const scratch = (await manifest(s.id, 'scratch')).take;
+      const music = s.music && (await exists(s.music.file)) ? s.music.file : undefined;
+      const got = clip ?? scratch;
+      const duration = got ? got.duration : s.sections.reduce((n, x) => n + estimate(x.text), 0);
+      const starts = got?.starts ?? s.sections.map((_, i) => s.sections.slice(0, i).reduce((n, x) => n + estimate(x.text), 0));
+      const take = {
+        duration, starts, still, music, words: clip?.words,
+        clip: clip ? `host/${s.id}/take.mp4` : undefined,
+        scratch: !clip && scratch ? `scratch/${s.id}/take.wav` : undefined,
+      };
+      return { durationInFrames: Math.ceil((duration + 1.5) * FPS), props: { ...props, take } };
+    }}
+  />
+);
+
 export const RemotionRoot = () => (
   <>
-    {tutorials.map((script) => (
+    {tutorials.filter(isTake).map(takeComposition)}
+    {tutorials.filter((s): s is TutorialScript => !isTake(s)).map((script) => (
       <Composition
         key={script.id}
         id={script.id}

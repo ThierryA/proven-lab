@@ -18,8 +18,8 @@ const Placeholder = ({ still, small }: { still?: string; small?: boolean }) =>
     </AbsoluteFill>
   );
 
-const Clip = ({ clip, still, small }: { clip?: string; still?: string; small?: boolean }) =>
-  clip ? <OffthreadVideo src={staticFile(clip)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Placeholder still={still} small={small} />;
+const Clip = ({ clip, still, small, offset = 0 }: { clip?: string; still?: string; small?: boolean; offset?: number }) =>
+  clip ? <OffthreadVideo src={staticFile(clip)} startFrom={offset} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Placeholder still={still} small={small} />;
 
 // Framing like a studio camera: a slow push on the wide shot, a punch-in on the face for the close shot.
 const useFraming = (shot: Shot) => {
@@ -29,19 +29,19 @@ const useFraming = (shot: Shot) => {
   return { transform: `scale(${(shot === 'close' ? 1.3 : 1.02) + push})`, transformOrigin: '50% 8%' };
 };
 
-type Props = { clip?: string; still?: string; variant: 'full' | 'side' | 'corner'; shot?: Shot };
+type Props = { clip?: string; still?: string; variant: 'full' | 'side' | 'corner'; shot?: Shot; offset?: number };
 
-export const Presenter = ({ clip, still, variant, shot = 'wide' }: Props) => {
+export const Presenter = ({ clip, still, variant, shot = 'wide', offset = 0 }: Props) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const framing = useFraming(shot);
   if (variant === 'full') {
-    return <AbsoluteFill style={{ overflow: 'hidden' }}><AbsoluteFill style={framing}><Clip clip={clip} still={still} /></AbsoluteFill></AbsoluteFill>;
+    return <AbsoluteFill style={{ overflow: 'hidden' }}><AbsoluteFill style={framing}><Clip clip={clip} still={still} offset={offset} /></AbsoluteFill></AbsoluteFill>;
   }
   if (variant === 'side') {
     return (
       <div style={{ position: 'absolute', top: 0, bottom: 0, right: 0, width: '56%', overflow: 'hidden' }}>
-        <AbsoluteFill style={framing}><Clip clip={clip} still={still} /></AbsoluteFill>
+        <AbsoluteFill style={framing}><Clip clip={clip} still={still} offset={offset} /></AbsoluteFill>
         <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(90deg, ${theme.ink} 0%, transparent 30%)` }} />
       </div>
     );

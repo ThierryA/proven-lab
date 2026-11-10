@@ -23,6 +23,7 @@ import { readFile, writeFile, mkdir, readdir, copyFile, access } from 'node:fs/p
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { join, extname } from 'node:path';
+import { sectionStarts, fullText } from './align.mjs';
 
 const args = process.argv.slice(2);
 const dry = args.includes('--dry-run');
@@ -220,10 +221,68 @@ if (twin && !dry) {
   await saveManifest(SHARED, shared);
 }
 
-await run(SHARED, 'intro', [{ id: 'hello', text: cfg.intro, camera: 'a' }]);
+// One continuous take: HeyGen Voice speaks the whole script in your voice and returns the timing of every
+// word; then the look lip-syncs that audio in a single clip. The words time the edit (src/OneTake.tsx).
+async function runTake(script) {
+  if (!twin) { console.error(`${script.id}: one-take episodes need "mode": "twin".`); process.exit(1); }
+  const dir = join('public', 'host', script.id);
+  await mkdir(dir, { recursive: true });
+  const manifest = await manifestOf(dir);
+  const text = fullText(script.sections);
+  const look = twin.cameras[script.camera || 'a'];
+  const settings = [cfg.avatarModel, cfg.resolution, twin.voiceId, twin.voiceModel, look, twin.motionFrom];
+  const hash = sha(JSON.stringify([text, settings]));
+  const words = text.split(/\s+/).length;
+  if (!force && manifest.scenes.take?.hash === hash) {
+    // Text unchanged: only the section boundaries may have moved.
+    manifest.scenes.take.starts = sectionStarts(script.sections, manifest.scenes.take.words);
+    await saveManifest(dir, manifest);
+    console.log(`${script.id}: take up to date`);
+    return;
+  }
+  console.log(`${script.id}: one take, about ${(words / 150).toFixed(1)} min of video`);
+  if (dry) return;
+  process.stdout.write('  voice ');
+  const speech = await speak(text);
+  process.stdout.write(`${speech.duration.toFixed(1)}s, take `);
+  const { video_id } = await api('/v3/videos', {
+    type: 'avatar',
+    avatar_id: look,
+    audio_url: speech.audio_url,
+    engine: { type: cfg.avatarModel, ...(twin.motionFrom && twin.motionFrom !== look ? { reference_look_id: twin.motionFrom } : {}) },
+    resolution: cfg.resolution,
+    aspect_ratio: '16:9',
+    title: `Proven Lab: ${script.title}`,
+  });
+  const done = await poll(`/v3/videos/${video_id}`);
+  const file = join(dir, 'take.mp4');
+  await download(done.video_url, file);
+  manifest.scenes.take = {
+    hash, duration: done.duration || probe(file) || speech.duration,
+    words: speech.original_words, starts: sectionStarts(script.sections, speech.original_words),
+  };
+  await saveManifest(dir, manifest);
+  console.log(` ${manifest.scenes.take.duration}s`);
+}
+
+// Your cloned voice with word timings. Free model first; the paid one if the free one is busy or refuses.
+async function speak(text) {
+  const body = { voice_id: twin.voiceId, text, language: 'en', with_timestamps: true };
+  for (const model of [twin.voiceModel || 'heygen-voice-1-turbo-free', 'heygen-voice-1']) {
+    try { return await api('/v3/models/audio/tts', { ...body, model }); }
+    catch (e) { if (model === 'heygen-voice-1') throw e; console.log(`\n  (${model}: ${e.message.slice(0, 120)}; trying heygen-voice-1)`); }
+  }
+}
+
+const scripts = [];
 for (const f of (await readdir('tutorials')).filter((x) => x.endsWith('.json'))) {
   const script = JSON.parse(await readFile(join('tutorials', f), 'utf8'));
-  if (only && script.id !== only) continue;
+  if (!only || script.id === only) scripts.push(script);
+}
+const needsIntro = scripts.some((s) => s.take !== 'single');
+if (needsIntro) await run(SHARED, 'intro', [{ id: 'hello', text: cfg.intro, camera: 'a' }]);
+for (const script of scripts) {
+  if (script.take === 'single') { await runTake(script); continue; }
   await run(join('public', 'host', script.id), script.id,
     script.scenes.map((s) => ({ id: s.id, text: s.narration, camera: s.camera || 'a' })));
 }

@@ -6,23 +6,24 @@ import { readFile, writeFile, mkdir, readdir, stat } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
+import { estimatedStarts, fullText } from './align.mjs';
 
 if (process.platform !== 'darwin') { console.log('scratch voice: macOS only, skipped'); process.exit(0); }
 const voice = process.env.SCRATCH_VOICE;
 const cfg = JSON.parse(await readFile('presenter.json', 'utf8'));
 
-async function run(dir, items) {
+async function run(dir, items, sections) {
   await mkdir(dir, { recursive: true });
   const manifestPath = join(dir, 'manifest.json');
   const manifest = JSON.parse(await readFile(manifestPath, 'utf8').catch(() => '{"scenes":{}}'));
   for (const { id, text } of items) {
-    const hash = createHash('sha1').update(JSON.stringify([text, voice])).digest('hex');
+    const hash = createHash('sha1').update(JSON.stringify([text, voice, sections?.map((x) => x.text)])).digest('hex');
     if (manifest.scenes[id]?.hash === hash) continue;
     const out = join(dir, `${id}.wav`);
     execFileSync('say', [...(voice ? ['-v', voice] : []), '-o', out, '--data-format=LEI16@44100', text]);
     // 16-bit mono at 44.1 kHz after a 44-byte header (close enough for timing).
     const duration = ((await stat(out)).size - 44) / (44100 * 2);
-    manifest.scenes[id] = { hash, duration };
+    manifest.scenes[id] = { hash, duration, ...(sections ? { starts: estimatedStarts(sections, duration) } : {}) };
     console.log(`scratch ${out} ${duration.toFixed(1)}s`);
   }
   await writeFile(manifestPath, JSON.stringify(manifest, null, 2));
@@ -31,5 +32,9 @@ async function run(dir, items) {
 await run(join('public', 'scratch', '_shared'), [{ id: 'hello', text: cfg.intro }]);
 for (const f of (await readdir('tutorials')).filter((x) => x.endsWith('.json'))) {
   const script = JSON.parse(await readFile(join('tutorials', f), 'utf8'));
+  if (script.take === 'single') {
+    await run(join('public', 'scratch', script.id), [{ id: 'take', text: fullText(script.sections) }], script.sections);
+    continue;
+  }
   await run(join('public', 'scratch', script.id), script.scenes.map((s) => ({ id: s.id, text: s.narration })));
 }

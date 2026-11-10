@@ -21,16 +21,7 @@ export const HostScene = ({ scene, clip, still, series, title, version }: Props)
       </div>
       <div style={{ position: 'absolute', top: 56, right: 96, fontFamily: theme.mono, fontSize: 26, color: theme.fg3 }}>v{version}</div>
 
-      {points.length > 0 && (
-        <div style={{ position: 'absolute', left: 96, top: 0, bottom: 0, width: '44%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 36 }}>
-          {points.map((p, i) => (
-            <div key={i} style={{ ...enter(frame, fps, 10 + (i * (durationInFrames - 40)) / points.length), display: 'flex', gap: 24, fontSize: 52, fontWeight: 500, lineHeight: 1.2 }}>
-              <span style={{ color: theme.signal, fontFamily: theme.mono }}>{String(i + 1).padStart(2, '0')}</span>
-              <span>{p}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      {points.length > 0 && <Points points={points} />}
 
       {scene.callout && <Callout text={scene.callout} />}
       {scene.lowerThird && <LowerThird series={series} title={title} />}
@@ -39,7 +30,7 @@ export const HostScene = ({ scene, clip, still, series, title, version }: Props)
 };
 
 // Series and episode name, in for a few seconds at the start of the scene.
-const LowerThird = ({ series, title }: { series: string; title: string }) => {
+export const LowerThird = ({ series, title }: { series: string; title: string }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const out = interpolate(frame, [fps * 5, fps * 5.5], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
@@ -56,13 +47,29 @@ const LowerThird = ({ series, title }: { series: string; title: string }) => {
 };
 
 // A short line that pops in beside the presenter, like a studio graphic.
-const Callout = ({ text }: { text: string }) => {
+export const Callout = ({ text }: { text: string }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const a = enter(frame, fps, 14);
   return (
     <div style={{ position: 'absolute', left: 96, top: '17%', maxWidth: 620, opacity: a.opacity, transform: a.transform }}>
       <div style={{ background: theme.signal, color: theme.ink, fontSize: 50, fontWeight: 500, lineHeight: 1.15, padding: '22px 30px', borderRadius: 6, boxShadow: '0 16px 40px rgba(0,0,0,0.4)' }}>{text}</div>
+    </div>
+  );
+};
+
+// A numbered list on the left, each point in turn across the scene.
+export const Points = ({ points }: { points: string[] }) => {
+  const frame = useCurrentFrame();
+  const { fps, durationInFrames } = useVideoConfig();
+  return (
+    <div style={{ position: 'absolute', left: 96, top: 0, bottom: 0, width: '44%', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 36 }}>
+      {points.map((p, i) => (
+        <div key={i} style={{ ...enter(frame, fps, 10 + (i * (durationInFrames - 40)) / points.length), display: 'flex', gap: 24, fontSize: 52, fontWeight: 500, lineHeight: 1.2 }}>
+          <span style={{ color: theme.signal, fontFamily: theme.mono }}>{String(i + 1).padStart(2, '0')}</span>
+          <span>{p}</span>
+        </div>
+      ))}
     </div>
   );
 };

@@ -8,7 +8,8 @@
     "render": "node tools/scratch-voice.mjs && node tools/render.mjs",
     "still": "remotion still src/index.ts build-an-app out/preview.png --frame=300",
     "presenter": "node tools/presenter.mjs",
-    "scratch": "node tools/scratch-voice.mjs"
+    "scratch": "node tools/scratch-voice.mjs",
+    "music": "node tools/music.mjs"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.542",
