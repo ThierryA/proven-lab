@@ -61,7 +61,7 @@ const Callout = ({ text }: { text: string }) => {
   const { fps } = useVideoConfig();
   const a = enter(frame, fps, 14);
   return (
-    <div style={{ position: 'absolute', left: 96, top: '36%', maxWidth: 620, opacity: a.opacity, transform: a.transform }}>
+    <div style={{ position: 'absolute', left: 96, top: '17%', maxWidth: 620, opacity: a.opacity, transform: a.transform }}>
       <div style={{ background: theme.signal, color: theme.ink, fontSize: 50, fontWeight: 500, lineHeight: 1.15, padding: '22px 30px', borderRadius: 6, boxShadow: '0 16px 40px rgba(0,0,0,0.4)' }}>{text}</div>
     </div>
   );

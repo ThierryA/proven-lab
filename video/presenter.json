@@ -2,8 +2,9 @@
   "mode": "twin",
   "twin": {
     "cameras": {
-      "a": "b5fb1a209c904c38bb630346e488a735"
+      "a": "12dbee2cdd71442ab4b1e2284e6cc07c"
     },
+    "motionFrom": "b5fb1a209c904c38bb630346e488a735",
     "voiceId": "18a855f86a1b4fa69dc20b7de6e9a232"
   },
   "intro": "Hey, this is the AI inside of me speaking.",

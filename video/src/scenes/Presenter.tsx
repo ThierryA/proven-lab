@@ -26,7 +26,7 @@ const useFraming = (shot: Shot) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
   const push = interpolate(frame, [0, durationInFrames], [0, 0.03]);
-  return { transform: `scale(${(shot === 'close' ? 1.38 : 1.02) + push})`, transformOrigin: '50% 28%' };
+  return { transform: `scale(${(shot === 'close' ? 1.3 : 1.02) + push})`, transformOrigin: '50% 8%' };
 };
 
 type Props = { clip?: string; still?: string; variant: 'full' | 'side' | 'corner'; shot?: Shot };

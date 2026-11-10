@@ -1,7 +1,8 @@
 // The AI presenter, made with HeyGen. Two modes (presenter.json "mode"):
 //
-// twin (recommended): your HeyGen digital twin. "twin.cameras" maps each camera to one of your twin's looks
-//   (an outfit or setting you made in HeyGen), "twin.voiceId" is your cloned voice. Avatar 6 renders each scene
+// twin (recommended): your HeyGen digital twin. "twin.cameras" maps each camera to one of your looks
+//   (an outfit or setting you made in HeyGen, such as a studio), "twin.motionFrom" is your recorded twin look
+//   whose footage drives the motion, "twin.voiceId" is your cloned voice. Avatar 6 renders each scene
 //   straight from the narration. List your looks and voices: npm run presenter -- --twin-info
 //
 // photo: you from photos, in two steps:
@@ -72,7 +73,8 @@ const saveManifest = (dir, m) => writeFile(join(dir, 'manifest.json'), JSON.stri
 if (args.includes('--consent')) {
   const res = await api('/v3/avatars/looks?avatar_type=digital_twin&ownership=private');
   const looks = Array.isArray(res) ? res : res.data || [];
-  const groups = [...new Set(looks.filter((l) => Object.values(twin?.cameras || {}).includes(l.id)).map((l) => l.group_id))];
+  const ids = [...Object.values(twin?.cameras || {}), twin?.motionFrom];
+  const groups = [...new Set(looks.filter((l) => ids.includes(l.id)).map((l) => l.group_id))];
   for (const g of groups) {
     const group = await api(`/v3/avatars/${g}`);
     const status = group.consent_status ?? group.avatar_group?.consent_status;
@@ -84,9 +86,9 @@ if (args.includes('--consent')) {
 }
 
 if (args.includes('--twin-info')) {
-  const looks = await api('/v3/avatars/looks?avatar_type=digital_twin&ownership=private');
-  console.log('Looks (use as twin.cameras):');
-  for (const l of looks.data || looks) console.log(`  ${l.id}  ${l.name}  engines: ${(l.supported_api_engines || []).join(', ')}`);
+  const looks = await api('/v3/avatars/looks?ownership=private');
+  console.log('Looks (twin.cameras; your recorded digital_twin look is twin.motionFrom):');
+  for (const l of looks.data || looks) console.log(`  ${l.id}  ${l.name}  (${l.avatar_type})  engines: ${(l.supported_api_engines || []).join(', ')}`);
   const voices = await api('/v3/models/audio/voices?type=private');
   console.log('Your voices (use as twin.voiceId):');
   for (const v of voices.voices || voices) console.log(`  ${v.voice_id}  ${v.name}`);
@@ -138,7 +140,8 @@ async function makeTwinClip(text, look) {
     avatar_id: look,
     script: text,
     voice_id: twin.voiceId,
-    engine: { type: cfg.avatarModel },
+    // The look gives the setting and outfit; your recorded twin footage (motionFrom) gives the motion.
+    engine: { type: cfg.avatarModel, ...(twin.motionFrom && twin.motionFrom !== look ? { reference_look_id: twin.motionFrom } : {}) },
     resolution: cfg.resolution,
     aspect_ratio: '16:9',
     // No motion prompt or background: the look's own footage drives the motion and keeps its setting.
@@ -178,7 +181,7 @@ async function run(dir, label, items) {
     let source, sourceHash;
     if (twin) {
       source = twin.cameras[s.camera] || twin.cameras.a;
-      sourceHash = source;
+      sourceHash = [source, twin.motionFrom];
     } else {
       source = await portrait(s.camera);
       sourceHash = (await exists(source)) ? sha(await readFile(source)) : 'missing';
@@ -204,13 +207,14 @@ async function run(dir, label, items) {
 // Twin mode: each look's preview image is the still shown until the clips exist.
 if (twin && !dry) {
   const shared = await manifestOf(SHARED);
-  const res = await api('/v3/avatars/looks?avatar_type=digital_twin&ownership=private');
-  const looks = Array.isArray(res) ? res : res.data || [];
   for (const [cam, id] of Object.entries(twin.cameras)) {
-    const look = looks.find((l) => l.id === id);
-    if (!look) { console.error(`Look ${id} (camera ${cam}) not found: npm run presenter -- --twin-info`); process.exit(1); }
     if (shared.stills[cam]?.hash === id) continue;
-    await download(look.preview_image_url, join(SHARED, `cam-${cam}.jpg`));
+    const look = await api(`/v3/avatars/looks/${id}`).catch(() => null);
+    if (!look) { console.error(`Look ${id} (camera ${cam}) not found: npm run presenter -- --twin-info`); process.exit(1); }
+    const raw = join(SHARED, `cam-${cam}.src`);
+    await download(look.preview_image_url, raw);
+    try { execFileSync('sips', ['-s', 'format', 'jpeg', '-Z', '1920', raw, '--out', join(SHARED, `cam-${cam}.jpg`)], { stdio: 'ignore' }); }
+    catch { await copyFile(raw, join(SHARED, `cam-${cam}.jpg`)); }
     shared.stills[cam] = { hash: id, file: `host/_shared/cam-${cam}.jpg` };
   }
   await saveManifest(SHARED, shared);

@@ -4,59 +4,25 @@
   "title": "Reuse beats regenerate",
   "captions": false,
   "scenes": [
-    {
-      "id": "hook",
-      "type": "host",
-      "camera": "a",
-      "shot": "close",
-      "lowerThird": true,
-      "narration": "Here's something I keep seeing. You ask a coding agent for an app, and it happily writes a login system, a content model and a search engine. From scratch. Again."
-    },
-    {
-      "id": "cheap",
-      "type": "host",
-      "camera": "a",
-      "shot": "wide",
-      "callout": "Code is cheap. Owning it isn't.",
-      "narration": "Generating code got cheap. Owning it didn't. Every line your agent writes is a line someone has to secure, debug and maintain."
-    },
-    {
-      "id": "decades",
-      "type": "host",
-      "camera": "a",
-      "shot": "close",
-      "callout": "Decades of fixes, already shipped",
-      "narration": "Meanwhile, open-source platforms have spent decades on exactly these problems. Millions of sites, a huge security community, and a patching process that already works."
-    },
-    {
-      "id": "wiring",
-      "type": "host",
-      "camera": "a",
-      "shot": "wide",
-      "callout": "Agents shine at wiring",
-      "narration": "And here's the thing: agents are great at wiring proven pieces together. That's where they shine. Rebuilding those pieces is where the cost and the risk come from."
-    },
-    {
-      "id": "question",
-      "type": "host",
-      "camera": "a",
-      "shot": "close",
-      "callout": "What can we reuse?",
-      "narration": "So start every project with one question: what can we reuse? Users, permissions, content, search. Then let the agent spend its effort on what makes your app unique."
-    },
-    {
-      "id": "recap",
-      "type": "host",
-      "camera": "a",
-      "points": ["Code is cheap, owning it isn't", "Reuse what's proven", "Build what's unique"],
-      "narration": "Code is cheap, owning it isn't. Reuse what's proven. And build what's actually unique."
-    },
-    {
-      "id": "outro",
-      "type": "host",
-      "camera": "a",
-      "shot": "wide",
-      "narration": "That's what we're exploring at Proven Lab. Tell me in the comments what your agents keep rebuilding. See you in the next one."
-    }
+    { "id": "hook", "type": "host", "camera": "a", "shot": "close", "lowerThird": true,
+      "narration": "Your coding agent just rebuilt a login system. From scratch. Again." },
+    { "id": "again", "type": "host", "camera": "a", "shot": "wide",
+      "narration": "And a content model. And search. On every single project." },
+    { "id": "cheap", "type": "host", "camera": "a", "shot": "close", "callout": "Code is cheap. Owning it isn't.",
+      "narration": "Here's the thing nobody tells you. Generating code got cheap. Owning it didn't." },
+    { "id": "own", "type": "host", "camera": "a", "shot": "wide",
+      "narration": "Every line your agent writes is a line someone has to secure, debug and maintain. Forever." },
+    { "id": "decades", "type": "host", "camera": "a", "shot": "close", "callout": "Decades of fixes, already shipped",
+      "narration": "Meanwhile, open source has spent more than twenty years on exactly these problems. Millions of sites. Battle-tested. Already patched." },
+    { "id": "wiring", "type": "host", "camera": "a", "shot": "wide", "callout": "Agents shine at wiring",
+      "narration": "And agents? They're amazing at wiring proven pieces together. That's their superpower. Not rebuilding them." },
+    { "id": "rule", "type": "host", "camera": "a", "shot": "close", "callout": "First ask: what can we reuse?",
+      "narration": "So here's my rule. Before your agent writes a single line, ask what you can reuse. Users, permissions, content, search." },
+    { "id": "unique", "type": "host", "camera": "a", "shot": "wide",
+      "narration": "Then let it spend all that energy on the part that makes your app yours." },
+    { "id": "recap", "type": "host", "camera": "a", "points": ["Code is cheap, owning it isn't", "Reuse what's proven", "Build what's unique"],
+      "narration": "Code is cheap, owning it isn't. Reuse what's proven. Build what's unique." },
+    { "id": "outro", "type": "host", "camera": "a", "shot": "close",
+      "narration": "That's what we're exploring at Proven Lab. Now tell me: what does your agent keep rebuilding? Drop it in the comments." }
   ]
 }
