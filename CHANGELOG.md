@@ -6,6 +6,9 @@ Proven Lab uses one version for everything it ships: the Claude Code plugin, the
 
 ## Unreleased
 
+## 0.3.0 · 2026-11-10
+
+- How to update: plugin, MCP server and project kit, on the Start building page and in the kit setup guide.
 - New command `/provenlab:explain` (and MCP prompt `explain`): explains the site's structure, data model, architecture, plan or deploy path with generative UI, else Mermaid.
 - Agents explain structures visually (site pages, data model, architecture, plan, deploy path): generative UI when their app supports it, else Mermaid, else a compact tree. Used by `/provenlab:start`, `:plan`, `:ship` and the existing-project summary.
 - Changelog kept up to date with every change, and published at proven-lab.com/changelog.

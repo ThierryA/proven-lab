@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "GitHub Actions workflow for WP Engine: every push to main deploys wp-content/ to staging; production deploys when the workflow is started by hand (and waits for approval if the repository has a `production` environment). Uses WP Engine's official action. The SSH key is for GitHub, set up by the user through WP Engine's guided GitHub Action setup; agents never create it.",
   "placeholders": {},
   "next": [

@@ -31,6 +31,10 @@ Fetch each file from `{{BASE}}/kit/<path>`:
 
 The full file list is at `{{BASE}}/kit/manifest.json`. If the Proven Lab Claude Code plugin is already installed, skip the skill and the MCP entries: the plugin provides them. A person can run `curl -fsSL {{BASE}}/install.sh | sh` instead; it adds missing files and leaves existing ones alone.
 
+## Updating an existing setup
+
+Compare the version in the project (the `Proven Lab` line in `.provenlab/project.md`, or the runbook's header) with `version` in `{{BASE}}/kit/manifest.json`. If the manifest is newer: replace `.claude/skills/provenlab/` with the files from the manifest, replace `AGENTS.md` only if it is Proven Lab's runbook (if the project has its own `AGENTS.md`, keep it and keep its one-line pointer), keep the user's MCP entries, update the version in `.provenlab/project.md`, and tell the user what changed (`{{BASE}}/CHANGELOG.md`).
+
 ## 3. Verify
 
 1. Call `list_domains` (or `curl "{{BASE}}/api/list_domains"`): it returns task areas such as `content-types`.

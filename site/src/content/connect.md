@@ -113,6 +113,14 @@ Or add only the tools: `claude mcp add --transport http provenlab {{MCP_URL}}` (
 
 **Keep the instructions in a project:** ask your agent `Set up Proven Lab in this project by following {{BASE}}/kit/SETUP.md`, or run `curl -fsSL {{BASE}}/install.sh | sh` in the project folder. It adds `AGENTS.md` (read by most coding agents), `CLAUDE.md`, MCP configs and a Claude Code skill, and leaves existing files alone (or `npx @provenlab/mcp init` once the package is published).
 
+## Updating
+
+Each release has a version and a [changelog](/changelog).
+
+- **Claude Code plugin:** run `/plugin marketplace update provenlab`, then `/plugin update provenlab@provenlab`, and restart Claude Code. From a terminal: `claude plugin marketplace update provenlab && claude plugin update provenlab@provenlab`.
+- **MCP server only:** nothing to do; the tools, instructions and prompts update on the server. Start a new session to pick them up.
+- **Project kit files** (`AGENTS.md`, the skill in `.claude/skills/provenlab/`): ask your agent `Update Proven Lab in this project by following {{BASE}}/kit/SETUP.md`. It replaces only Proven Lab's own files and keeps yours.
+
 ## For tool builders
 
 - **Tools over HTTP:** `GET {{BASE}}/api/<tool>?<args>`, for example `{{BASE}}/api/get_function?name=register_meta`.
