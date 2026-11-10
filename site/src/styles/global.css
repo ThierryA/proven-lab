@@ -8,11 +8,11 @@
 
   --color-ink: #0b0b0c;      /* page */
   --color-ink-2: #121214;    /* raised surface */
-  --color-line: #222225;     /* hairline */
-  --color-line-2: #36363b;   /* stronger rule, dashed outlines */
+  --color-line: #303035;     /* hairline */
+  --color-line-2: #5f5f66;   /* stronger rule, outlines (3:1 on the page) */
   --color-fg: #ecebe6;       /* primary text */
-  --color-fg-2: #a6a49e;     /* secondary text */
-  --color-fg-3: #6e6d69;     /* labels, captions */
+  --color-fg-2: #b8b6af;     /* secondary text (9.7:1) */
+  --color-fg-3: #94928b;     /* labels, captions (6.3:1, AA for small text) */
   --color-signal: #facc48;   /* the one accent */
 }
 

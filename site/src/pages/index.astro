@@ -39,6 +39,9 @@ const steps = [
   ['Verify', 'It proves the result with WP-CLI and real requests, not by rereading its own code.'],
 ];
 const section = 'mx-auto grid max-w-[72rem] gap-x-12 gap-y-6 border-t border-line px-5 py-20 sm:px-8 lg:grid-cols-[12rem_minmax(0,1fr)]';
+// Every other section puts its label on the right.
+const sectionRight = 'mx-auto grid max-w-[72rem] gap-x-12 gap-y-6 border-t border-line px-5 py-20 sm:px-8 lg:grid-cols-[minmax(0,1fr)_12rem]';
+const labelRight = 'label lg:order-last lg:text-right';
 ---
 <Base title="Why pay agents to rebuild a battle-tested platform? Instead, build on top of it! · Proven Lab">
 
@@ -98,8 +101,8 @@ const section = 'mx-auto grid max-w-[72rem] gap-x-12 gap-y-6 border-t border-lin
 </section>
 
 <!-- 02 Architecture -->
-<section id="architecture" class={section}>
-  <p class="label">02 / Architecture</p>
+<section id="architecture" class={sectionRight}>
+  <p class={labelRight}>02 / Architecture</p>
   <div>
     <h2 class="max-w-3xl text-3xl font-medium tracking-tight text-fg">One application layer. Your choice of admin and frontend.</h2>
     <p class="mt-4 max-w-2xl">The application layer always runs and does the work. The admin and the frontend each run inside it or as a separate custom app. The Cloud AI API runs on its own infrastructure.</p>
@@ -132,8 +135,8 @@ const section = 'mx-auto grid max-w-[72rem] gap-x-12 gap-y-6 border-t border-lin
 </section>
 
 <!-- 04 For agents -->
-<section id="agents" class={section}>
-  <p class="label">04 / For agents</p>
+<section id="agents" class={sectionRight}>
+  <p class={labelRight}>04 / For agents</p>
   <div>
     <h2 class="max-w-3xl text-3xl font-medium tracking-tight text-fg">Documentation generated for agents.</h2>
     <p class="mt-4 max-w-2xl">Built from the platform's source code, its developer handbooks, the WP-CLI release and the Cloud AI API's published spec, and served in the formats agents read.</p>

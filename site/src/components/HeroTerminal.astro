@@ -55,7 +55,7 @@ const prompt = { you: 'you ›', agent: 'agent ›' } as const;
 </figure>
 
 <style is:global>
-  .hero-term .t-screen { height: 24em; overflow-y: auto; scrollbar-width: none; transition: opacity 0.6s ease; }
+  .hero-term .t-screen { height: 28em; overflow-y: auto; scrollbar-width: none; transition: opacity 0.6s ease; }
   .hero-term .t-screen::-webkit-scrollbar { display: none; }
   .hero-term .t-screen.is-clearing { opacity: 0; }
   .hero-term .t-row { display: flex; gap: 0.75ch; white-space: pre-wrap; animation: term-in 0.5s ease-out both; }
@@ -72,7 +72,7 @@ const prompt = { you: 'you ›', agent: 'agent ›' } as const;
   .hero-term .t-caret::after { content: '▍'; color: var(--color-signal); animation: term-blink 1s steps(1) infinite; }
   @keyframes term-in { from { opacity: 0; } to { opacity: 1; } }
   @keyframes term-blink { 50% { opacity: 0; } }
-  @media (max-width: 640px) { .hero-term .t-out { padding-left: 2ch; } .hero-term .t-prompt { width: auto; } .hero-term .t-screen { height: 28em; } }
+  @media (max-width: 640px) { .hero-term .t-out { padding-left: 2ch; } .hero-term .t-prompt { width: auto; } .hero-term .t-screen { height: 32em; } }
   @media (prefers-reduced-motion: reduce) { .hero-term .t-row { animation: none; } }
 </style>
 
