@@ -21,7 +21,7 @@ Use Proven Lab: {{BASE}}
 
 [See more example requests ↓](#examples)
 
-With just the link you can also ask in plain words for what the commands do: "plan this first", "explain the site structure", "connect it to GitHub", "check it", "ship it".
+With just the link you can also ask in plain words for what the commands do: "plan this first", "explain the basics" (where it is hosted, its addresses, how changes go live), "explain it for developers", "connect it to GitHub", "check it", "ship it".
 
 ## 3. Answer a few questions
 
