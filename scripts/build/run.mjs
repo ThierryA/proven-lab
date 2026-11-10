@@ -96,7 +96,7 @@ for (const f of await readdir(bpDir)) {
   await w(`blueprints/${f}`, stripMarkers(raw));
 }
 // Runbook order (AGENTS.md, steps 1 to 6): list_blueprints, llms.txt and the docs show guides in the order agents use them.
-const RUNBOOK_ORDER = ['architecture', 'existing-project', 'local-development', 'wpengine-cloud', 'classic-wordpress', 'custom-app', 'frontend-design', 'wpe-ai-plugins', 'ai-features', 'wp-cli-for-agents', 'best-practices', 'wpe-deployment'];
+const RUNBOOK_ORDER = ['architecture', 'existing-project', 'local-development', 'wpengine-cloud', 'git-workflow', 'classic-wordpress', 'custom-app', 'frontend-design', 'wpe-ai-plugins', 'ai-features', 'wp-cli-for-agents', 'best-practices', 'wpe-deployment'];
 const rank = (s) => (RUNBOOK_ORDER.indexOf(s) + 1 || 99);
 blueprints.sort((a, b) => rank(a.slug) - rank(b.slug));
 await w('blueprints.json', blueprints);
@@ -157,6 +157,17 @@ for (const name of (await readdir(tplRoot)).sort()) {
 }
 await w('templates.json', templates);
 
+// Slash commands: the Claude Code plugin's commands, also served as MCP prompts (one source).
+{
+  const cmds = [];
+  for (const f of (await readdir(join(ROOT, 'content/plugin-commands'))).sort()) {
+    const raw = await readFile(join(ROOT, 'content/plugin-commands', f), 'utf8');
+    const fm = YAML.parse(raw.match(/^---\n([\s\S]*?)\n---\n/)?.[1] || '') || {};
+    cmds.push({ name: f.replace(/\.md$/, ''), description: fm.description || '', argumentHint: fm['argument-hint'] || null, body: raw.replace(/^---[\s\S]*?---\n/, '').trim().replaceAll('{{BASE}}', site).replaceAll('{{MCP_URL}}', `${site}/mcp`) });
+  }
+  await w('commands.json', cmds);
+}
+
 // URLs filled into the kit and the playbook
 const mcpUrl = `${site}/mcp`;
 const fill = (text) => text.replaceAll('{{BASE}}', site).replaceAll('{{MCP_URL}}', mcpUrl);
@@ -191,6 +202,7 @@ await w('install.sh', fill(await readFile(join(ROOT, 'scripts/kit/install.sh'), 
   await put(P('plugins/provenlab/.mcp.json'), fill(await readFile(join(kitDir, '.mcp.json'), 'utf8')));
   await rm(P('plugins/provenlab/skills/provenlab'), { recursive: true, force: true });
   for (const [k, v] of skillFiles) await put(P('plugins/provenlab/skills/provenlab', k), v);
+  await rm(P('plugins/provenlab/commands'), { recursive: true, force: true });
   for (const f of await readdir(P('content/plugin-commands'))) await put(P('plugins/provenlab/commands', f), fill(await readFile(P('content/plugin-commands', f), 'utf8')));
 }
 

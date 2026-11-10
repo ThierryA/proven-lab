@@ -102,7 +102,7 @@ test('agent-facing files tell the agent to ask for the setup before building', a
   assert.match(agents, /local-development/);
   const local = await (await fetch(`${base}/blueprints/local-development.md`)).text();
   for (const s of ['sites.json', 'local_create_site', 'https://localwp.com', 'app/public']) assert.ok(local.includes(s), `local-development mentions ${s}`);
-  assert.match(readFileSync(join(ROOT, 'plugins/provenlab/commands/new-app.md'), 'utf8'), /Wait for the answer/);
+  assert.match(readFileSync(join(ROOT, 'plugins/provenlab/commands/start.md'), 'utf8'), /Wait for the answer/);
 });
 
 test('agents are told to use the Cloud AI API for AI and to follow best practices', async () => {

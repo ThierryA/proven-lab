@@ -1,0 +1,18 @@
+---
+description: Plan the work before building - steps, files, verification and deploy - and get the user's OK
+argument-hint: "[what to build or change]"
+---
+
+Plan this before writing code: $ARGUMENTS
+
+1. Read `.provenlab/project.md` (run `/provenlab:start` first if it is missing).
+2. Look up what the plan needs: the guides for the setup (`get_blueprint classic-wordpress` or `custom-app`, `frontend-design` for anything people see, `wpe-ai-plugins` for AI), the starter files (`get_template`), and existing plugins that already do part of the job.
+3. Write `.provenlab/plan.md`:
+   - **Goal** in one sentence, in the user's words.
+   - **Reuse:** plugins or core features used instead of new code.
+   - **Steps:** small, each ending in something that can be verified; for each, the files it creates or changes.
+   - **Data model:** post types, fields, roles and capabilities, Abilities (with the plugin prefix).
+   - **Verification:** the WP-CLI checks, requests and screenshots that prove each step.
+   - **Commits:** one per step, with the message.
+   - **Ship:** staging, then production after the user's yes.
+4. Show the plan briefly (plain words for non-developers) and wait for the user's OK or changes before building. Then work through it step by step, ticking steps off in `.provenlab/plan.md` and committing after each verified step.

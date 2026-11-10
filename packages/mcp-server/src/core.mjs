@@ -18,6 +18,7 @@ async function load() {
   const [entities, domains, blueprints, wpe, docs, cli] = await Promise.all(['entities.json', 'domains.json', 'blueprints.json', 'wpe-operations.json', 'docs.json', 'cli-commands.json'].map(rj));
   const templates = existsSync(join(DIST, 'templates.json')) ? await rj('templates.json') : [];
   const runbook = existsSync(join(DIST, 'AGENTS.md')) ? await readFile(join(DIST, 'AGENTS.md'), 'utf8') : '';
+  const commands = existsSync(join(DIST, 'commands.json')) ? await rj('commands.json') : [];
   const index = [];
   const add = (type, id, name, text, extra = {}) => index.push({ type, id, name, nameLc: name.toLowerCase(), textLc: text.toLowerCase(), ...extra });
   for (const f of entities.functions) add('function', f.name, f.name, f.summary + ' ' + f.description, { summary: f.summary, url: f.url });
@@ -43,7 +44,7 @@ async function load() {
   ];
   const counts = mentionCounts([...docs.map((d) => d.markdown), ...entities.functions.map((f) => f.description), ...entities.hooks.map((h) => h.description)], entries.filter((e) => e.type !== 'handbook' && e.type !== 'ai-doc').map((e) => e.id));
   const search = buildSearch(entries, counts);
-  state = { dynamicHooks, templates, runbook, search, cli, cliMap: new Map(cli.commands.map((c) => [c.path.replace(/^wp /, ''), c])), entities, domains, blueprints, wpe, docs, index, fn: new Map(entities.functions.map((x) => [x.name, x])), cls: new Map(entities.classes.map((x) => [x.name, x])), hook: new Map(entities.hooks.map((x) => [x.name, x])), op: new Map(wpe.operations.map((o) => [o.operationId, o])) };
+  state = { dynamicHooks, templates, runbook, commands, search, cli, cliMap: new Map(cli.commands.map((c) => [c.path.replace(/^wp /, ''), c])), entities, domains, blueprints, wpe, docs, index, fn: new Map(entities.functions.map((x) => [x.name, x])), cls: new Map(entities.classes.map((x) => [x.name, x])), hook: new Map(entities.hooks.map((x) => [x.name, x])), op: new Map(wpe.operations.map((o) => [o.operationId, o])) };
   return state;
 }
 
@@ -128,6 +129,9 @@ const handlers = {
     return { operationId: o.operationId, method: o.method, url: `${s.wpe.servers[0]}${o.path}`, summary: o.summary, description: o.description, howToCall: howToCall(o, s.wpe.components), parameters: d.params.length ? d.params : undefined, request: d.fields.length ? { contentType: d.contentType, fields: d.fields } : undefined, responses: d.responses };
   },
 };
+
+/** The slash commands (Claude Code plugin commands), also served as MCP prompts. */
+export async function getCommands() { return (await load()).commands; }
 
 export async function callTool(name, args = {}) {
   const h = handlers[name];

@@ -2,7 +2,7 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { ListToolsRequestSchema, CallToolRequestSchema, ListPromptsRequestSchema, GetPromptRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { TOOLS } from './tools.mjs';
 import { callTool } from './core.mjs';
-import { PROMPTS, INSTRUCTIONS, getPrompt } from './prompts.mjs';
+import { INSTRUCTIONS, listPrompts, getPrompt } from './prompts.mjs';
 
 export function createServer() {
   const server = new Server({ name: 'provenlab', version: '0.2.0' }, { capabilities: { tools: {}, prompts: {} }, instructions: INSTRUCTIONS });
@@ -17,7 +17,7 @@ export function createServer() {
       return { content: [{ type: 'text', text: String(e.message || e) }], isError: true };
     }
   });
-  server.setRequestHandler(ListPromptsRequestSchema, async () => ({ prompts: PROMPTS }));
+  server.setRequestHandler(ListPromptsRequestSchema, async () => ({ prompts: await listPrompts() }));
   server.setRequestHandler(GetPromptRequestSchema, async ({ params }) => getPrompt(params.name, params.arguments || {}));
   return server;
 }

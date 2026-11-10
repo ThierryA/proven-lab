@@ -114,7 +114,7 @@ async function exerciseMcp(client) {
   assert.equal(hook.data.params.length, 3);
   assert.match(await text('get_blueprint', { slug: 'custom-app' }), /authorize-application/);
   assert.match(await text('get_blueprint', { slug: 'runbook' }), /^# Proven Lab runbook/);
-  const list = (await call('list_blueprints', {})).data; assert.equal(list.length, 13); assert.equal(list[0].slug, 'runbook');
+  const list = (await call('list_blueprints', {})).data; assert.equal(list.length, 14); assert.equal(list[0].slug, 'runbook');
   const tpl = (await call('get_template', { name: 'plugin', slug: 'book-club' })).data; assert.ok(tpl.files.some((f) => f.path === 'wp-content/plugins/book-club/book-club.php'));
   const op = await call('get_ai_operation', { operationId: 'searchCollection' });
   assert.equal(op.data.method, 'POST'); assert.match(op.data.url, /\/v1\/kb\/collections\/\{id\}\/search$/); assert.match(op.data.howToCall.php, /wpe_auth_api_request/);

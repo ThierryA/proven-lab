@@ -5,7 +5,9 @@ description: Build applications on WordPress as the application layer (post type
 
 # Proven Lab: build on WordPress, don't rebuild it
 
-Follow the runbook in `references/runbook.md` (the same text as https://proven-lab.com/AGENTS.md). Each step names a guide: read `references/<slug>.md`, or call `get_blueprint`. Start new code from `templates/` (or `get_template`), and record decisions in `.provenlab/project.md`.
+Follow the runbook in `references/runbook.md` (the same text as https://proven-lab.com/AGENTS.md). Each step names a guide: read `references/<slug>.md`, or call `get_blueprint`. Start new code from `templates/` (or `get_template`), record decisions in `.provenlab/project.md`, and with GitHub commit every verified step and always commit before pushing (`references/git-workflow.md`).
+
+Commands: `/provenlab:start`, `/provenlab:plan`, `/provenlab:git-connect`, `/provenlab:check`, `/provenlab:ship`.
 
 ## Look things up instead of guessing
 

@@ -95,7 +95,7 @@ Use Proven Lab: {{BASE}}
 
 Not needed to start. Connecting makes lookups faster and keeps the instructions in your project.
 
-**Claude Code:** install the plugin (Proven Lab tools, skill and `/provenlab:new-app`):
+**Claude Code:** install the plugin: the Proven Lab tools, the skill, and the commands `/provenlab:start`, `/provenlab:plan`, `/provenlab:git-connect`, `/provenlab:check` and `/provenlab:ship` (other MCP clients get the same commands as prompts):
 
 ```text
 /plugin install provenlab --marketplace ThierryA/proven-lab

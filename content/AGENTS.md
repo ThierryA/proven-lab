@@ -22,7 +22,7 @@ If `.provenlab/project.md` exists, read it first and skip every question it answ
 - WordPress: local path or site URL; version
 - Plugin: slug, PHP prefix, text domain; theme
 - Environments: local / staging / production (WP Engine install names, if any)
-- Repository: URL or none; deploy method
+- Git: GitHub repository URL or none; default branch; push policy (ask | auto); deploy on push (yes | no)
 - AI: connected on which environments
 ```
 
@@ -56,7 +56,7 @@ Find out first, from the request or with one question.
 
 - **Which setup?** Classic (WP Admin and WordPress templating) · Headless Frontend (WP Admin and your own frontend app) · Headless Admin (your own admin app and WordPress templating) · Headless Frontend + Admin (your own admin and frontend app). Recommend one: a content site → Classic; an app with its own interface → Headless Frontend + Admin. Guide: `architecture`.
 - **Where to build?** Check whether Local (localwp.com) is installed. Offer: on your computer with Local, or in the cloud on WP Engine with nothing to install. **The cloud needs a WP Engine account** (paid): ask whether they have one; without one, say so and recommend Local (free).
-- **Developers: which repository?** New, existing, or none for now.
+- **GitHub?** Developers: a new private repository, an existing one, or none for now. Non-developers, plainly: "I can keep a history of every change on GitHub (free), so nothing is lost. Want that?" Also ask the push policy once: push after your OK (default) or automatically. Guide: `git-workflow`.
 
 Developers: wait for the answers and never pick the setup for them. Non-developers: follow the tables above.
 
@@ -65,7 +65,7 @@ Developers: wait for the answers and never pick the setup for them. Non-develope
 - **On the user's computer:** `local-development`.
 - **In the cloud, and every site already on WP Engine:** `wpengine-cloud`. If the WP Engine MCP server is unavailable or refuses access (it is in beta), tell the user, build locally instead, and deploy with the GitHub Action or a plugin zip (`wpe-deployment`).
 - **Existing project:** work where it lives (`existing-project`).
-- Developers who want a new repository: `git init`, a WordPress `.gitignore`, and `gh repo create <name> --private --source=. --push` when the GitHub CLI is signed in.
+- **GitHub:** connect it now if the user wants it (`git-workflow`): `gh auth status`, create or connect the repository, `.gitignore`, first commit and push.
 - Turn on error logging on local and staging sites: `wp config set WP_DEBUG true --raw` and `wp config set WP_DEBUG_LOG true --raw`.
 
 Then write `.provenlab/project.md`.
@@ -96,6 +96,7 @@ Connecting needs a WP Engine account with AI access, and requests use credits: s
 - A fatal error in your plugin breaks `wp` too: `wp --skip-plugins plugin deactivate <slug>`, read `wp-content/debug.log`, fix, reactivate.
 - Developers: the checks in `best-practices` (coding standards, PHPUnit, PHPStan, Plugin Check).
 - Report what you checked and the results.
+- **Commit** each verified change with a clear message (`git-workflow`); never commit broken code or secrets.
 
 ## 6. Ship
 
@@ -103,7 +104,8 @@ Guide: `wpe-deployment`.
 
 - **No staging environment?** Suggest one. If the user does not want it, deploy straight to production with a backup first.
 - **Staging:** deploy, send the link and what to check, then offer production. Production only after the user's yes.
-- **Deploy the plugin and the theme.** GitHub is optional: WP Engine's GitHub Action from a repository, or files through the WP Engine MCP server.
+- **Commit, then push** (always commit before pushing), following the push policy in `.provenlab/project.md`.
+- **Deploy the plugin and the theme.** With GitHub and WP Engine, a push to `main` deploys to staging through WP Engine's GitHub Action; production runs after the user's yes. Without GitHub: files through the WP Engine MCP server.
 - Never copy another environment's database over a production site with real content.
 - WP Engine is optional: the app is a plugin and a theme, so it deploys to any WordPress host.
 
@@ -115,8 +117,21 @@ Guide: `wpe-deployment`.
 - Flush rewrite rules once, after registering the post types, in the activation hook or with `wp rewrite flush`; never on every request.
 - Secrets (application passwords, API keys) never go to browser code or version control.
 - On WP Engine, use the WP Engine MCP server (`https://api.ai.wpengine.com/v1/mcp`, OAuth sign-in) for WP-CLI and files; it connects for you. Never generate SSH keys or configure the SSH Gateway.
+- Git: always commit before pushing; never force-push a shared branch; never commit `.env`, keys or passwords.
 - Sample and test content is realistic, created as drafts on local or staging, and removed when no longer needed.
 - Never run destructive commands on shared environments, publish content, or change production without the user's approval.
+
+## Commands
+
+In Claude Code with the Proven Lab plugin (other MCP clients get the same as MCP prompts):
+
+| Command | Does |
+|---|---|
+| `/provenlab:start` | Onboard: project memory, new or existing, setup, workspace, GitHub |
+| `/provenlab:plan` | Write a step-by-step plan in `.provenlab/plan.md` and get the user's OK before building |
+| `/provenlab:git-connect` | Connect the project to GitHub and set the push policy |
+| `/provenlab:check` | Verify the work: WP-CLI, quality checks, screenshot review |
+| `/provenlab:ship` | Commit, push, deploy to staging, then production after the user's yes |
 
 ## Tools
 

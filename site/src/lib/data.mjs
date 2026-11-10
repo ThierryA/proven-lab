@@ -15,7 +15,7 @@ export const BASE = (process.env.SITE_URL || pkgRoot.homepage || '').replace(/\/
 export const RUNBOOK = [
   { title: 'Start', pages: [['Start building', '/docs/connect']] },
   { title: '1 · New or existing', slugs: ['architecture', 'existing-project'] },
-  { title: '2 · Workspace', slugs: ['local-development', 'wpengine-cloud'] },
+  { title: '2 · Workspace', slugs: ['local-development', 'wpengine-cloud', 'git-workflow'] },
   { title: '3 · Build', slugs: ['classic-wordpress', 'custom-app', 'frontend-design'] },
   { title: '4 · AI', slugs: ['wpe-ai-plugins', 'ai-features'] },
   { title: '5 · Verify', slugs: ['wp-cli-for-agents', 'best-practices'] },

@@ -10,7 +10,7 @@ import YAML from 'yaml';
 import { ROOT, walk } from './helpers.mjs';
 import { callTool } from '../packages/mcp-server/src/core.mjs';
 import { TOOLS } from '../packages/mcp-server/src/tools.mjs';
-import { INSTRUCTIONS, PROMPTS, getPrompt } from '../packages/mcp-server/src/prompts.mjs';
+import { INSTRUCTIONS, listPrompts, getPrompt } from '../packages/mcp-server/src/prompts.mjs';
 
 const read = (...p) => readFileSync(join(ROOT, ...p), 'utf8');
 
@@ -39,9 +39,9 @@ test('templates: complete, placeholders filled, PHP lints, JSON and YAML parse',
 test('MCP: server instructions, prompts and the runbook as a guide', async () => {
   assert.ok(INSTRUCTIONS.length > 500 && INSTRUCTIONS.length < 2500, 'instructions are short but complete');
   for (const s of ['runbook', 'get_template', 'staging']) assert.ok(INSTRUCTIONS.includes(s), `instructions mention ${s}`);
-  assert.deepEqual(PROMPTS.map((p) => p.name), ['build', 'check', 'ship']);
-  const build = await getPrompt('build', { request: 'Build a members directory' });
-  assert.match(build.messages[0].content.text, /Build a members directory[\s\S]*Proven Lab runbook/);
+  assert.deepEqual((await listPrompts()).map((p) => p.name), ['check', 'git-connect', 'plan', 'ship', 'start']);
+  const start = await getPrompt('start', { request: 'Build a members directory' });
+  assert.match(start.messages[0].content.text, /Build a members directory[\s\S]*project\.md/);
   const list = await callTool('list_blueprints', {});
   assert.equal(list[0].slug, 'runbook');
   assert.match((await callTool('get_blueprint', { slug: 'runbook' })).markdown, /^# Proven Lab runbook/);
