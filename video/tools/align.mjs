@@ -9,11 +9,12 @@ export function sectionStarts(sections, words) {
   for (const s of sections) {
     starts.push(words[Math.min(i, words.length - 1)]?.start_time ?? 0);
     i += tokens(s.text).length; // advance past this section's words
-    // Re-sync: if the next section's first word is close by, snap to it.
+    // Re-sync: snap to where the next section's first three words appear nearby (not just one common word).
     const next = sections[starts.length]?.text;
     if (next) {
-      const first = tokens(next)[0];
-      for (let d = -3; d <= 3; d++) if (spoken[i + d] === first) { i += d; break; }
+      const head = tokens(next).slice(0, 3);
+      const at = (k) => head.every((t, j) => spoken[k + j] === t);
+      for (const d of [0, -1, 1, -2, 2, -3, 3]) if (at(i + d)) { i += d; break; }
     }
   }
   return starts.map((t, k) => (k === 0 ? 0 : Math.max(0, t - 0.15)));
