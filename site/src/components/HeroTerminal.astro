@@ -16,7 +16,8 @@ const sessions: Row[][] = [
     { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">Core API    </span> content, users, permissions, hooks, REST' },
     { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">WP-CLI      </span> every step verified from the shell' },
     { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">Cloud AI API</span> chat, images, speech, transcription, search, agents' },
-    { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">Deployment  </span> WP Engine, optional: managed hosting, Headless Platform' },
+    { kind: 'out', html: '<span class="t-ok">✓</span> <span class="t-key">Deployment  </span> WP Engine, optional:' },
+    { kind: 'out', html: '  <span class="t-key">            </span> managed hosting, Headless Platform' },
     { kind: 'agent', text: 'Done. Only the code specific to your app was written.' },
     { kind: 'out', html: '<span class="t-sig">reliable · secure · scalable · efficient · lower cost</span>' },
   ],
@@ -43,7 +44,7 @@ const prompt = { you: 'you ›', agent: 'agent ›' } as const;
       <span class="size-2 rounded-full bg-line-2"></span><span class="size-2 rounded-full bg-line-2"></span><span class="size-2 rounded-full bg-line-2"></span>
       <span class="ml-3 font-mono text-[11px] text-fg-3" data-term-title>agent session · build</span>
     </div>
-    <div class="t-screen space-y-1.5 scroll-smooth px-5 py-5 font-mono text-[12px] leading-[1.7] sm:text-[13px] lg:text-[12.5px] xl:px-6" data-term-screen>
+    <div class="t-screen space-y-1.5 scroll-smooth px-5 py-5 font-mono text-[12px] leading-[1.7] sm:text-[13px] lg:text-[12px] xl:px-6" data-term-screen>
       {sessions[0].map((r) => (
         <div class={`t-row t-${r.kind}`}>
           {(r.kind === 'you' || r.kind === 'agent') && <span class="t-prompt">{prompt[r.kind]}</span>}
@@ -59,7 +60,7 @@ const prompt = { you: 'you ›', agent: 'agent ›' } as const;
   .hero-term .t-screen::-webkit-scrollbar { display: none; }
   .hero-term .t-screen.is-clearing { opacity: 0; }
   .hero-term .t-row { display: flex; gap: 0.75ch; white-space: pre-wrap; animation: term-in 0.5s ease-out both; }
-  .hero-term .t-out { padding-left: 8ch; color: var(--color-fg-2); }
+  .hero-term .t-out { padding-left: 6ch; color: var(--color-fg-2); }
   .hero-term .t-label { color: var(--color-fg-3); margin-top: 0.6em; }
   .hero-term .t-you .t-body { color: var(--color-fg); }
   .hero-term .t-agent .t-body { color: var(--color-fg-2); }
