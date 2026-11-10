@@ -1,0 +1,71 @@
+{
+  "id": "what-is-proven-lab",
+  "series": "Proven Lab",
+  "title": "What is Proven Lab?",
+  "captions": false,
+  "scenes": [
+    {
+      "id": "welcome",
+      "type": "host",
+      "camera": "a",
+      "shot": "wide",
+      "lowerThird": true,
+      "narration": "Today: what Proven Lab is, and why your coding agent shouldn't rebuild what already works."
+    },
+    {
+      "id": "problem",
+      "type": "host",
+      "camera": "b",
+      "shot": "close",
+      "callout": "Rebuilding costs more and adds risk",
+      "narration": "Coding agents are great at wiring existing pieces together. But ask one to rebuild a content system, logins and search on every project, and you pay more, and you take on more risk."
+    },
+    {
+      "id": "idea",
+      "type": "host",
+      "camera": "a",
+      "shot": "wide",
+      "callout": "Instead, build on top of it!",
+      "narration": "So instead, build on top of a platform that already works. WordPress is the most widely used open-source platform for websites and web apps, with more than twenty years of collective intelligence behind it."
+    },
+    {
+      "id": "what",
+      "type": "host",
+      "camera": "a",
+      "shot": "close",
+      "callout": "One link · MCP server · plugin",
+      "narration": "Proven Lab gives your coding agent the exact framework to do that: a runbook, guides, templates and commands, in the formats agents read. Share one link, connect the MCP server, or install the Claude Code plugin."
+    },
+    {
+      "id": "layer",
+      "type": "host",
+      "camera": "b",
+      "shot": "wide",
+      "callout": "WordPress as your application layer",
+      "narration": "WordPress becomes your application layer: users, permissions, content, hooks and the REST API. Keep its admin, or bring your own admin and frontend. And add AI features through the Cloud AI API."
+    },
+    {
+      "id": "ship",
+      "type": "host",
+      "camera": "a",
+      "shot": "close",
+      "callout": "Staging first, live after your yes",
+      "narration": "When it's time to ship, the agent saves to GitHub, deploys to staging for you to check, and goes live only after your yes. WP Engine is recommended, but nothing requires it."
+    },
+    {
+      "id": "recap",
+      "type": "host",
+      "camera": "b",
+      "points": ["Reuse, don't regenerate", "Reliable, secure, scalable", "Faster, at lower cost"],
+      "narration": "Reuse, don't regenerate. Apps that are reliable, secure and scalable, built faster and at lower cost."
+    },
+    {
+      "id": "outro",
+      "type": "host",
+      "camera": "a",
+      "shot": "wide",
+      "callout": "proven-lab.com",
+      "narration": "Give your agent one link: proven-lab.com. Build on a proven platform, not from scratch. See you in the next one."
+    }
+  ]
+}

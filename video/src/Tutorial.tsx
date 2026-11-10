@@ -34,15 +34,15 @@ export const Tutorial = ({ script, version, intro, timing }: TutorialProps) => (
         return (
           <Series.Sequence key={scene.id} durationInFrames={t.frames} name={scene.id}>
             {scene.type === 'host' ? (
-              <HostScene scene={scene} clip={t.clip} series={script.series} title={script.title} version={version} />
+              <HostScene scene={scene} clip={t.clip} still={t.still} series={script.series} title={script.title} version={version} />
             ) : (
               <>
                 <Frame label={scene.label} version={version} inset>{screen(scene)}</Frame>
-                <Presenter clip={t.clip} variant="corner" />
+                <Presenter clip={t.clip} still={t.still} variant="corner" />
               </>
             )}
             {t.scratch && <Audio src={staticFile(t.scratch)} />}
-            <Captions text={scene.narration} inset={scene.type !== 'host'} />
+            {script.captions !== false && <Captions text={scene.narration} inset={scene.type !== 'host'} />}
           </Series.Sequence>
         );
       })}

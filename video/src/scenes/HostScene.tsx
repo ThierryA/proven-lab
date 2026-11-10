@@ -4,16 +4,18 @@ import { enter } from './anim';
 import { Presenter } from './Presenter';
 import type { Scene } from '../types';
 
-type Props = { scene: Extract<Scene, { type: 'host' }>; clip?: string; series: string; title: string; version: string };
+type Props = { scene: Extract<Scene, { type: 'host' }>; clip?: string; still?: string; series: string; title: string; version: string };
 
 // The presenter on camera: full frame, or beside a short list of points.
-export const HostScene = ({ scene, clip, series, title, version }: Props) => {
+export const HostScene = ({ scene, clip, still, series, title, version }: Props) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
   const points = scene.points ?? [];
   return (
     <AbsoluteFill>
-      <Presenter clip={clip} variant={points.length ? 'side' : 'full'} />
+      <Presenter clip={clip} still={still} variant={points.length ? 'side' : 'full'} shot={scene.shot} />
+      {/* Studio grade: a soft vignette so text reads over any set. */}
+      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,0.45) 100%)' }} />
       <div style={{ position: 'absolute', top: 56, left: 96, fontFamily: theme.mono, fontSize: 26, color: theme.fg, textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}>
         <span style={{ color: theme.signal }}>■</span> Proven Lab
       </div>
@@ -30,6 +32,7 @@ export const HostScene = ({ scene, clip, series, title, version }: Props) => {
         </div>
       )}
 
+      {scene.callout && <Callout text={scene.callout} />}
       {scene.lowerThird && <LowerThird series={series} title={title} />}
     </AbsoluteFill>
   );
@@ -48,6 +51,18 @@ const LowerThird = ({ series, title }: { series: string; title: string }) => {
         <div style={{ fontFamily: theme.mono, fontSize: 26, color: theme.signal }}>{series}</div>
         <div style={{ fontSize: 48, fontWeight: 500, marginTop: 6 }}>{title}</div>
       </div>
+    </div>
+  );
+};
+
+// A short line that pops in beside the presenter, like a studio graphic.
+const Callout = ({ text }: { text: string }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const a = enter(frame, fps, 14);
+  return (
+    <div style={{ position: 'absolute', left: 96, top: '36%', maxWidth: 620, opacity: a.opacity, transform: a.transform }}>
+      <div style={{ background: theme.signal, color: theme.ink, fontSize: 50, fontWeight: 500, lineHeight: 1.15, padding: '22px 30px', borderRadius: 6, boxShadow: '0 16px 40px rgba(0,0,0,0.4)' }}>{text}</div>
     </div>
   );
 };
