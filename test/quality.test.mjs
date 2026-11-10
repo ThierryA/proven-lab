@@ -39,7 +39,7 @@ test('templates: complete, placeholders filled, PHP lints, JSON and YAML parse',
 test('MCP: server instructions, prompts and the runbook as a guide', async () => {
   assert.ok(INSTRUCTIONS.length > 500 && INSTRUCTIONS.length < 2500, 'instructions are short but complete');
   for (const s of ['runbook', 'get_template', 'staging']) assert.ok(INSTRUCTIONS.includes(s), `instructions mention ${s}`);
-  assert.deepEqual((await listPrompts()).map((p) => p.name), ['check', 'git-connect', 'plan', 'ship', 'start']);
+  assert.deepEqual((await listPrompts()).map((p) => p.name), ['check', 'explain', 'git-connect', 'plan', 'ship', 'start']);
   const start = await getPrompt('start', { request: 'Build a members directory' });
   assert.match(start.messages[0].content.text, /Build a members directory[\s\S]*project\.md/);
   const list = await callTool('list_blueprints', {});

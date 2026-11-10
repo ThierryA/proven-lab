@@ -166,6 +166,7 @@ In Claude Code with the Proven Lab plugin (other MCP clients get the same as MCP
 | `/provenlab:plan` | Write a step-by-step plan in `.provenlab/plan.md` and get the user's OK before building |
 | `/provenlab:git-connect` | Connect the project to GitHub and set the push policy |
 | `/provenlab:check` | Verify the work: WP-CLI, quality checks, screenshot review |
+| `/provenlab:explain` | Explain the site's structure, data model, architecture, plan or deploy path visually |
 | `/provenlab:ship` | Commit, push, deploy to staging, then production after the user's yes |
 
 ## Tools
