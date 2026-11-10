@@ -15,7 +15,7 @@ HEYGEN_API_KEY=... npm run presenter             # make the presenter clips
 npm run render                                   # every episode -> out/<id>.mp4
 ```
 
-Without presenter clips the episode still renders, silent with captions and a placeholder where the presenter goes, timed from the narration.
+Until the presenter clips exist, scenes use a **scratch voice**: the Mac's built-in voice reads the narration (free, offline, made automatically by `npm run studio` and `npm run render`, or `npm run scratch`), with a placeholder where the presenter goes. It is only for checking timing and wording; each HeyGen clip replaces it. Pick another Mac voice with `SCRATCH_VOICE=Samantha` (`say -v '?'` lists them). On other systems the scratch step is skipped and those scenes are silent.
 
 ## Presenter
 

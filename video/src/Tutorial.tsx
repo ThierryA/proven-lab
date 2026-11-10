@@ -1,4 +1,4 @@
-import { AbsoluteFill, Series } from 'remotion';
+import { AbsoluteFill, Audio, Series, staticFile } from 'remotion';
 import { theme } from './theme';
 import type { Scene, Timing, TutorialProps, TutorialScript } from './types';
 import { TitleScene } from './scenes/TitleScene';
@@ -41,6 +41,7 @@ export const Tutorial = ({ script, version, intro, timing }: TutorialProps) => (
                 <Presenter clip={t.clip} variant="corner" />
               </>
             )}
+            {t.scratch && <Audio src={staticFile(t.scratch)} />}
             <Captions text={scene.narration} inset={scene.type !== 'host'} />
           </Series.Sequence>
         );

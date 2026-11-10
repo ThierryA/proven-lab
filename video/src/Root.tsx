@@ -12,9 +12,9 @@ const PAD = 0.6; // seconds of air after each scene
 const estimate = (text: string) => Math.max(2.5, text.split(/\s+/).length / 2.5);
 
 // Clip lengths, written by tools/presenter.mjs. Missing manifest = no clips yet.
-const manifest = async (dir: string): Promise<Record<string, { duration: number }>> => {
+const manifest = async (dir: string, kind = 'host'): Promise<Record<string, { duration: number }>> => {
   try {
-    const res = await fetch(staticFile(`host/${dir}/manifest.json`));
+    const res = await fetch(staticFile(`${kind}/${dir}/manifest.json`));
     return res.ok ? (await res.json()).scenes : {};
   } catch {
     return {};
@@ -35,12 +35,14 @@ export const RemotionRoot = () => (
         defaultProps={{ script, version: pkg.version, intro: presenter.intro } as TutorialProps}
         calculateMetadata={async ({ props }) => {
           const clips = { _shared: await manifest('_shared'), [props.script.id]: await manifest(props.script.id) };
+          const scratch = { _shared: await manifest('_shared', 'scratch'), [props.script.id]: await manifest(props.script.id, 'scratch') };
           const timing: Timing[] = withIntro(props.script, props.intro).map((s) => {
             const dir = s.id === 'hello' ? '_shared' : props.script.id;
             const clip = clips[dir][s.id];
-            return clip
-              ? { frames: Math.ceil((clip.duration + PAD) * FPS), clip: `host/${dir}/${s.id}.mp4` }
-              : { frames: Math.ceil((estimate(s.narration) + PAD) * FPS) };
+            if (clip) return { frames: Math.ceil((clip.duration + PAD) * FPS), clip: `host/${dir}/${s.id}.mp4` };
+            const voice = scratch[dir][s.id];
+            if (voice) return { frames: Math.ceil((voice.duration + PAD) * FPS), scratch: `scratch/${dir}/${s.id}.wav` };
+            return { frames: Math.ceil((estimate(s.narration) + PAD) * FPS) };
           });
           return { durationInFrames: timing.reduce((n, t) => n + t.frames, 0), props: { ...props, timing } };
         }}

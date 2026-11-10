@@ -12,8 +12,8 @@ export type Scene =
 
 export type TutorialScript = { id: string; series: string; title: string; scenes: Scene[] };
 
-// How a scene is voiced: a presenter clip, or nothing yet (silent, captions only, placeholder presenter).
-export type Timing = { frames: number; clip?: string };
+// How a scene is voiced: a HeyGen presenter clip, else scratch narration (placeholder presenter), else silent.
+export type Timing = { frames: number; clip?: string; scratch?: string };
 
 export type TutorialProps = {
   script: TutorialScript;

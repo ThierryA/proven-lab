@@ -4,10 +4,11 @@
   "description": "Proven Lab tutorial videos, built with Remotion from versioned scripts in tutorials/",
   "type": "module",
   "scripts": {
-    "studio": "remotion studio src/index.ts",
-    "render": "node tools/render.mjs",
+    "studio": "node tools/scratch-voice.mjs && remotion studio src/index.ts",
+    "render": "node tools/scratch-voice.mjs && node tools/render.mjs",
     "still": "remotion still src/index.ts build-an-app out/preview.png --frame=300",
-    "presenter": "node tools/presenter.mjs"
+    "presenter": "node tools/presenter.mjs",
+    "scratch": "node tools/scratch-voice.mjs"
   },
   "dependencies": {
     "@remotion/cli": "4.0.542",
