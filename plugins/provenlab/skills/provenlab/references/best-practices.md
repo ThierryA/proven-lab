@@ -6,6 +6,8 @@ Apply these on every project, whatever the setup. Add the tooling at the start, 
 
 ## 1. Project layout
 
+Use the core APIs before writing your own (runbook, step 3: post types and meta instead of custom tables, core users and capabilities instead of custom auth, transients instead of custom caches, `wp_remote_*` instead of raw HTTP). Never change WordPress core or third-party plugins and themes: extend them with hooks.
+
 Put the application's PHP in a regular plugin, never in a theme, in WordPress core or in a must-use plugin (must-use plugins cannot be deactivated, have no activation or uninstall hooks, and are skipped by Plugin Check). Use a must-use plugin only for small site-wide code the user explicitly wants always on.
 
 ```

@@ -9,6 +9,8 @@ description: Build applications on WordPress as the application layer (post type
 
 Follow the runbook in `references/runbook.md` (the same text as https://proven-lab.com/AGENTS.md). Each step names a guide: read `references/<slug>.md`, or call `get_blueprint`. Start new code from `templates/` (or `get_template`), record decisions in `.provenlab/project.md`, and with GitHub commit every verified step and always commit before pushing (`references/git-workflow.md`).
 
+Always: never change WordPress core; never edit plugins or themes the user did not write (use their hooks and extension points from the user's plugin); use the core APIs (post types, meta, taxonomies, users, options, cron, transients) instead of custom tables or custom code.
+
 Commands: `/provenlab:start`, `/provenlab:plan`, `/provenlab:git-connect`, `/provenlab:check`, `/provenlab:ship`.
 
 ## Look things up instead of guessing

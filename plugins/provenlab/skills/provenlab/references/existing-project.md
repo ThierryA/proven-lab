@@ -24,7 +24,8 @@ Look, then summarize what you found to the user in two or three lines:
 
 ## 3. Change it safely
 
-- Put new features in **the project's own plugin**, or a new plugin if there is none. Never edit WordPress core, third-party plugins or a theme the user did not write; extend them with hooks.
+- Put new features in **the project's own plugin**, or a new plugin if there is none.
+- **Never change WordPress core, and never edit plugins or themes the user did not write.** Find out who wrote each one (`wp plugin list --fields=name,title,version,update` and each plugin header); anything from WordPress.org or a vendor is third-party. Change third-party behavior only from the user's plugin: their actions and filters, their documented extension points (template overrides, settings, APIs), or a child theme. If no hook exists, tell the user and propose an alternative; never patch the files, because the next update erases the change.
 - Follow the project's conventions over Proven Lab's defaults when they differ.
 - Keep existing content and data: no database copies over live sites, migrations only with a backup and the user's approval.
 - Run the project's own tests and checks as well as the WP-CLI checks (`wp-cli-for-agents`).

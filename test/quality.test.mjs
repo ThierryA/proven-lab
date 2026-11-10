@@ -69,7 +69,9 @@ test('consistency: guides, runbook, skill and commands only reference guides and
 test('consistency: agent-facing text keeps the rules that were decided', () => {
   const agents = read('content/AGENTS.md');
   const all = [agents, read('content/kit/.claude/skills/provenlab/SKILL.md'), ...walk(join(ROOT, 'content/blueprints'), '.md').map((f) => readFileSync(f, 'utf8'))].join('\n');
-  assert.ok(agents.length < 12000, `AGENTS.md is ${agents.length} chars; keep the runbook short`);
+  assert.ok(agents.length < 16000, `AGENTS.md is ${agents.length} chars; keep the runbook short`);
+  for (const s of ['Never change WordPress core', 'Never edit plugins or themes the user did not write', 'No custom database tables']) assert.ok(agents.includes(s), `runbook rule: ${s}`);
+  assert.ok(INSTRUCTIONS.includes('never change WordPress core'), 'MCP instructions carry the core rule');
   assert.ok(!/(in|as|use) a must-use plugin(?! is)/i.test(all.replace(/not a must-use plugin|never[^.]*must-use|must-use plugins? (cannot|have no|are skipped)|Use a must-use plugin only/gi, '')), 'no guide recommends a must-use plugin for the app');
   assert.ok(!/ssh-keygen|wpe_create_ssh_key/.test(all), 'agents never create SSH keys');
   for (const s of ['New or existing', 'staging', 'get_template', 'project.md']) assert.ok(agents.includes(s), `runbook mentions ${s}`);

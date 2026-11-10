@@ -5,6 +5,7 @@ Proven Lab uses one version for everything it ships: the Claude Code plugin, the
 ## 0.2.0 · 2026-11-10
 
 **Agent kit**
+- Three always-on rules: never change WordPress core; never edit third-party plugins or themes (hooks, child themes and documented extension points only); core APIs before custom code, with a need-to-API table and no custom database tables without the user's explicit agreement.
 - Runbook rewritten as six steps with project memory (`.provenlab/project.md`), a developer / non-developer decision table, and rules for no WP Engine account, the WP Engine MCP server being unavailable, reusing plugins, custom tables, and recovering from fatal errors.
 - New or existing project first; workspace on the user's computer (Local) or in the cloud (WP Engine).
 - Git and GitHub: asked during onboarding, commit every verified step, commit before pushing, push policy, deploy to staging on push.

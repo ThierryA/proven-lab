@@ -4,6 +4,12 @@
 
 You build or change applications where **WordPress is the application layer**: data, users and permissions, validation, hooks, REST and Abilities come from WordPress. The admin and the frontend are WordPress or a custom app. AI comes from the Cloud AI API. WP Engine hosting is optional.
 
+**Three rules that always apply:**
+
+1. **Never change WordPress core.** No edits to `wp-admin/`, `wp-includes/` or the root `wp-*.php` files, ever; configuration goes through `wp config set`, never by editing core.
+2. **Never edit plugins or themes the user did not write.** Change their behavior with their hooks (`add_action`, `add_filter`), a child theme, or the extension points they document (template overrides, settings, APIs), from the user's own plugin. If no hook exists, say so and propose an alternative; never patch the files (updates would erase the change).
+3. **Use the core APIs; do not build what WordPress already has.** No custom database tables, custom login, custom roles storage, custom caching or custom HTTP code when a core API does it (table in step 3).
+
 Follow the steps in order. Each step names its guides: `get_blueprint <slug>`, or `curl "https://proven-lab.com/api/get_blueprint?slug=<slug>"`.
 
 ## Access: nothing to install
@@ -78,7 +84,24 @@ Then write `.provenlab/project.md`.
 - **Reuse before building.** A maintained plugin that does the job beats new code: payments and shops → WooCommerce; forms → an existing forms plugin when the user agrees. Build what is specific to the app.
 - **Start from the template:** `get_template` with `plugin` and the slug: a regular plugin in `wp-content/plugins/<slug>/`, activated with `wp plugin activate <slug>`. Never a must-use plugin, a theme's `functions.php`, or WordPress core.
 - **Conventions from the first line:** prefix every post type, meta key, option, hook and function with the plugin prefix (or a namespace); one text domain; register on the right hook.
-- **Model first:** post types, taxonomies and registered meta on `init`, with `show_in_rest => true` for anything a custom app uses. Use custom tables only when the data is relational or needs atomic updates (bookings with capacity, ledgers): create them with `dbDelta()` on activation and store a schema version option.
+- **Model first, with core data structures:** post types, taxonomies and registered meta on `init`, with `show_in_rest => true` for anything a custom app uses.
+- **Core API first** (look each one up before using it):
+
+| The app needs | Use |
+|---|---|
+| Records (bookings, members, products, notes) | A post type + registered meta (`register_post_type`, `register_post_meta`) |
+| Categories, tags, statuses, relationships between records | Taxonomies (`register_taxonomy`), or post meta holding the related ID |
+| Data about users | User meta (`register_meta( 'user', ... )`); roles and capabilities (`add_role`, `map_meta_cap`) |
+| Settings | Options with the Settings API (`register_setting`) |
+| Sign-in, accounts, permissions | Core users, application passwords, capabilities: never custom auth |
+| Files and images | The media library (`media_handle_upload`, `wp_get_attachment_url`) |
+| Scheduled and background work | WP-Cron (`wp_schedule_event`), or Action Scheduler if already installed |
+| Caching | Transients and the object cache (`set_transient`, `wp_cache_get`) |
+| Calls to other services, email | `wp_remote_get` / `wp_remote_post`, `wp_mail` |
+| Custom endpoints and actions | `register_rest_route`, Abilities (`wp_register_ability`) |
+| Search and queries | `WP_Query`, `WP_User_Query`, `WP_Term_Query`; the Cloud AI API knowledge base for meaning-based search |
+
+- **No custom database tables** unless the user explicitly agrees after you explain why core structures cannot work (for example, millions of rows queried in ways meta cannot index). Then create them with `dbDelta()` on activation, prefixed, with a schema version option and cleanup in `uninstall.php`.
 - **Permissions** are WordPress capabilities in `permission_callback`, `auth_callback` and `current_user_can()`, never only in the interface. Custom actions are **Abilities**.
 - **By setup:** Classic → `classic-wordpress` (block theme first). Headless → `custom-app`. Anything people see → `frontend-design`.
 - **Look up before you write:** `get_function`, `get_class`, `get_hook`; `get_cli_command` before running WP-CLI.
@@ -114,6 +137,7 @@ Guide: `wpe-deployment`.
 
 ## Hard rules
 
+- Never change WordPress core; never edit third-party plugins or themes (hooks, child themes and documented extension points only); core APIs before custom code; no custom tables without the user's explicit agreement.
 - Sanitize input, validate against the REST or ability schema, escape output. `$wpdb->prepare()` for any SQL.
 - Check `since` against the target WordPress version; guard newer APIs with `function_exists()`.
 - Hooks: `init` for types and meta, `rest_api_init` for routes, `wp_abilities_api_categories_init` then `wp_abilities_api_init` for Abilities.
