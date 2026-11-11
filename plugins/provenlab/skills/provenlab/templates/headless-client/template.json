@@ -1,5 +1,5 @@
 {
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "A typed WordPress REST client for a custom app (Node, server side only): application-password authentication from environment variables, JSON errors surfaced as exceptions, helpers for listing, reading and creating posts of a custom post type, and running an Ability.",
   "placeholders": {
     "slug": "the WordPress plugin slug (its rest_base is <slug>-items in the plugin template)",

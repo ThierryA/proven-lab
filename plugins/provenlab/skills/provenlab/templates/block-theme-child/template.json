@@ -1,5 +1,5 @@
 {
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "A child theme of the default block theme with the design tokens in theme.json: a neutral palette and one accent, two font families, a type scale, a spacing scale and content widths. Fill the tokens from the design brief (blueprint frontend-design).",
   "placeholders": {
     "slug": "theme folder and text domain, e.g. book-club",

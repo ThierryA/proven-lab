@@ -4,6 +4,12 @@ Proven Lab uses one version for everything it ships: the Claude Code plugin, the
 
 **To release:** `npm version minor` (or `patch` / `major`), add a section for the new version and date at the top of the list below, written from the commits since the last tag (`git log v<previous>..HEAD`), build, commit, and tag `v<version>`. This file is public: only released versions appear here.
 
+## 0.4.0 · 2026-11-11
+
+- Quick prototype: a working version of an idea in minutes, on your computer with WordPress Playground (recommended, nothing to install) or Local, or in the cloud on WP Engine. Same building blocks and rules as a full project, so nothing is thrown away; it skips the plan, GitHub, the full checks and staging, and becomes a real project when you say so. New command `/provenlab:prototype` (also an MCP prompt, and at `proven-lab.com/commands/prototype.md`), and a new guide.
+- A simpler start: the agent first asks what you want to do (try an idea quickly, build it properly, or change a site you already have), then only what that path needs. Every question is worded in plain English, with the technical name in brackets.
+- Home page video: captions and annotations off by default.
+
 ## 0.3.2 · 2026-11-11
 
 - Faster, cheaper verification: every change gets a quick check with WP-CLI and real requests; the full checks (coding standards, PHPUnit, PHPStan, Plugin Check, the verify script) run on demand, when you ask or run `/provenlab:check`, preferably on your computer or in CI. Agents no longer install test suites or run long checks in the WP Engine sandbox unless you ask.

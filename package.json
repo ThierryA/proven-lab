@@ -1,6 +1,6 @@
 {
   "name": "provenlab",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "description": "Proven Lab: docs and tools that let AI agents build on WordPress core APIs, WP-CLI and the Cloud AI API.",

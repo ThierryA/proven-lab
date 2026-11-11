@@ -1,7 +1,7 @@
 {
   "name": "provenlab",
   "description": "Build on WordPress as the application layer with exact Core API, WP-CLI and Cloud AI API references, blueprints and a playbook for coding agents.",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "author": {
     "name": "Proven Lab"
   },
