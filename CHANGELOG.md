@@ -4,6 +4,10 @@ Proven Lab uses one version for everything it ships: the `@provenlab/mcp` packag
 
 **To release:** `npm version minor` (or `patch` / `major`), add a section for the new version and date at the top of the list below, written from the commits since the last tag (`git log v<previous>..HEAD`), build, commit, and tag `v<version>`. This file is public: only released versions appear here.
 
+## 0.5.2 · 2026-11-11
+
+- After every step, the agent checks what comes next and offers two or three concrete next steps in plain words, with its recommendation first, instead of asking "What next?". After a quick prototype, for example: change something, put it on the web so others can open it, or make it a real project ready to go live on your domain.
+
 ## 0.5.1 · 2026-11-11
 
 - The agent always starts by asking what you want to do (try an idea quickly, build it properly, or change a site you already have), with its recommendation, and waits for your answer, even when the request is detailed. It skips the question only when you name the path yourself, for example "a quick prototype".
