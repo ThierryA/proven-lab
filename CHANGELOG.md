@@ -4,6 +4,11 @@ Proven Lab uses one version for everything it ships: the `@provenlab/mcp` packag
 
 **To release:** `npm version minor` (or `patch` / `major`), add a section for the new version and date at the top of the list below, written from the commits since the last tag (`git log v<previous>..HEAD`), build, commit, and tag `v<version>`. This file is public: only released versions appear here.
 
+## 0.5.0 · 2026-11-11
+
+- No more Claude Code plugin: Proven Lab is fully remote. Give your agent the link, or connect the MCP server once (`claude mcp add --transport http provenlab https://proven-lab.com/mcp`, or one line in Codex, Cursor or VS Code). The tools, the instructions and the commands (`start`, `prototype`, `plan`, `git-connect`, `check`, `explain`, `ship`, as MCP prompts or in plain words) update on the server, so there is nothing to install or update.
+- Had the plugin? It keeps working but no longer updates. Remove it with `/plugin uninstall provenlab@provenlab` and `/plugin marketplace remove provenlab`, then connect the MCP server.
+
 ## 0.4.0 · 2026-11-11
 
 - Quick prototype: a working version of an idea in minutes, on your computer with WordPress Playground (recommended, nothing to install) or Local, or in the cloud on WP Engine. Same building blocks and rules as a full project, so nothing is thrown away; it skips the plan, GitHub, the full checks and staging, and becomes a real project when you say so. New command `/provenlab:prototype` (also an MCP prompt, and at `proven-lab.com/commands/prototype.md`), and a new guide.
