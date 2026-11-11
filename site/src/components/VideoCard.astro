@@ -46,10 +46,25 @@ const { youtubeId = v.youtubeId } = Astro.props;
   document.querySelectorAll<HTMLButtonElement>('.video-card').forEach((btn) =>
     btn.addEventListener('click', () => {
       if (!dialog || !frame) return;
-      frame.src = `https://www.youtube-nocookie.com/embed/${btn.dataset.video}?autoplay=1&rel=0&modestbranding=1&cc_load_policy=0&iv_load_policy=3&disablekb=1`;
+      const origin = encodeURIComponent(location.origin);
+      // hl=en: the player in the video's language, so YouTube does not switch captions on for a different interface
+      // language. enablejsapi lets us unload the captions module once the player is ready (viewers can still use CC).
+      frame.src = `https://www.youtube-nocookie.com/embed/${btn.dataset.video}?autoplay=1&rel=0&modestbranding=1&cc_load_policy=0&iv_load_policy=3&disablekb=1&hl=en&enablejsapi=1&origin=${origin}`;
       dialog.showModal();
     }),
   );
+  // Captions off by default: ask the player to unload them, a few times while it starts (the first messages can
+  // arrive before the player listens).
+  frame?.addEventListener('load', () => {
+    if (!frame.src) return;
+    const send = (func, args = []) => frame.contentWindow?.postMessage(JSON.stringify({ event: 'command', func, args }), '*');
+    let tries = 0;
+    const timer = setInterval(() => {
+      send('unloadModule', ['captions']);
+      send('unloadModule', ['cc']);
+      if (++tries >= 6) clearInterval(timer);
+    }, 500);
+  });
   // Stop playback when the lightbox closes (Escape, the button, or a click outside the video).
   dialog?.addEventListener('close', () => { if (frame) frame.src = ''; });
   dialog?.addEventListener('click', (e) => { if (e.target === dialog) dialog.close(); });
