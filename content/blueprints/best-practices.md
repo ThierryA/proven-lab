@@ -13,7 +13,7 @@ you_do:
 
 > **Runbook step 5 · Verify,** for developers. Set the tooling up at the start of step 3; run the full checks on demand. **Next:** step 6, `wpe-deployment`.
 
-Apply these on every project, whatever the setup. Add the tooling at the start and keep it in CI. Run the full checks on demand (when the user asks, or `/provenlab:check`), locally (Local or `wp-env`) or in CI, not in the WP Engine sandbox unless the user asks: test suites there are slow and costly. Every change still gets a quick WP-CLI check (runbook, step 5).
+Apply these on every project, whatever the setup. Add the tooling at the start and keep it in CI. Run the full checks on demand (when the user asks, or the `check` command), locally (Local or `wp-env`) or in CI, not in the WP Engine sandbox unless the user asks: test suites there are slow and costly. Every change still gets a quick WP-CLI check (runbook, step 5).
 
 ## 1. Project layout
 

@@ -101,22 +101,23 @@ a calendar and RSVPs, then show me before anything goes to production.
 Use Proven Lab: {{BASE}}
 ```
 
-## Optional: connect Proven Lab to your agent
+## Optional: connect the MCP server
 
-Not needed to start. Connecting makes lookups faster and keeps the instructions in your project.
+Not needed to start: the link alone does everything. Connecting the Proven Lab MCP server makes lookups faster (exact WordPress functions, hooks, WP-CLI commands, guides and templates as tools) and adds the commands as prompts: `start`, `prototype`, `plan`, `git-connect`, `check`, `explain` and `ship`. It updates itself: nothing to install or update, ever.
 
-**Claude Code:** install the plugin: the Proven Lab tools, the skill, and the commands `/provenlab:start`, `/provenlab:prototype`, `/provenlab:plan`, `/provenlab:git-connect`, `/provenlab:check`, `/provenlab:explain` and `/provenlab:ship` (other MCP clients get the same commands as prompts):
+**Claude Code:**
 
 ```text
-/plugin install provenlab --marketplace ThierryA/proven-lab
+claude mcp add --transport http provenlab {{MCP_URL}}
 ```
 
-Or add only the tools: `claude mcp add --transport http provenlab {{MCP_URL}}` (add `--scope project` to share it with your team).
+Add `--scope project` to share it with your team. The commands appear as `/mcp__provenlab__prototype` and so on, or just ask in plain words.
 
 **Other agents:** add an MCP server named `provenlab` with the URL `{{MCP_URL}}`:
 
 | Agent | Configuration |
 |---|---|
+| Codex | `codex mcp add provenlab --url {{MCP_URL}}` |
 | Cursor | `.cursor/mcp.json`: `{"mcpServers": {"provenlab": {"url": "{{MCP_URL}}"}}}` |
 | VS Code (GitHub Copilot) | `.vscode/mcp.json`: `{"servers": {"provenlab": {"type": "http", "url": "{{MCP_URL}}"}}}` |
 | Any agent with remote MCP | Server name `provenlab`, URL `{{MCP_URL}}` |
@@ -127,9 +128,9 @@ Or add only the tools: `claude mcp add --transport http provenlab {{MCP_URL}}` (
 
 Each release has a version and a [changelog](/changelog).
 
-- **Claude Code plugin:** run `/plugin marketplace update provenlab`, then `/plugin update provenlab@provenlab`, and restart Claude Code. From a terminal: `claude plugin marketplace update provenlab && claude plugin update provenlab@provenlab`.
-- **MCP server only:** nothing to do; the tools, instructions and prompts update on the server. Start a new session to pick them up.
+- **The link and the MCP server:** nothing to do. The tools, instructions and prompts update on the server; start a new session to pick them up.
 - **Project kit files** (`AGENTS.md`, the skill in `.claude/skills/provenlab/`): ask your agent `Update Proven Lab in this project by following {{BASE}}/kit/SETUP.md`. It replaces only Proven Lab's own files and keeps yours.
+- **Had the Claude Code plugin?** It is no longer needed: run `/plugin uninstall provenlab@provenlab` and `/plugin marketplace remove provenlab`, then connect the MCP server as above.
 
 ## For tool builders
 

@@ -5,7 +5,7 @@ argument-hint: "[what to build or change]"
 
 Plan this before writing code: $ARGUMENTS
 
-1. Read `.provenlab/project.md` (run `/provenlab:start` first if it is missing).
+1. Read `.provenlab/project.md` (run the `start` command first if it is missing).
 2. Look up what the plan needs: the guides for the setup (`get_blueprint classic-wordpress` or `custom-app`, `frontend-design` for anything people see, `wpe-ai-plugins` for AI), the starter files (`get_template`), and existing plugins that already do part of the job.
 3. Write `.provenlab/plan.md`:
    - **Goal** in one sentence, in the user's words.

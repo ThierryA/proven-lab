@@ -5,7 +5,7 @@
     "prefix": "the plugin's post type prefix"
   },
   "next": [
-    "Run it on demand (when the user asks, or /provenlab:check), from the plugin folder on a local site: bash bin/verify.sh   (or WP=\"wp --path=/path/to/wordpress\" bash bin/verify.sh), or in CI.",
+    "Run it on demand (when the user asks, or the check command), from the plugin folder on a local site: bash bin/verify.sh   (or WP=\"wp --path=/path/to/wordpress\" bash bin/verify.sh), or in CI.",
     "On WP Engine, do the quick checks only (a few wp commands through the WP Engine MCP server's sandbox_bash); run the full script there only if the user asks."
   ]
 }

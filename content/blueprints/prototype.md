@@ -75,4 +75,4 @@ Write a short `.provenlab/project.md`: **Mode: prototype**, where it runs and it
 
 ## When the prototype is approved
 
-When the user says "make it a real project" (or runs `/provenlab:start`), keep the code and add what was skipped: GitHub and a first commit, a plan for what is missing (edge cases, polish, permissions review), the full checks on demand, then staging and production. From Playground, move the plugin folder into Local or a WP Engine environment; recreate the sample content there.
+When the user says "make it a real project" (or runs the `start` command), keep the code and add what was skipped: GitHub and a first commit, a plan for what is missing (edge cases, polish, permissions review), the full checks on demand, then staging and production. From Playground, move the plugin folder into Local or a WP Engine environment; recreate the sample content there.

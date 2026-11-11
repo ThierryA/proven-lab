@@ -1,4 +1,4 @@
-// The project kit, installer, init command and Claude Code plugin.
+// The project kit, installer, init command and the published commands.
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtempSync, writeFileSync, readFileSync, existsSync, mkdirSync } from 'node:fs';
@@ -40,11 +40,12 @@ test('kit files, manifest, setup guide and installer are served with real URLs',
   assert.ok((sh.headers.get('content-type') || '').startsWith('text/plain'));
   assert.ok((await sh.text()).startsWith('#!/bin/sh'));
   const connect = await (await fetch(`${base}/docs/connect`)).text();
-  assert.ok(connect.includes(`${home}/mcp`) && connect.includes('install.sh') && connect.includes('--marketplace ThierryA/proven-lab'));
+  assert.ok(connect.includes(`${home}/mcp`) && connect.includes('install.sh') && connect.includes('claude mcp add --transport http provenlab'));
+  assert.ok(!connect.includes('/plugin install'), 'the Claude Code plugin is gone: no install instructions');
   assert.ok(!connect.includes('your-provenlab-host'));
   for (const n of ['start', 'prototype', 'plan', 'git-connect', 'check', 'explain', 'ship']) {
     const r = await fetch(`${base}/commands/${n}.md`); const body = await r.text();
-    assert.equal(r.status, 200, `/commands/${n}.md`); assert.ok(body.startsWith(`# /provenlab:${n}`) && !body.includes('{{'), `/commands/${n}.md content`);
+    assert.equal(r.status, 200, `/commands/${n}.md`); assert.ok(body.startsWith(`# Proven Lab command: ${n}`) && !body.includes('{{'), `/commands/${n}.md content`);
   }
 });
 
@@ -81,17 +82,10 @@ test('init merges MCP configs and CLAUDE.md without losing the project\'s conten
   assert.deepEqual(again.added, []); assert.ok(again.kept.includes('.vscode/mcp.json') && again.kept.includes('CLAUDE.md'));
 });
 
-test('Claude Code plugin matches the site and the kit', () => {
-  const market = rj('.claude-plugin', 'marketplace.json');
-  assert.equal(market.plugins[0].source, './plugins/provenlab');
-  const plugin = rj('plugins', 'provenlab', '.claude-plugin', 'plugin.json');
-  assert.equal(plugin.name, market.plugins[0].name);
-  assert.equal(rj('plugins', 'provenlab', '.mcp.json').mcpServers.provenlab.url, `${home}/mcp`);
-  assert.equal(readFileSync(join(ROOT, 'plugins/provenlab/skills/provenlab/SKILL.md'), 'utf8'), readFileSync(join(ROOT, 'dist/kit/.claude/skills/provenlab/SKILL.md'), 'utf8'));
+test('no Claude Code plugin: everything is remote (MCP server) or in the kit', () => {
+  assert.ok(!existsSync(join(ROOT, '.claude-plugin')) && !existsSync(join(ROOT, 'plugins')), 'no plugin or marketplace in the repo');
+  assert.equal(rj('dist', 'kit', '.mcp.json').mcpServers.provenlab.url, `${home}/mcp`);
   assert.equal(rj('packages', 'mcp-server', 'package.json').homepage, home, 'npm package homepage must match the site');
-  const cli = spawnSync('claude', ['plugin', 'validate', ROOT], { encoding: 'utf8' });
-  if (cli.error) return; // Claude Code CLI not installed (CI): structure checks above still ran
-  assert.match(cli.stdout + cli.stderr, /Validation passed/);
 });
 
 test('agent-facing files tell the agent to ask for the setup before building', async () => {
@@ -106,7 +100,7 @@ test('agent-facing files tell the agent to ask for the setup before building', a
   assert.match(agents, /local-development/);
   const local = await (await fetch(`${base}/blueprints/local-development.md`)).text();
   for (const s of ['sites.json', 'local_create_site', 'https://localwp.com', 'app/public']) assert.ok(local.includes(s), `local-development mentions ${s}`);
-  assert.match(readFileSync(join(ROOT, 'plugins/provenlab/commands/start.md'), 'utf8'), /Wait for the answer/);
+  assert.match(readFileSync(join(ROOT, 'dist/commands/start.md'), 'utf8'), /Wait for the answer/);
 });
 
 test('agents are told to use the Cloud AI API for AI and to follow best practices', async () => {
@@ -127,17 +121,15 @@ test('agents default to the WP Engine AI plugins and use the WP Engine MCP serve
   for (const s of ['wpe-hub?download', 'wpe-ai-connector?download', 'wpe-ai-chatbot?download', 'power-coworker?download', 'wpe_ai_connector_authorize_request', 'power-chatbot/embedded-chatbot', 'cannot be automated', 'mint_browser_session', '/v1/sessions/${session_id}/events', 'does not use the connector']) assert.ok(plugins.includes(s), s);
   const hosted = await (await fetch(`${base}/blueprints/wpengine-cloud.md`)).text();
   for (const s of ['sandbox_edit', 'wpe_create_backup', 'staging', 'approval', '--scope user wpengine']) assert.ok(hosted.includes(s), s);
-  assert.equal(rj('plugins', 'provenlab', '.mcp.json').mcpServers.wpengine.url, 'https://api.ai.wpengine.com/v1/mcp');
+  assert.equal(rj('dist', 'kit', '.mcp.json').mcpServers.wpengine.url, 'https://api.ai.wpengine.com/v1/mcp');
 });
 
 test('everything Proven Lab ships carries the same version', async () => {
   const version = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version;
   assert.match(version, /^\d+\.\d+\.\d+$/);
-  assert.equal(rj('plugins', 'provenlab', '.claude-plugin', 'plugin.json').version, version, 'plugin.json');
-  assert.equal(rj('.claude-plugin', 'marketplace.json').plugins[0].version, version, 'marketplace entry');
   assert.equal(rj('packages', 'mcp-server', 'package.json').version, version, '@provenlab/mcp');
   assert.equal((await (await fetch(`${base}/kit/manifest.json`)).json()).version, version, 'kit manifest');
-  assert.match(readFileSync(join(ROOT, 'plugins/provenlab/skills/provenlab/SKILL.md'), 'utf8'), new RegExp(`version: "${version.replace(/\./g, '\\.')}"`), 'skill');
+  assert.match(readFileSync(join(ROOT, 'dist/kit/.claude/skills/provenlab/SKILL.md'), 'utf8'), new RegExp(`version: "${version.replace(/\./g, '\\.')}"`), 'skill');
   assert.ok((await (await fetch(`${base}/AGENTS.md`)).text()).includes(`Proven Lab ${version}`), 'runbook');
   const changelog = readFileSync(join(ROOT, 'CHANGELOG.md'), 'utf8');
   assert.ok(changelog.includes(`## ${version}`), 'changelog entry for the current version');

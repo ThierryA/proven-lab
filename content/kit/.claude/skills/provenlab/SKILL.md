@@ -13,7 +13,7 @@ Always: never change WordPress core; never edit plugins or themes the user did n
 
 Explain structures visually (site pages, data model, architecture, plan, deploy path): generative UI if your app supports it, else a Mermaid diagram, else a compact tree.
 
-Commands: `/provenlab:start`, `/provenlab:prototype`, `/provenlab:plan`, `/provenlab:git-connect`, `/provenlab:check`, `/provenlab:explain` (`--dev` for the technical view), `/provenlab:ship` (also at {{BASE}}/commands/<name>.md for requests in plain words).
+Commands (MCP prompts, or ask in plain words; steps from `get_command` or {{BASE}}/commands/<name>.md): `start`, `prototype`, `plan`, `git-connect`, `check`, `explain` (`--dev` for the technical view), `ship`.
 
 ## Look things up instead of guessing
 

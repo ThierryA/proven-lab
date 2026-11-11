@@ -1,6 +1,5 @@
-// MCP server instructions (sent to every client on connect) and prompts. The prompts are the same as the Claude
-// Code plugin's slash commands (content/plugin-commands), so every MCP client gets /start, /plan, /git-connect,
-// /check and /ship.
+// MCP server instructions (sent to every client on connect) and prompts. The prompts are the Proven Lab commands
+// (content/commands): start, prototype, plan, git-connect, check, explain and ship, for every MCP client.
 import { getCommands } from './core.mjs';
 
 export const INSTRUCTIONS = `Proven Lab: build or change apps with WordPress as the application layer (data, users, permissions, hooks, REST, Abilities), WP-CLI, and the Cloud AI API for AI features. GitHub and WP Engine hosting are optional.

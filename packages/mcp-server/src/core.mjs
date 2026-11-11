@@ -57,7 +57,7 @@ const handlers = {
     const s = await load();
     const list = s.commands.filter((c) => c.name !== 'setup-project').map(({ name: n, description }) => ({ name: n, description }));
     if (!name) return { commands: list, usage: 'When the user asks for one of these in plain words, call get_command with its name and follow the steps.' };
-    const c = s.commands.find((x) => x.name === String(name).replace(/^\/?(provenlab:)?/, ''));
+    const c = s.commands.find((x) => x.name === String(name).replace(/^\/?(provenlab:|mcp__provenlab__)?/, ''));
     return c ? { name: c.name, description: c.description, markdown: c.body } : { error: `unknown command ${name}`, commands: list };
   },
   async get_template({ name, slug, title } = {}) {
@@ -137,7 +137,7 @@ const handlers = {
   },
 };
 
-/** The slash commands (Claude Code plugin commands), also served as MCP prompts. */
+/** The Proven Lab commands (content/commands), served as MCP prompts, by get_command and as /commands pages. */
 export async function getCommands() { return (await load()).commands; }
 
 export async function callTool(name, args = {}) {

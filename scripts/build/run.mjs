@@ -12,7 +12,7 @@ const w = async (rel, data) => { const p = join(DIST, rel); await mkdir(join(p, 
 await rm(DIST, { recursive: true, force: true });
 // Public base URL: SITE_URL, else package.json homepage. Used for links in llms.txt, OpenAPI and the kit.
 const pkg = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8'));
-// One version for everything Proven Lab ships (root package.json); the build stamps it into the plugin, the MCP
+// One version for everything Proven Lab ships (root package.json); the build stamps it into the MCP
 // package and server, the kit, the skill, the templates, the runbook, the OpenAPI spec and llms.txt.
 const VERSION = pkg.version;
 {
@@ -165,17 +165,17 @@ for (const name of (await readdir(tplRoot)).sort()) {
 }
 await w('templates.json', templates);
 
-// Slash commands: the Claude Code plugin's commands, also served as MCP prompts (one source).
+// Commands (start, prototype, plan…): served as MCP prompts, by get_command, and as plain pages (one source).
 {
   const cmds = [];
-  for (const f of (await readdir(join(ROOT, 'content/plugin-commands'))).sort()) {
-    const raw = await readFile(join(ROOT, 'content/plugin-commands', f), 'utf8');
+  for (const f of (await readdir(join(ROOT, 'content/commands'))).sort()) {
+    const raw = await readFile(join(ROOT, 'content/commands', f), 'utf8');
     const fm = YAML.parse(raw.match(/^---\n([\s\S]*?)\n---\n/)?.[1] || '') || {};
     cmds.push({ name: f.replace(/\.md$/, ''), description: fm.description || '', argumentHint: fm['argument-hint'] || null, body: raw.replace(/^---[\s\S]*?---\n/, '').trim().replaceAll('{{BASE}}', site).replaceAll('{{MCP_URL}}', `${site}/mcp`) });
   }
   await w('commands.json', cmds);
   // Plain pages, so agents that only have the URL can follow a command when the user asks for it in words.
-  for (const c of cmds) await w(`commands/${c.name}.md`, `# /provenlab:${c.name}\n\n${c.description}.\n\nWhen the user asks for this in plain words (or types the command), follow these steps. Where it says $ARGUMENTS, use what the user asked for.\n\n${c.body}\n`);
+  for (const c of cmds) await w(`commands/${c.name}.md`, `# Proven Lab command: ${c.name}\n\n${c.description}.\n\nWhen the user asks for this in plain words (or runs the ${c.name} prompt), follow these steps. Where it says $ARGUMENTS, use what the user asked for.\n\n${c.body}\n`);
 }
 
 // URLs filled into the kit and the playbook
@@ -189,7 +189,7 @@ await w('AGENTS.md', agentsMd);
 // Project kit: files an agent or a person drops into a project, plus SETUP.md and install.sh
 const kitDir = join(ROOT, 'content/kit');
 // The skill (Agent Skills format): SKILL.md, references/ (the runbook and every guide, read when a step needs it)
-// and templates/ (verified starter files). Same files in the project kit and the Claude Code plugin.
+// and templates/ (verified starter files), in the project kit.
 const skillFiles = new Map();
 skillFiles.set('SKILL.md', fill(await readFile(join(kitDir, '.claude/skills/provenlab/SKILL.md'), 'utf8')));
 skillFiles.set('references/runbook.md', agentsMd);
@@ -201,20 +201,6 @@ for (const f of kitFiles) await w(`kit/${f}`, f === 'AGENTS.md' ? agentsMd : f.s
 await w('kit/manifest.json', { version: VERSION, base: site, mcp: mcpUrl, files: kitFiles.map((path) => ({ path, url: `${site}/kit/${path}` })) });
 await w('kit/SETUP.md', fill(await readFile(join(ROOT, 'content/kit-setup.md'), 'utf8')));
 await w('install.sh', fill(await readFile(join(ROOT, 'scripts/kit/install.sh'), 'utf8')).replace('__FILES__', kitFiles.join(' ')));
-
-// Claude Code plugin + marketplace, committed in the repo (generated so URLs and the skill match the kit)
-{
-  const P = (...p) => join(ROOT, ...p);
-  const put = async (path, data) => { await mkdir(join(path, '..'), { recursive: true }); await writeFile(path, typeof data === 'string' ? data : JSON.stringify(data, null, 2) + '\n'); };
-  const desc = 'Build on WordPress as the application layer with exact Core API, WP-CLI and Cloud AI API references, blueprints and a playbook for coding agents.';
-  await put(P('.claude-plugin/marketplace.json'), { name: 'provenlab', description: 'Proven Lab plugins for Claude Code', owner: { name: 'Proven Lab' }, plugins: [{ name: 'provenlab', source: './plugins/provenlab', description: desc, version: VERSION }] });
-  await put(P('plugins/provenlab/.claude-plugin/plugin.json'), { name: 'provenlab', description: desc, version: VERSION, author: { name: 'Proven Lab' }, homepage: site });
-  await put(P('plugins/provenlab/.mcp.json'), fill(await readFile(join(kitDir, '.mcp.json'), 'utf8')));
-  await rm(P('plugins/provenlab/skills/provenlab'), { recursive: true, force: true });
-  for (const [k, v] of skillFiles) await put(P('plugins/provenlab/skills/provenlab', k), v);
-  await rm(P('plugins/provenlab/commands'), { recursive: true, force: true });
-  for (const f of await readdir(P('content/plugin-commands'))) await put(P('plugins/provenlab/commands', f), fill(await readFile(P('content/plugin-commands', f), 'utf8')));
-}
 
 // llms.txt + llms-full.txt
 const llms = [

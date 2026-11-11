@@ -56,7 +56,7 @@ test('consistency: guides, runbook, skill and commands only reference guides and
   const texts = [
     ['AGENTS.md', read('content/AGENTS.md')],
     ['SKILL.md', read('content/kit/.claude/skills/provenlab/SKILL.md')],
-    ...readdirSync(join(ROOT, 'content/plugin-commands')).map((f) => [f, read('content/plugin-commands', f)]),
+    ...readdirSync(join(ROOT, 'content/commands')).map((f) => [f, read('content/commands', f)]),
     ...walk(join(ROOT, 'content/blueprints'), '.md').map((f) => [f.split('/').pop(), readFileSync(f, 'utf8')]),
   ];
   for (const [file, md] of texts) {

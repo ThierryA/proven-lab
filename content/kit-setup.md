@@ -29,7 +29,7 @@ Fetch each file from `{{BASE}}/kit/<path>`:
 | `.vscode/mcp.json` | VS Code MCP config (`provenlab` and `wpengine`) | Add both entries under `servers` |
 | `.claude/skills/provenlab/` | The skill: `SKILL.md`, `references/` (runbook and guides) and `templates/` (starter files) | Replace it only if it is an older Proven Lab skill |
 
-The full file list is at `{{BASE}}/kit/manifest.json`. If the Proven Lab Claude Code plugin is already installed, skip the skill and the MCP entries: the plugin provides them. A person can run `curl -fsSL {{BASE}}/install.sh | sh` instead; it adds missing files and leaves existing ones alone.
+The full file list is at `{{BASE}}/kit/manifest.json`. A person can run `curl -fsSL {{BASE}}/install.sh | sh` instead; it adds missing files and leaves existing ones alone.
 
 ## Updating an existing setup
 

@@ -13,7 +13,7 @@ you_do:
 
 # Git and GitHub: history, commits and deploy on push
 
-> **Runbook step 2 · Workspace** (connect), used again in steps 3 to 6 (commit, push, deploy). Command: `/provenlab:git-connect`. **Next:** step 3, build.
+> **Runbook step 2 · Workspace** (connect), used again in steps 3 to 6 (commit, push, deploy). Command: `git-connect`. **Next:** step 3, build.
 
 ## 1. Ask during onboarding
 

@@ -134,7 +134,7 @@ Connecting needs a WP Engine account with AI access, and requests use credits: s
 
 - **Quick check, every change:** prove it works with a few **WP-CLI** commands and real HTTP requests, not by rereading code (`wp-cli-for-agents`). Locally run `wp` in the site; on WP Engine use the WP Engine MCP server's `sandbox_bash`.
 - A fatal error in your plugin breaks `wp` too: `wp --skip-plugins plugin deactivate <slug>`, read `wp-content/debug.log`, fix, reactivate.
-- **Full checks, on demand only:** the `best-practices` suite (coding standards, PHPUnit, PHPStan, Plugin Check) and the full `verify-script`. Run them when the user asks or runs `/provenlab:check`, preferably locally (Local or `wp-env`) or in CI on GitHub. Not in the WP Engine sandbox unless asked: long runs there are slow and costly.
+- **Full checks, on demand only:** the `best-practices` suite (coding standards, PHPUnit, PHPStan, Plugin Check) and the full `verify-script`. Run them when the user asks or runs `check`, preferably locally (Local or `wp-env`) or in CI on GitHub. Not in the WP Engine sandbox unless asked: long runs there are slow and costly.
 - Report what you checked and the results.
 - **Commit** each verified change with a clear message (`git-workflow`); never commit broken code or secrets.
 
@@ -164,17 +164,17 @@ Guide: `wpe-deployment`. **Prototype:** no shipping; give the link and offer to 
 
 ## Commands
 
-In Claude Code with the Proven Lab plugin these are slash commands; MCP clients get them as prompts. **Without either** (the user only gave the Proven Lab link), when the user asks for one in plain words ("plan this", "explain the structure", "ship it"), read `{{BASE}}/commands/<name>.md` (or call `get_command`) and follow its steps.
+With the MCP server connected these are prompts (in Claude Code: `/mcp__provenlab__<name>`). In any case, when the user asks for one in plain words ("make a quick prototype", "plan this", "ship it"), call `get_command` (or read `{{BASE}}/commands/<name>.md`) and follow its steps.
 
 | Command | Does |
 |---|---|
-| `/provenlab:start` | Onboard or resume: the questions, workspace, GitHub |
-| `/provenlab:plan` | Write a step-by-step plan in `.provenlab/plan.md` and get the user's OK before building |
-| `/provenlab:git-connect` | Connect the project to GitHub and set the push policy |
-| `/provenlab:prototype` | A quick prototype: a working version in minutes, same building blocks |
-| `/provenlab:check` | The full checks, on demand: test suites, static analysis, Plugin Check, screenshots |
-| `/provenlab:explain` | Explain visually: by default the basics (where it is hosted, its addresses, how changes go live); `--dev` for the technical structure |
-| `/provenlab:ship` | Commit, push, deploy to staging, then production after the user's yes |
+| `start` | Onboard or resume: the questions, workspace, GitHub |
+| `plan` | Write a step-by-step plan in `.provenlab/plan.md` and get the user's OK before building |
+| `git-connect` | Connect the project to GitHub and set the push policy |
+| `prototype` | A quick prototype: a working version in minutes, same building blocks |
+| `check` | The full checks, on demand: test suites, static analysis, Plugin Check, screenshots |
+| `explain` | Explain visually: by default the basics (where it is hosted, its addresses, how changes go live); `--dev` for the technical structure |
+| `ship` | Commit, push, deploy to staging, then production after the user's yes |
 
 ## Tools
 
