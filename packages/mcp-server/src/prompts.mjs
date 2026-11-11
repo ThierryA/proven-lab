@@ -6,7 +6,7 @@ export const INSTRUCTIONS = `Proven Lab: build or change apps with WordPress as 
 
 Follow the runbook: get_blueprint("runbook"). In short:
 0. Read .provenlab/project.md if it exists and skip what it answers; write it after onboarding.
-1. What are we doing? Ask in plain words, technical name in brackets: a quick prototype (get_blueprint "prototype": Playground recommended, or Local, or WP Engine; same building blocks, no plan, GitHub, full checks or staging), a new project (the setup, get_blueprint "architecture"; where to build; GitHub, get_blueprint "git-workflow"), or an existing site (get_blueprint "existing-project"). Developers choose; for non-developers propose in plain words.
+1. What are we doing? Always ask first and wait for the answer (skip only if the user named the path), in plain words, technical name in brackets: a quick prototype (get_blueprint "prototype": Playground recommended, or Local, or WP Engine; same building blocks, no plan, GitHub, full checks or staging), a new project (the setup, get_blueprint "architecture"; where to build; GitHub, get_blueprint "git-workflow"), or an existing site (get_blueprint "existing-project"). Developers choose; for non-developers propose in plain words.
 2. Workspace: get_blueprint "local-development" or "wpengine-cloud"; connect GitHub if wanted.
 3. Build the app as a regular plugin: start from get_template("plugin", slug). Look up APIs with get_function / get_hook / get_class. Anything people see follows get_blueprint "frontend-design".
 4. AI: the Cloud AI API through the WP Engine AI plugins, no API key (get_blueprint "wpe-ai-plugins"; get_ai_operation gives the PHP call).

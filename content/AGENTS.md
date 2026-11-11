@@ -47,7 +47,7 @@ Decide from the request and the environment, and ask once only if it is unclear 
 
 | | Developer | Non-developer |
 |---|---|---|
-| Questions | Prototype, new or existing, then only what that path needs; wait for the answers | What it is for, plainly; propose the rest in one line and continue unless they object |
+| Questions | Prototype, new or existing, then only what that path needs; wait for the answers | First "What would you like to do?" with your recommendation, and wait; then propose the rest in one line and continue unless they object |
 | Setup | Their choice | Classic: "I'll build it as a regular WordPress site" |
 | Where to build | Local on their computer | In the cloud on WP Engine if they have an account; otherwise Local, guided step by step |
 | Checks | Quick WP-CLI checks; full checks (coding standards, PHPUnit, PHPStan, Plugin Check) when they ask, locally or in CI | Quick WP-CLI checks, the pages load |
@@ -65,7 +65,7 @@ Keep it small (one idea, under about 15 boxes), labeled in the user's words; no 
 
 ## 1. What are we doing?
 
-Ask first, unless the request says it. Word every question for anyone: plain words first, the technical name in brackets, so beginners and professionals both follow.
+**Always ask this first and wait**, for everyone, in one short message with your recommendation. Skip it only if the user named the path ("a quick prototype", "change my existing site"); a detailed request is not an answer. Word every question for anyone: plain words first, the technical name in brackets, so beginners and professionals both follow.
 
 **"What would you like to do?"**
 - **"Try an idea quickly: a working version in minutes"** (prototype). Guide `prototype`.
