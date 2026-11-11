@@ -1,5 +1,5 @@
 {
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A WordPress plugin for the app: data model (post type and registered meta), a REST route and an Ability, each with a permission check, plus WordPress Coding Standards, PHPStan and Composer scripts. Activate it with WP-CLI; add tests with `wp scaffold plugin-tests <slug>`.",
   "placeholders": {
     "slug": "plugin folder and text domain, lowercase with dashes, e.g. book-club",

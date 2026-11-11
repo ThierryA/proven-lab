@@ -1,7 +1,7 @@
 ---
 name: provenlab
 metadata:
-  version: "0.3.1"
+  version: "0.3.2"
 description: Build applications on WordPress as the application layer (post types, registered meta, users and capabilities, hooks, Abilities, REST API) with WP-CLI and the Cloud AI API. Use when creating or changing a WordPress-backed site or app, a headless or custom admin/frontend, WordPress plugins, or AI features (gateway, knowledge base, agents) for such an app.
 ---
 

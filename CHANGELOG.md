@@ -4,6 +4,12 @@ Proven Lab uses one version for everything it ships: the Claude Code plugin, the
 
 **To release:** `npm version minor` (or `patch` / `major`), add a section for the new version and date at the top of the list below, written from the commits since the last tag (`git log v<previous>..HEAD`), build, commit, and tag `v<version>`. This file is public: only released versions appear here.
 
+## 0.3.2 · 2026-11-11
+
+- Faster, cheaper verification: every change gets a quick check with WP-CLI and real requests; the full checks (coding standards, PHPUnit, PHPStan, Plugin Check, the verify script) run on demand, when you ask or run `/provenlab:check`, preferably on your computer or in CI. Agents no longer install test suites or run long checks in the WP Engine sandbox unless you ask.
+- `/provenlab:explain` gives the basics by default: where the site is hosted, its addresses, how a change goes live and who signs in where. Add `--dev` for the technical view.
+- Home page: a short video, "Why pay agents to rebuild battle-tested software?".
+
 ## 0.3.1 · 2026-11-10
 
 - Commands work without the plugin: each one is published at `proven-lab.com/commands/<name>.md` and through the new `get_command` tool, so agents that only have the link follow a command when the user asks for it in plain words ("plan this", "explain the structure").
