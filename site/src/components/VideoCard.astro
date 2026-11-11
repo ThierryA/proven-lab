@@ -46,7 +46,7 @@ const { youtubeId = v.youtubeId } = Astro.props;
   document.querySelectorAll<HTMLButtonElement>('.video-card').forEach((btn) =>
     btn.addEventListener('click', () => {
       if (!dialog || !frame) return;
-      frame.src = `https://www.youtube-nocookie.com/embed/${btn.dataset.video}?autoplay=1&rel=0&modestbranding=1`;
+      frame.src = `https://www.youtube-nocookie.com/embed/${btn.dataset.video}?autoplay=1&rel=0&modestbranding=1&cc_load_policy=0&iv_load_policy=3&disablekb=1`;
       dialog.showModal();
     }),
   );
