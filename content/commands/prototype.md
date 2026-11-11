@@ -12,6 +12,9 @@ Follow `get_blueprint prototype`:
 3. Build with the same foundations as a full project: `get_template` with `plugin`, core building blocks (post types, registered meta, roles, Abilities), the always-on rules, `frontend-design` for anything people see, with sample content.
 4. **Quick check only:** a few real requests or WP-CLI commands prove it works, and the pages load. No test suites, no static analysis, no staging.
 5. Write `.provenlab/project.md` with **Mode: prototype**, where it runs and its address.
-6. Give the link and what to try. Offer the next step: change something, or make it a real project (the `start` command adds GitHub, a plan for what is missing, the full checks on demand, and staging).
+6. Give the link and what to try, then offer the next steps as choices, never an open question:
+   - **"Change something"**: what to add or adjust.
+   - **"Put it on the web so others can open it"** (recommended once it looks right): a staging copy on WP Engine with a link to share, needs an account; or the user's own WordPress host, with a plugin zip and upload steps.
+   - **"Make it a real project, ready to go live on your domain"**: the `start` command keeps the code and adds GitHub, a plan for what is missing, the full checks on demand, staging, then the live site on their domain.
 
 If the `provenlab` tools are not available, use `curl "{{BASE}}/api/<tool>?<args>"` instead.

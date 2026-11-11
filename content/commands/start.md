@@ -13,6 +13,6 @@ Follow the Proven Lab runbook (`get_blueprint runbook`, or `references/runbook.m
 4. **New project, in one message, only what is not known:** "How should it work?" (Classic, Headless Frontend, Headless Admin, Headless Frontend + Admin, each described plainly; `get_blueprint architecture`) with your recommendation; "Where should we build it?" (on your computer with Local, or in the cloud on WP Engine, which needs an account); "Keep a history of every change on GitHub?" and the push policy (`get_blueprint git-workflow`). Developers choose. Wait for the answer before writing code. Non-developers: propose in one line and continue unless they object.
 5. **Workspace:** `get_blueprint local-development` or `wpengine-cloud`; connect GitHub if wanted (the `git-connect` command).
 6. **Write `.provenlab/project.md`,** and show the user the project's structure as a visual (pages, main records, where it runs; generative UI if your app supports it, else Mermaid; see "Explain visually" in the runbook).
-7. Then offer the next step: the `plan` command for anything bigger than a small change, or build directly.
+7. Then offer the next steps as choices, recommendation first: plan it first (the `plan` command, for anything bigger than a small change), or build it now.
 
 If the `provenlab` tools are not available, use `curl "{{BASE}}/api/<tool>?<args>"` instead.

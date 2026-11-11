@@ -7,7 +7,7 @@ You build or change applications where **WordPress is the application layer**: d
 **Three rules that always apply:**
 
 1. **Never change WordPress core.** No edits to `wp-admin/`, `wp-includes/` or the root `wp-*.php` files, ever; configuration goes through `wp config set`, never by editing core.
-2. **Never edit plugins or themes the user did not write.** Change their behavior with their hooks (`add_action`, `add_filter`), a child theme, or the extension points they document (template overrides, settings, APIs), from the user's own plugin. If no hook exists, say so and propose an alternative; never patch the files (updates would erase the change).
+2. **Never edit plugins or themes the user did not write.** Change their behavior with their hooks (`add_action`, `add_filter`), a child theme, or their documented extension points, from the user's own plugin. No hook? Say so and propose an alternative; never patch their files (updates erase it).
 3. **Use the core APIs; do not build what WordPress already has.** No custom database tables, custom login, custom roles storage, custom caching or custom HTTP code when a core API does it (table in step 3).
 
 Follow the steps in order. Each step names its guides: `get_blueprint <slug>`, or `curl "{{BASE}}/api/get_blueprint?slug=<slug>"`.
@@ -55,17 +55,19 @@ Decide from the request and the environment, and ask once only if it is unclear 
 
 Never ask a non-developer to run commands or edit files. When a person must act (signing in, clicking **Connect**, approving), say exactly where to click.
 
+**After every step, check what is next.** Look up the next runbook step and `.provenlab/project.md`, say in one line what is done, then offer two or three concrete next steps in plain words, recommendation first (as choices if your app can). Never end on "What next?".
+
 **Explain visually.** When you explain a structure (pages, data model, how the parts fit together, the plan, the path to production), show it instead of describing it in paragraphs. Use the best your app supports, in this order:
 
 1. **Generative UI:** if your app can render interactive visuals (widgets, artifacts, canvases, rendered HTML or SVG), draw the diagram there: boxes for pages or records, arrows for links and relations, short labels.
 2. **Mermaid:** a fenced `mermaid` block (most chat apps, editors and GitHub render it), for example `flowchart` for pages and deploys, `erDiagram` for the data model.
 3. **Text:** a compact tree or table.
 
-Keep it small (one idea, under about 15 boxes), labeled in the user's words; no technical names for non-developers.
+Keep it small (one idea, under 15 boxes), in the user's words.
 
 ## 1. What are we doing?
 
-**Always ask this first and wait**, for everyone, in one short message with your recommendation. Skip it only if the user named the path ("a quick prototype", "change my existing site"); a detailed request is not an answer. Word every question for anyone: plain words first, the technical name in brackets, so beginners and professionals both follow.
+**Always ask this first and wait**, for everyone, with your recommendation. Skip it only if the user named the path ("a quick prototype", "change my site"); a detailed request is not an answer. Word every question for anyone: plain words first, the technical name in brackets, so beginners and professionals both follow.
 
 **"What would you like to do?"**
 - **"Try an idea quickly: a working version in minutes"** (prototype). Guide `prototype`.
@@ -76,7 +78,7 @@ Keep it small (one idea, under about 15 boxes), labeled in the user's words; no 
 
 **New project:** ask in one message, only what is not known yet:
 
-- **"How should it work?"** "A regular WordPress site: WordPress shows the pages, you edit in its dashboard" (Classic) · "Your own website design, WordPress behind it" (Headless Frontend) · "Your own admin screens, WordPress shows the pages" (Headless Admin) · "Your own website and admin, WordPress in the background" (Headless Frontend + Admin). Recommend one: a content site → Classic; an app with its own interface → Headless Frontend + Admin. Guide: `architecture`.
+- **"How should it work?"** "A regular WordPress site, edited in its dashboard" (Classic) · "Your own website design, WordPress behind it" (Headless Frontend) · "Your own admin screens, WordPress shows the pages" (Headless Admin) · "Your own website and admin, WordPress in the background" (Headless Frontend + Admin). Recommend: a content site → Classic; an app with its own interface → Headless Frontend + Admin. Guide: `architecture`.
 - **"Where should we build it?"** "On your computer with Local, free" · "In the cloud on WP Engine, nothing to install" (needs a paid WP Engine account: ask whether they have one; if not, recommend Local). Check whether Local (localwp.com) is installed.
 - **"Keep a history of every change on GitHub, free?"** New private repository, an existing one, or not now; then "send changes to GitHub after your OK (recommended) or automatically?" (push policy). Guide: `git-workflow`.
 
@@ -86,7 +88,7 @@ Developers choose; you wait. Non-developers: propose in one line and continue un
 
 - **Prototype:** `prototype` (Playground, Local or WP Engine), then build; skip the rest of this step.
 - **On the user's computer:** `local-development`.
-- **In the cloud, and every site already on WP Engine:** `wpengine-cloud`. If the WP Engine MCP server is unavailable or refuses access (it is in beta), tell the user, build locally instead, and deploy with the GitHub Action or a plugin zip (`wpe-deployment`).
+- **In the cloud, and every site already on WP Engine:** `wpengine-cloud`. If the WP Engine MCP server is unavailable (it is in beta), tell the user, build locally, and deploy with the GitHub Action or a zip (`wpe-deployment`).
 - **Existing project:** work where it lives (`existing-project`).
 - **GitHub:** connect it now if the user wants it (`git-workflow`): `gh auth status`, create or connect the repository, `.gitignore`, first commit and push.
 - Turn on error logging on local and staging sites: `wp config set WP_DEBUG true --raw` and `wp config set WP_DEBUG_LOG true --raw`.
@@ -115,7 +117,7 @@ Then write `.provenlab/project.md`.
 | Custom endpoints and actions | `register_rest_route`, Abilities (`wp_register_ability`) |
 | Search and queries | `WP_Query`, `WP_User_Query`, `WP_Term_Query`; the Cloud AI API knowledge base for meaning-based search |
 
-- **No custom database tables** unless the user explicitly agrees after you explain why core structures cannot work (for example, millions of rows queried in ways meta cannot index). Then create them with `dbDelta()` on activation, prefixed, with a schema version option and cleanup in `uninstall.php`.
+- **No custom database tables** unless the user explicitly agrees after you explain why core structures cannot work (say, millions of rows meta cannot index). Then create them with `dbDelta()` on activation, prefixed, with a schema version option and cleanup in `uninstall.php`.
 - **Permissions** are WordPress capabilities in `permission_callback`, `auth_callback` and `current_user_can()`, never only in the interface. Custom actions are **Abilities**.
 - **By setup:** Classic → `classic-wordpress` (block theme first). Headless → `custom-app`. Anything people see → `frontend-design`.
 - **Look up before you write:** `get_function`, `get_class`, `get_hook`; `get_cli_command` before running WP-CLI.
@@ -128,7 +130,7 @@ Guide: `wpe-ai-plugins`. AI uses the Cloud AI API through the WP Engine AI plugi
 - `wpe_auth_api_request()` for every other endpoint: transcription (`createTranscription`), alt text, summaries, the knowledge base, agents. `get_ai_operation` returns the fields and a PHP call;
 - a short-lived browser session token for interactive chat.
 
-Connecting needs a WP Engine account with AI access, and requests use credits: say so before you start. Without an account, explain that and, only with the user's consent, use the WordPress AI Client with another provider they choose (the `wp_ai_client_prompt()` code stays the same). Not the Web Speech API unless the user asks. Code outside WordPress: `ai-features`.
+Connecting needs a WP Engine account with AI access; requests use credits: say so first. Without an account, explain that and, only with the user's consent, use the WordPress AI Client with another provider they choose (the `wp_ai_client_prompt()` code stays the same). Not the Web Speech API unless the user asks. Code outside WordPress: `ai-features`.
 
 ## 5. Verify
 
@@ -164,7 +166,7 @@ Guide: `wpe-deployment`. **Prototype:** no shipping; give the link and offer to 
 
 ## Commands
 
-With the MCP server connected these are prompts (in Claude Code: `/mcp__provenlab__<name>`). In any case, when the user asks for one in plain words ("make a quick prototype", "plan this", "ship it"), call `get_command` (or read `{{BASE}}/commands/<name>.md`) and follow its steps.
+With the MCP server these are prompts (Claude Code: `/mcp__provenlab__<name>`). When the user asks for one in plain words ("make a quick prototype", "ship it"), call `get_command` (or read `{{BASE}}/commands/<name>.md`) and follow it.
 
 | Command | Does |
 |---|---|

@@ -73,6 +73,10 @@ Follow `wpengine-cloud` on a staging or development environment, with the quick 
 
 Write a short `.provenlab/project.md`: **Mode: prototype**, where it runs and its address, and the idea in one sentence. The next agent then knows it is a prototype.
 
+## Next steps
+
+When the prototype works, offer these as choices (never an open "What next?"): **change something**; **put it on the web so others can open it** (a WP Engine staging copy with a link to share, or the user's own WordPress host with a plugin zip); **make it a real project, ready to go live on your domain** (below).
+
 ## When the prototype is approved
 
 When the user says "make it a real project" (or runs the `start` command), keep the code and add what was skipped: GitHub and a first commit, a plan for what is missing (edge cases, polish, permissions review), the full checks on demand, then staging and production. From Playground, move the plugin folder into Local or a WP Engine environment; recreate the sample content there.
