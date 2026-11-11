@@ -36,7 +36,7 @@ Adapt to the user: developers get the developer path; someone who does not code 
 2. **Workspace:** Local on their computer (`local-development`), or in the cloud on WP Engine with nothing to install, including any site already there (`wpengine-cloud`).
 3. **Build** (`classic-wordpress` or `custom-app`): a regular plugin in `wp-content/plugins/<app>/`, not a must-use plugin. Data model on `init`, capabilities for permissions, Abilities for custom actions. Look up every function before using it. Anything people see follows `frontend-design`: a design brief, tokens, real content, and a screenshot review at three widths.
 4. **AI** (`wpe-ai-plugins`): the Cloud AI API through the WP Engine AI plugins, no API key: `wp_ai_client_prompt()->using_provider( 'wpengine' )`, `wpe_auth_api_request()` for every other endpoint, browser session tokens for chat. Not the Web Speech API or another provider unless asked.
-5. **Verify** (`wp-cli-for-agents`): WP-CLI and real requests. Developers also run `best-practices`: WordPress Coding Standards, PHPUnit, PHPStan, Plugin Check.
+5. **Verify** (`wp-cli-for-agents`): a quick check of every change with WP-CLI and real requests. The full checks (`best-practices`: WordPress Coding Standards, PHPUnit, PHPStan, Plugin Check) run on demand, locally or in CI, not in the WP Engine sandbox unless the user asks.
 6. **Ship** (`wpe-deployment`): suggest staging if there is none, deploy there, then offer production; straight to production if the user does not want staging. GitHub is optional. On WP Engine use the `wpengine` MCP server; never set up SSH keys yourself.
 
 Keys and application passwords stay on the server. Never run destructive commands, publish, or change production without approval.

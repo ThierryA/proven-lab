@@ -50,7 +50,7 @@ Decide from the request and the environment, and ask once only if it is unclear 
 | Questions | New or existing, setup, where to build, repository; wait for the answers | What the site is for and its name, plainly; propose the rest in one line and continue unless they object |
 | Setup | Their choice | Classic: "I'll build it as a regular WordPress site" |
 | Where to build | Local on their computer | In the cloud on WP Engine if they have an account; otherwise Local, guided step by step |
-| Checks | Coding standards, PHPUnit, PHPStan, Plugin Check | WP-CLI checks, the pages load |
+| Checks | Quick WP-CLI checks; full checks (coding standards, PHPUnit, PHPStan, Plugin Check) when they ask, locally or in CI | Quick WP-CLI checks, the pages load |
 | Shipping | Staging, then production; GitHub Action if they want it | Staging link, then production after their yes |
 
 Never ask a non-developer to run commands or edit files. When a person must act (signing in, clicking **Connect**, approving), say exactly where to click.
@@ -126,9 +126,9 @@ Connecting needs a WP Engine account with AI access, and requests use credits: s
 
 ## 5. Verify
 
-- Prove behavior with **WP-CLI** and real HTTP requests, not by rereading code: `wp-cli-for-agents`, or `get_template` with `verify-script`. Locally run `wp` in the site; on WP Engine use the WP Engine MCP server's `sandbox_bash`.
+- **Quick check, every change:** prove it works with a few **WP-CLI** commands and real HTTP requests, not by rereading code (`wp-cli-for-agents`). Locally run `wp` in the site; on WP Engine use the WP Engine MCP server's `sandbox_bash`.
 - A fatal error in your plugin breaks `wp` too: `wp --skip-plugins plugin deactivate <slug>`, read `wp-content/debug.log`, fix, reactivate.
-- Developers: the checks in `best-practices` (coding standards, PHPUnit, PHPStan, Plugin Check).
+- **Full checks, on demand only:** the `best-practices` suite (coding standards, PHPUnit, PHPStan, Plugin Check) and the full `verify-script`. Run them when the user asks or runs `/provenlab:check`, preferably locally (Local or `wp-env`) or in CI on GitHub. Not in the WP Engine sandbox unless the user asks: its sessions are short, and long runs there are slow and costly.
 - Report what you checked and the results.
 - **Commit** each verified change with a clear message (`git-workflow`); never commit broken code or secrets.
 
@@ -165,7 +165,7 @@ In Claude Code with the Proven Lab plugin these are slash commands; MCP clients 
 | `/provenlab:start` | Onboard: project memory, new or existing, setup, workspace, GitHub |
 | `/provenlab:plan` | Write a step-by-step plan in `.provenlab/plan.md` and get the user's OK before building |
 | `/provenlab:git-connect` | Connect the project to GitHub and set the push policy |
-| `/provenlab:check` | Verify the work: WP-CLI, quality checks, screenshot review |
+| `/provenlab:check` | The full checks, on demand: test suites, static analysis, Plugin Check, screenshots |
 | `/provenlab:explain` | Explain visually: by default the basics (where it is hosted, its addresses, how changes go live); `--dev` for the technical structure |
 | `/provenlab:ship` | Commit, push, deploy to staging, then production after the user's yes |
 

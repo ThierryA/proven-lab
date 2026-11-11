@@ -30,7 +30,7 @@ Three IDs, never interchangeable; look them up, never guess: the hosting site ID
 
 - Write the plugin with `sandbox_write` to `wp-content/plugins/<app>/<app>.php`, then `wp plugin activate <app>`. Follow `classic-wordpress` or `custom-app`; look up every function with `get_function`.
 - Change existing files with `sandbox_read` and the smallest `sandbox_edit`. Never touch WordPress core or `wp-config.php`.
-- Check every file with `php -l` and verify with WP-CLI in `sandbox_bash` (`wp-cli-for-agents`). Add sample content so the user sees a real page.
+- Quick checks only: `php -l` on the files you changed and a few WP-CLI commands in `sandbox_bash` (`wp-cli-for-agents`). Add sample content so the user sees a real page. Do not install test suites or run long checks in the sandbox unless the user asks: run the full checks locally or in CI (`best-practices`).
 - AI features: install the WP Engine AI plugins with WP-CLI (`wpe-ai-plugins`) and ask the user to click **Connect** once in the staging site's WP Admin.
 - Keep a copy of every file you write in the user's working folder; for a site with a repository, commit the change there too.
 

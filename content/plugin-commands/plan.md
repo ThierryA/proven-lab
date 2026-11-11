@@ -12,7 +12,7 @@ Plan this before writing code: $ARGUMENTS
    - **Reuse:** plugins or core features used instead of new code.
    - **Steps:** small, each ending in something that can be verified; for each, the files it creates or changes.
    - **Data model:** post types, fields, roles and capabilities, Abilities (with the plugin prefix).
-   - **Verification:** the WP-CLI checks, requests and screenshots that prove each step.
+   - **Verification:** the quick WP-CLI checks and requests that prove each step (the full checks run only on request, locally or in CI).
    - **Commits:** one per step, with the message.
    - **Ship:** staging, then production after the user's yes.
 4. Show the plan visually first: the pages and navigation, and the data model (records, fields, relations), with generative UI if your app supports it, else Mermaid (`flowchart`, `erDiagram`). Then summarize it briefly (plain words for non-developers) and wait for the user's OK or changes before building. Then work through it step by step, ticking steps off in `.provenlab/plan.md` and committing after each verified step.

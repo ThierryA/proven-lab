@@ -1,8 +1,8 @@
 # Quality checks: WordPress best practices
 
-> **Runbook step 5 · Verify,** for developers. Set the tooling up at the start of step 3 and run it before saying the work is done. **Next:** step 6, `wpe-deployment`.
+> **Runbook step 5 · Verify,** for developers. Set the tooling up at the start of step 3; run the full checks on demand. **Next:** step 6, `wpe-deployment`.
 
-Apply these on every project, whatever the setup. Add the tooling at the start, run it before saying the work is done, and keep it in CI.
+Apply these on every project, whatever the setup. Add the tooling at the start and keep it in CI. Run the full checks on demand (when the user asks, or `/provenlab:check`), locally (Local or `wp-env`) or in CI, not in the WP Engine sandbox unless the user asks: test suites there are slow and costly. Every change still gets a quick WP-CLI check (runbook, step 5).
 
 ## 1. Project layout
 
@@ -170,6 +170,9 @@ Wrap every user-facing string: `__( 'Projects', 'my-app' )`, `esc_html_e()`, `_n
 Run all checks on every push: PHPCS, PHPStan, PHPUnit (the workflow `wp scaffold plugin-tests --ci=github` generates is a starting point; add a MySQL service and a PHP version matrix), and `wp-scripts lint-js` if there is JavaScript. A change is done when CI is green.
 
 ## Definition of done
+
+When the full checks run (on request or in CI):
+
 
 1. `vendor/bin/phpcs` reports no errors.
 2. `vendor/bin/phpunit` passes, with tests for the model, the REST routes, the Abilities and permissions.
