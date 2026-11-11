@@ -1,6 +1,6 @@
 {
   "name": "@provenlab/mcp",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "type": "module",
   "description": "Proven Lab MCP server (WordPress Core API, WP-CLI, Cloud AI API references) and project kit installer (init).",
   "bin": {

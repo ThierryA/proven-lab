@@ -4,6 +4,10 @@ Proven Lab uses one version for everything it ships: the `@provenlab/mcp` packag
 
 **To release:** `npm version minor` (or `patch` / `major`), add a section for the new version and date at the top of the list below, written from the commits since the last tag (`git log v<previous>..HEAD`), build, commit, and tag `v<version>`. This file is public: only released versions appear here.
 
+## 0.5.1 · 2026-11-11
+
+- The agent always starts by asking what you want to do (try an idea quickly, build it properly, or change a site you already have), with its recommendation, and waits for your answer, even when the request is detailed. It skips the question only when you name the path yourself, for example "a quick prototype".
+
 ## 0.5.0 · 2026-11-11
 
 - No more Claude Code plugin: Proven Lab is fully remote. Give your agent the link, or connect the MCP server once (`claude mcp add --transport http provenlab https://proven-lab.com/mcp`, or one line in Codex, Cursor or VS Code). The tools, the instructions and the commands (`start`, `prototype`, `plan`, `git-connect`, `check`, `explain`, `ship`, as MCP prompts or in plain words) update on the server, so there is nothing to install or update.
