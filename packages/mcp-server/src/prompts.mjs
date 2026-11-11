@@ -7,13 +7,13 @@ export const INSTRUCTIONS = `Proven Lab: build or change apps with WordPress as 
 
 Follow the runbook: get_blueprint("runbook"). In short:
 0. Read .provenlab/project.md if it exists and skip what it answers; write it after onboarding.
-1. New or existing project? Existing: find and inspect it (get_blueprint "existing-project"). New: ask the setup (Classic or headless; get_blueprint "architecture"), where to build (Local, or in the cloud on WP Engine), and whether to use GitHub (get_blueprint "git-workflow"). Developers choose; for non-developers propose Classic in plain words.
+1. What are we doing? Ask in plain words, technical name in brackets: a quick prototype (get_blueprint "prototype": Playground recommended, or Local, or WP Engine; same building blocks, no plan, GitHub, full checks or staging), a new project (the setup, get_blueprint "architecture"; where to build; GitHub, get_blueprint "git-workflow"), or an existing site (get_blueprint "existing-project"). Developers choose; for non-developers propose in plain words.
 2. Workspace: get_blueprint "local-development" or "wpengine-cloud"; connect GitHub if wanted.
 3. Build the app as a regular plugin: start from get_template("plugin", slug). Look up APIs with get_function / get_hook / get_class. Anything people see follows get_blueprint "frontend-design".
 4. AI: the Cloud AI API through the WP Engine AI plugins, no API key (get_blueprint "wpe-ai-plugins"; get_ai_operation gives the PHP call).
-5. Verify with WP-CLI and real requests (get_template "verify-script"), then commit.
+5. Verify: a quick check with WP-CLI and real requests on every change; the full checks on demand, locally or in CI. Then commit.
 6. Ship: commit before pushing; staging first, production after the user's yes (get_blueprint "wpe-deployment").
-Always: never change WordPress core; never edit third-party plugins or themes (use their hooks from the user's plugin); use core APIs (post types, meta, taxonomies, users, options, cron, transients), no custom tables without the user's explicit agreement. Never set up SSH keys for WP Engine (its MCP server connects for you). Explain structures (pages, data model, plan, deploy path) visually: generative UI if available, else Mermaid. Prompts: start, plan, git-connect, check, explain, ship; when the user asks for one in plain words, get_command gives its steps.`;
+Always: never change WordPress core; never edit third-party plugins or themes (use their hooks from the user's plugin); use core APIs (post types, meta, taxonomies, users, options, cron, transients), no custom tables without the user's explicit agreement. Never set up SSH keys for WP Engine (its MCP server connects for you). Explain structures (pages, data model, plan, deploy path) visually: generative UI if available, else Mermaid. Prompts: start, prototype, plan, git-connect, check, explain, ship; when the user asks for one in plain words, get_command gives its steps.`;
 
 export async function listPrompts() {
   return (await getCommands()).filter((c) => c.name !== 'setup-project').map((c) => ({

@@ -69,7 +69,7 @@ test('WP Engine MCP is removed from docs, search data and the published spec', (
 
 test('blueprints have front matter and the expected set', () => {
   const bps = rj('dist', 'blueprints.json');
-  assert.deepEqual(bps.map((b) => b.slug).sort(), ['ai-features', 'architecture', 'best-practices', 'classic-wordpress', 'custom-app', 'existing-project', 'frontend-design', 'git-workflow', 'local-development', 'wp-cli-for-agents', 'wpe-ai-plugins', 'wpe-deployment', 'wpengine-cloud']);
+  assert.deepEqual(bps.map((b) => b.slug).sort(), ['ai-features', 'architecture', 'best-practices', 'classic-wordpress', 'custom-app', 'existing-project', 'frontend-design', 'git-workflow', 'local-development', 'prototype', 'wp-cli-for-agents', 'wpe-ai-plugins', 'wpe-deployment', 'wpengine-cloud']);
   for (const b of bps) { assert.ok(b.title && b.summary && b.md.length > 500, b.slug); }
 });
 

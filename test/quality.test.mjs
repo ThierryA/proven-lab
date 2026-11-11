@@ -39,14 +39,14 @@ test('templates: complete, placeholders filled, PHP lints, JSON and YAML parse',
 test('MCP: server instructions, prompts and the runbook as a guide', async () => {
   assert.ok(INSTRUCTIONS.length > 500 && INSTRUCTIONS.length < 2500, 'instructions are short but complete');
   for (const s of ['runbook', 'get_template', 'staging']) assert.ok(INSTRUCTIONS.includes(s), `instructions mention ${s}`);
-  assert.deepEqual((await listPrompts()).map((p) => p.name), ['check', 'explain', 'git-connect', 'plan', 'ship', 'start']);
+  assert.deepEqual((await listPrompts()).map((p) => p.name), ['check', 'explain', 'git-connect', 'plan', 'prototype', 'ship', 'start']);
   const start = await getPrompt('start', { request: 'Build a members directory' });
   assert.match(start.messages[0].content.text, /Build a members directory[\s\S]*project\.md/);
   const list = await callTool('list_blueprints', {});
   assert.equal(list[0].slug, 'runbook');
   const cmd = await callTool('get_command', { name: '/provenlab:plan' });
   assert.match(cmd.markdown, /\.provenlab\/plan\.md/);
-  assert.deepEqual((await callTool('get_command', {})).commands.map((c) => c.name), ['check', 'explain', 'git-connect', 'plan', 'ship', 'start']);
+  assert.deepEqual((await callTool('get_command', {})).commands.map((c) => c.name), ['check', 'explain', 'git-connect', 'plan', 'prototype', 'ship', 'start']);
   assert.match((await callTool('get_blueprint', { slug: 'runbook' })).markdown, /^# Proven Lab runbook/);
 });
 
@@ -77,5 +77,5 @@ test('consistency: agent-facing text keeps the rules that were decided', () => {
   assert.ok(INSTRUCTIONS.includes('never change WordPress core'), 'MCP instructions carry the core rule');
   assert.ok(!/(in|as|use) a must-use plugin(?! is)/i.test(all.replace(/not a must-use plugin|never[^.]*must-use|must-use plugins? (cannot|have no|are skipped)|Use a must-use plugin only/gi, '')), 'no guide recommends a must-use plugin for the app');
   assert.ok(!/ssh-keygen|wpe_create_ssh_key/.test(all), 'agents never create SSH keys');
-  for (const s of ['New or existing', 'staging', 'get_template', 'project.md']) assert.ok(agents.includes(s), `runbook mentions ${s}`);
+  for (const s of ['What are we doing', 'staging', 'get_template', 'project.md']) assert.ok(agents.includes(s), `runbook mentions ${s}`);
 });

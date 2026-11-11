@@ -21,15 +21,23 @@ Use Proven Lab: {{BASE}}
 
 [See more example requests ↓](#examples)
 
-With just the link you can also ask in plain words for what the commands do: "plan this first", "explain the basics" (where it is hosted, its addresses, how changes go live), "explain it for developers", "connect it to GitHub", "check it", "ship it".
+With just the link you can also ask in plain words for what the commands do: "make a quick prototype", "plan this first", "explain the basics" (where it is hosted, its addresses, how changes go live), "explain it for developers", "connect it to GitHub", "check it", "ship it".
 
 ## 3. Answer a few questions
 
-Your agent reads the Proven Lab instructions and first asks whether this is a new project or a change to something you already have. Then it asks only what it needs (the kind of site, where to build it, or where your existing project lives), does the work, and shows you the result. You sign in where needed and approve before anything goes live.
+Your agent reads the Proven Lab instructions and first asks what you want to do, in plain words: **try an idea quickly** (a working version in minutes, on your computer or in the cloud), **build it properly** (ready to grow and go live), or **change a site you already have**. Then it asks only what that path needs, does the work, and shows you the result. You sign in where needed and approve before anything goes live.
 
 <a id="examples"></a>
 
 ## Example requests
+
+**Try an idea quickly**
+
+```text
+Make a quick prototype of a recipe site where I save recipes and
+search them by ingredient. On my computer, nothing to install.
+Use Proven Lab: {{BASE}}
+```
 
 **A new app**
 
@@ -97,7 +105,7 @@ Use Proven Lab: {{BASE}}
 
 Not needed to start. Connecting makes lookups faster and keeps the instructions in your project.
 
-**Claude Code:** install the plugin: the Proven Lab tools, the skill, and the commands `/provenlab:start`, `/provenlab:plan`, `/provenlab:git-connect`, `/provenlab:check`, `/provenlab:explain` and `/provenlab:ship` (other MCP clients get the same commands as prompts):
+**Claude Code:** install the plugin: the Proven Lab tools, the skill, and the commands `/provenlab:start`, `/provenlab:prototype`, `/provenlab:plan`, `/provenlab:git-connect`, `/provenlab:check`, `/provenlab:explain` and `/provenlab:ship` (other MCP clients get the same commands as prompts):
 
 ```text
 /plugin install provenlab --marketplace ThierryA/proven-lab

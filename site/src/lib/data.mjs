@@ -14,7 +14,7 @@ export const BASE = (process.env.SITE_URL || pkgRoot.homepage || '').replace(/\/
 // The docs menu follows the runbook in AGENTS.md: one group per step, guides in the order agents use them.
 export const RUNBOOK = [
   { title: 'Start', pages: [['Start building', '/docs/connect']] },
-  { title: '1 · New or existing', slugs: ['architecture', 'existing-project'] },
+  { title: '1 · What are we doing', slugs: ['prototype', 'architecture', 'existing-project'] },
   { title: '2 · Workspace', slugs: ['local-development', 'wpengine-cloud', 'git-workflow'] },
   { title: '3 · Build', slugs: ['classic-wordpress', 'custom-app', 'frontend-design'] },
   { title: '4 · AI', slugs: ['wpe-ai-plugins', 'ai-features'] },

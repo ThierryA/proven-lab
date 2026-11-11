@@ -55,7 +55,7 @@ test('pages render with the right content', async () => {
 test('sidebar follows the runbook steps, then Core API, WP-CLI and Cloud AI API; no Platform; non-tool groups set apart', async () => {
   const page = await (await get('/docs/api/fields')).text();
   const html = page.slice(page.indexOf('<aside'), page.indexOf('</aside>'));
-  let from = 0; const order = ['How it works', '1 · New or existing', '2 · Workspace', '3 · Build', '4 · AI', '5 · Verify', '6 · Ship', 'Core API', 'WP-CLI', 'Cloud AI API'].map((t) => (from = html.indexOf(t, from)));
+  let from = 0; const order = ['How it works', '1 · What are we doing', '2 · Workspace', '3 · Build', '4 · AI', '5 · Verify', '6 · Ship', 'Core API', 'WP-CLI', 'Cloud AI API'].map((t) => (from = html.indexOf(t, from)));
   assert.ok(order.every((i, k) => i > -1 && (k === 0 || i > order[k - 1])), `section order ${order}`);
   assert.ok(!/>\s*Platform\s*</.test(html) && !html.includes('WP Engine AI API'));
   const ai = html.slice(html.lastIndexOf('Cloud AI API'));
@@ -114,7 +114,7 @@ async function exerciseMcp(client) {
   assert.equal(hook.data.params.length, 3);
   assert.match(await text('get_blueprint', { slug: 'custom-app' }), /authorize-application/);
   assert.match(await text('get_blueprint', { slug: 'runbook' }), /^# Proven Lab runbook/);
-  const list = (await call('list_blueprints', {})).data; assert.equal(list.length, 14); assert.equal(list[0].slug, 'runbook');
+  const list = (await call('list_blueprints', {})).data; assert.equal(list.length, 15); assert.equal(list[0].slug, 'runbook');
   const tpl = (await call('get_template', { name: 'plugin', slug: 'book-club' })).data; assert.ok(tpl.files.some((f) => f.path === 'wp-content/plugins/book-club/book-club.php'));
   const op = await call('get_ai_operation', { operationId: 'searchCollection' });
   assert.equal(op.data.method, 'POST'); assert.match(op.data.url, /\/v1\/kb\/collections\/\{id\}\/search$/); assert.match(op.data.howToCall.php, /wpe_auth_api_request/);

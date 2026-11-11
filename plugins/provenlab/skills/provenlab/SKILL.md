@@ -13,7 +13,7 @@ Always: never change WordPress core; never edit plugins or themes the user did n
 
 Explain structures visually (site pages, data model, architecture, plan, deploy path): generative UI if your app supports it, else a Mermaid diagram, else a compact tree.
 
-Commands: `/provenlab:start`, `/provenlab:plan`, `/provenlab:git-connect`, `/provenlab:check`, `/provenlab:explain` (`--dev` for the technical view), `/provenlab:ship` (also at https://proven-lab.com/commands/<name>.md for requests in plain words).
+Commands: `/provenlab:start`, `/provenlab:prototype`, `/provenlab:plan`, `/provenlab:git-connect`, `/provenlab:check`, `/provenlab:explain` (`--dev` for the technical view), `/provenlab:ship` (also at https://proven-lab.com/commands/<name>.md for requests in plain words).
 
 ## Look things up instead of guessing
 
@@ -32,7 +32,7 @@ Use the `provenlab` MCP tools. If they are not connected, call the same tools ov
 
 Adapt to the user: developers get the developer path; someone who does not code gets plain words, few questions and nothing to install.
 
-1. **New or existing?** Find out first. Existing: find and inspect it, work out its setup from the code (`existing-project`). New (`architecture`): ask the user the setup (Classic, Headless Frontend, Headless Admin, Headless Frontend + Admin) with a recommendation, where to build, and for developers which repository. Developers choose and you wait; for non-developers propose Classic and continue unless they object.
+1. **What are we doing?** Ask the user in plain words (technical name in brackets): try an idea quickly (prototype, `prototype`: Playground recommended, or Local, or WP Engine; no plan, GitHub, full checks or staging), build it properly (new project, `architecture`: the setup with a recommendation, where to build, GitHub), or change an existing site (`existing-project`). Developers choose and you wait; for non-developers propose and continue unless they object.
 2. **Workspace:** Local on their computer (`local-development`), or in the cloud on WP Engine with nothing to install, including any site already there (`wpengine-cloud`).
 3. **Build** (`classic-wordpress` or `custom-app`): a regular plugin in `wp-content/plugins/<app>/`, not a must-use plugin. Data model on `init`, capabilities for permissions, Abilities for custom actions. Look up every function before using it. Anything people see follows `frontend-design`: a design brief, tokens, real content, and a screenshot review at three widths.
 4. **AI** (`wpe-ai-plugins`): the Cloud AI API through the WP Engine AI plugins, no API key: `wp_ai_client_prompt()->using_provider( 'wpengine' )`, `wpe_auth_api_request()` for every other endpoint, browser session tokens for chat. Not the Web Speech API or another provider unless asked.

@@ -104,7 +104,7 @@ for (const f of await readdir(bpDir)) {
   await w(`blueprints/${f}`, stripMarkers(raw));
 }
 // Runbook order (AGENTS.md, steps 1 to 6): list_blueprints, llms.txt and the docs show guides in the order agents use them.
-const RUNBOOK_ORDER = ['architecture', 'existing-project', 'local-development', 'wpengine-cloud', 'git-workflow', 'classic-wordpress', 'custom-app', 'frontend-design', 'wpe-ai-plugins', 'ai-features', 'wp-cli-for-agents', 'best-practices', 'wpe-deployment'];
+const RUNBOOK_ORDER = ['prototype', 'architecture', 'existing-project', 'local-development', 'wpengine-cloud', 'git-workflow', 'classic-wordpress', 'custom-app', 'frontend-design', 'wpe-ai-plugins', 'ai-features', 'wp-cli-for-agents', 'best-practices', 'wpe-deployment'];
 const rank = (s) => (RUNBOOK_ORDER.indexOf(s) + 1 || 99);
 blueprints.sort((a, b) => rank(a.slug) - rank(b.slug));
 await w('blueprints.json', blueprints);
