@@ -19,6 +19,18 @@ const raw = (path) => new Promise((resolve, reject) => { http.get({ host: '127.0
 
 test('healthz', async () => { const r = await get('/healthz'); assert.equal(r.status, 200); assert.deepEqual(await r.json(), { ok: true }); });
 
+test('the site is discoverable: no noindex, robots.txt with the sitemap, canonical and preview tags', async () => {
+  const home = await get('/');
+  assert.equal(home.headers.get('x-robots-tag'), null, 'no x-robots-tag header');
+  const html = await home.text();
+  assert.ok(!/name="robots"[^>]*noindex/.test(html), 'no noindex meta');
+  assert.match(html, /<link rel="canonical" href="https:\/\/[^"]+\/">/);
+  assert.match(html, /property="og:image"/);
+  const robots = await (await get('/robots.txt')).text();
+  assert.match(robots, /Allow: \//); assert.match(robots, /Disallow: \/api\//); assert.match(robots, /Sitemap: https:\/\/\S+\/sitemap-index\.xml/);
+  assert.equal((await get('/sitemap-index.xml')).status, 200);
+});
+
 test('pages render with the right content', async () => {
   const cases = [
     ['/', 'text/html', ['Why pay agents to rebuild a battle-tested platform', 'data-hero-term', 'current industry', 'the fix: ', 'One application layer', 'data-setup="classic"', 'WP Admin', 'WordPress templating', 'Core API', 'WP-CLI', 'Deployment', 'optional']],
